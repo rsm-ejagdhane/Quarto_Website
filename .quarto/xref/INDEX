@@ -1,0 +1,32 @@
+{
+  "index.qmd": {
+    "index.html": "52daffdd"
+  },
+  "about.qmd": {
+    "about.html": "dac1b09a"
+  },
+  "blogs.qmd": {
+    "blogs.html": "58ef626d"
+  },
+  "worldcup.qmd": {
+    "worldcup.html": "cf5a5d1a"
+  },
+  "blogs/worldcup/index.qmd": {
+    "index.html": "28f38940"
+  },
+  "blogs/post2/index.qmd": {
+    "index.html": "db9446d7"
+  },
+  "blogs/HW1/index.qmd": {
+    "index.html": "5a233c6a"
+  },
+  "blogs/HW1/hw1_questions.qmd": {
+    "hw1_questions.html": "30935f44"
+  },
+  "blogs/HW1/hw1_index.qmd": {
+    "hw1_index.html": "4ded3387"
+  },
+  "blogs/worldcup/worldcup.qmd": {
+    "worldcup.html": "3e2c285d"
+  }
+}

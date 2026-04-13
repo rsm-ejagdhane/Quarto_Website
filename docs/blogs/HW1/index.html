@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.13">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Eesha Jagdhane">
+<meta name="dcterms.date" content="2026-04-12">
+<meta name="description" content="Exploring A/B testing through simulation — covering the Law of Large Numbers, Bootstrap Standard Errors, the Central Limit Theorem, Hypothesis Testing, and the problem with peeking.">
+
+<title>A/B Testing a Call to Action – Eesha Jagdhane</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+
+
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-html-734cb40618f438257b19a1e532635a32.min.css" rel="stylesheet" append-hash="true" data-mode="light">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ac077c1e730dfeb5e42400639d17284e.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+
+
+</head>
+
+<body>
+
+
+<header id="title-block-header">
+<h1 class="title">A/B Testing a Call to Action</h1>
+<p class="subtitle">Simulating Key Ideas from Classical Frequentist Statistics</p>
+<p class="author">Eesha Jagdhane</p>
+
+<p class="date">2026-04-12</p>
+</header>
+
+<nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction">Introduction</a></li>
+  <li><a href="#the-ab-test-as-a-statistical-problem" id="toc-the-ab-test-as-a-statistical-problem">The A/B Test as a Statistical Problem</a></li>
+  <li><a href="#simulating-data" id="toc-simulating-data">Simulating Data</a></li>
+  <li><a href="#the-law-of-large-numbers" id="toc-the-law-of-large-numbers">The Law of Large Numbers</a></li>
+  <li><a href="#bootstrap-standard-errors" id="toc-bootstrap-standard-errors">Bootstrap Standard Errors</a></li>
+  <li><a href="#the-central-limit-theorem" id="toc-the-central-limit-theorem">The Central Limit Theorem</a></li>
+  <li><a href="#hypothesis-testing" id="toc-hypothesis-testing">Hypothesis Testing</a></li>
+  <li><a href="#the-t-test-as-a-regression" id="toc-the-t-test-as-a-regression">The T-Test as a Regression</a></li>
+  <li><a href="#the-problem-with-peeking" id="toc-the-problem-with-peeking">The Problem with Peeking</a></li>
+  </ul>
+</nav>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&amp;family=DM+Sans:wght@300;400;500&amp;display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #f0ece4; color: #2e2825; font-family: 'DM Sans', sans-serif; }
+  a { color: inherit; text-decoration: none; }
+
+  .nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.5rem 4rem; border-bottom: 1px solid #c9c2b6;
+    background: #f0ece4; position: sticky; top: 0; z-index: 10;
+  }
+  .nav-logo { font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase; color: #7a3b35; }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.8rem; color: #8a8278; text-transform: uppercase;
+    letter-spacing: 0.08em; padding: 0.4rem 0.75rem; display: inline-block;
+    transition: color 0.2s, background 0.2s, transform 0.2s;
+  }
+  .nav-links a:hover { color: #2e2825; background: #e8e3da; transform: translateY(-2px); }
+  .nav-cta {
+    background: #2e2825; color: #f0ece4; padding: 0.5rem 1.2rem;
+    font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase;
+    transition: background 0.2s;
+  }
+  .nav-cta:hover { background: #7a3b35; }
+
+  /* POST HEADER */
+  .post-header {
+    padding: 5rem 4rem 3rem;
+    border-bottom: 1px solid #c9c2b6;
+    max-width: 860px;
+  }
+  .post-tag { font-size: 0.7rem; color: #7a3b35; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 0.5rem; }
+  .post-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 900; line-height: 1.1; color: #2e2825; margin-bottom: 0.5rem;
+  }
+  .post-subtitle { font-size: 1rem; color: #8a8278; margin-bottom: 1rem; font-style: italic; }
+  .post-meta { font-size: 0.75rem; color: #8a8278; }
+
+  /* BACK LINK */
+  .back-link {
+    display: inline-block; margin: 2rem 4rem 0;
+    font-size: 0.75rem; color: #7a3b35;
+    border-bottom: 1px solid #c9a09b; padding-bottom: 2px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .back-link:hover { color: #2e2825; border-color: #2e2825; }
+
+  /* POST BODY */
+  .post-body {
+    padding: 3rem 4rem 5rem;
+    max-width: 860px;
+  }
+  .post-body h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem; font-weight: 700;
+    color: #2e2825; margin: 3rem 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #c9c2b6;
+  }
+  .post-body h3 { font-size: 1.1rem; font-weight: 500; color: #2e2825; margin: 2rem 0 0.75rem; }
+  .post-body p { font-size: 0.95rem; color: #6b6560; line-height: 1.9; margin-bottom: 1.25rem; }
+  .post-body ul, .post-body ol { padding-left: 1.5rem; margin-bottom: 1.25rem; }
+  .post-body li { font-size: 0.95rem; color: #6b6560; line-height: 1.9; margin-bottom: 0.4rem; }
+  .post-body strong { color: #2e2825; font-weight: 500; }
+  .post-body em { color: #7a3b35; font-style: italic; }
+
+  /* CALLOUT OVERRIDES */
+  .callout { border-left: 3px solid #7a3b35 !important; background: #e8e3da !important; border-radius: 0 !important; }
+  .callout-header { display: none !important; }
+  .callout-body p { color: #6b6560 !important; font-size: 0.9rem !important; }
+
+  /* CODE BLOCKS */
+  pre { background: #e8e3da !important; border: 1px solid #c9c2b6 !important; border-radius: 2px !important; padding: 1rem !important; }
+  code { font-size: 0.85rem !important; color: #2e2825 !important; }
+
+  /* FOOTER */
+  .footer-bar {
+    margin: 0 4rem; padding: 2rem 0;
+    border-top: 1px solid #c9c2b6;
+    display: flex; justify-content: space-between;
+    font-size: 0.7rem; color: #8a8278;
+  }
+
+  @media (max-width: 800px) {
+    .nav { padding: 1rem 1.5rem; }
+    .post-header, .post-body { padding: 3rem 1.5rem; }
+    .back-link { margin: 1.5rem; }
+    .footer-bar { margin: 0 1.5rem; flex-direction: column; gap: 0.5rem; }
+  }
+</style>
+
+<div class="nav">
+  <span class="nav-logo">Eesha Jagdhane // Portfolio</span>
+  <ul class="nav-links">
+    <li><a href="../../index.html">Home</a></li>
+    <li><a href="../../blogs.html">Blogs &amp; Insights</a></li>
+  </ul>
+  <a href="../../index.html#contact" class="nav-cta">Get in touch</a>
+</div>
+
+<div class="post-header">
+  <div class="post-tag">Assignment 2 — Marketing Analytics</div>
+  <div class="post-title">A/B Testing a Call to Action</div>
+  <div class="post-subtitle">Simulating Key Ideas from Classical Frequentist Statistics</div>
+  <div class="post-meta">Eesha Jagdhane &nbsp;·&nbsp; April 12, 2026</div>
+</div>
+
+<a href="../../blogs.html" class="back-link">← Back to Blogs &amp; Insights</a>
+
+<div class="post-body">
+<h2 id="introduction" class="anchored">Introduction</h2>
+<div>
+<blockquote>
+<p><strong>Note</strong></p>
+<p>Write a short introduction for the reader that sets the scene. Cover the following points in your own words:</p>
+<ul>
+<li><p>You have a website and your landing page includes a place where visitors can sign up to receive your newsletter.</p></li>
+<li><p>You want to test which of two possible “calls to action” (CTAs) leads to more sign-ups. CTA A reads “Sign up for our newsletter here!” and CTA B reads “Stay up to date by signing up!” (you are welcome to change the language of the CTAs).</p></li>
+<li><p>You will evaluate which CTA performs better by running an A/B test. Explain what an A/B test is: visitors are randomly assigned to see one of the two CTAs, and you compare sign-up rates between the two groups.</p></li>
+</ul>
+</blockquote>
+</div>
+<h2 id="the-ab-test-as-a-statistical-problem" class="anchored">The A/B Test as a Statistical Problem</h2>
+<div>
+<blockquote>
+<p><strong>Note</strong></p>
+<p>In this section, connect the A/B test to a formal statistical framework. Address each of the following ideas:</p>
+<ul>
+<li><p>Each visitor either signs up or does not, so we can model each visitor’s outcome as a draw from a Bernoulli distribution with parameter <span class="math inline"><em>π</em></span>, the probability of signing up.</p></li>
+<li><p>Because the CTA a visitor sees may influence their probability of signing up, we allow the parameter to differ across groups: visitors who see CTA A have sign-up probability <span class="math inline"><em>π</em><sub><em>A</em></sub></span>, and visitors who see CTA B have sign-up probability <span class="math inline"><em>π</em><sub><em>B</em></sub></span>. Each visitor can either sign up (1) or not (0).</p></li>
+<li><p>The quantity we care about is <span class="math inline"><em>θ</em> = <em>π</em><sub><em>A</em></sub> − <em>π</em><sub><em>B</em></sub></span>, the difference in sign-up rates between the two CTAs.</p></li>
+<li><p>Our estimator of <span class="math inline"><em>θ</em></span> is the difference in sample means, <span class="math inline"><em>θ̂</em> = <em>X̄</em><sub><em>A</em></sub> − <em>X̄</em><sub><em>B</em></sub></span>.</p></li>
+</ul>
+</blockquote>
+</div>
+<h2 id="simulating-data" class="anchored">Simulating Data</h2>
+<div>
+<blockquote>
+<p><strong>Note</strong></p>
+<ul>
+<li><p>Write a brief paragraph explaining that in the real world we would not know the true values of <span class="math inline"><em>π</em><sub><em>A</em></sub></span> and <span class="math inline"><em>π</em><sub><em>B</em></sub></span>, but for this exercise we set them ourselves so we can study the behavior of our estimator.</p></li>
+<li><p>Suppose <span class="math inline"><em>π</em><sub><em>A</em></sub> = 0.22</span> and <span class="math inline"><em>π</em><sub><em>B</em></sub> = 0.18</span>, so the true difference is <span class="math inline"><em>θ</em> = 0.04</span>.</p></li>
+<li><p>Using a language of your choice, simulate 1,000 draws from each of the two Bernoulli distributions (2,000 total).</p></li>
+</ul>
+</blockquote>
+</div>
+<h2 id="the-law-of-large-numbers" class="anchored">The Law of Large Numbers</h2>
+<div>
+<blockquote>
+<p><strong>Note</strong></p>
+<p>Demonstrate the LLN visually using the cumulative average of the difference between CTA A and CTA B draws plotted against the number of observations.</p>
+</blockquote>
+</div>
+<h2 id="bootstrap-standard-errors" class="anchored">Bootstrap Standard Errors</h2>
+<div>
+<blockquote>
+<p><strong>Note</strong></p>
+<p>Carry out the bootstrap procedure, compute the bootstrapped and analytical standard errors, compare them, and construct a 95% confidence interval for <span class="math inline"><em>θ</em></span>.</p>
+</blockquote>
+</div>
+<h2 id="the-central-limit-theorem" class="anchored">The Central Limit Theorem</h2>
+<div>
+<blockquote>
+<p><strong>Note</strong></p>
+<p>Demonstrate the CLT with four histograms at sample sizes <span class="math inline"><em>n</em> ∈ {25, 50, 100, 500}</span> arranged in a 2x2 grid.</p>
+</blockquote>
+</div>
+<h2 id="hypothesis-testing" class="anchored">Hypothesis Testing</h2>
+<div>
+<blockquote>
+<p><strong>Note</strong></p>
+<p>Compute the test statistic and p-value using your simulated data and interpret the result.</p>
+</blockquote>
+</div>
+<h2 id="the-t-test-as-a-regression" class="anchored">The T-Test as a Regression</h2>
+<div>
+<blockquote>
+<p><strong>Note</strong></p>
+<p>Fit the regression <span class="math inline"><em>Y</em><sub><em>i</em></sub> = <em>β</em><sub>0</sub> + <em>β</em><sub>1</sub><em>D</em><sub><em>i</em></sub> + <em>ε</em><sub><em>i</em></sub></span> and compare the output to the two-sample test from the previous section.</p>
+</blockquote>
+</div>
+<h2 id="the-problem-with-peeking" class="anchored">The Problem with Peeking</h2>
+<div>
+<blockquote>
+<p><strong>Note</strong></p>
+<p>Simulate 10,000 experiments under the null and compute the empirical false positive rate when peeking every 100 observations.</p>
+</blockquote>
+</div>
+</div>
+
+<div class="footer-bar">
+  <span>© 2026 Eesha Jagdhane</span>
+  <span style="color: #7a3b35;">Built with Quarto</span>
+  <span>San Diego, CA</span>
+</div>
+
+
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+    tabsets.forEach(function(tabset) {
+      const tabby = new Tabby('#' + tabset.id);
+    });
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'light-border',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+
+
+
+
+</body></html>
