@@ -4,9 +4,9 @@ format:
     toc: false
     page-layout: full
     theme: none
-    mathjax: true
     fig-format: png
     fig-dpi: 150
+    include-in-header: mathjax.html
 jupyter: python3
 execute:
   echo: true
@@ -15,13 +15,6 @@ execute:
 ---
 
 ```{=html}
-<script>
-  window.MathJax = {
-    tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
-    svg: { fontCache: 'global' }
-  };
-</script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
