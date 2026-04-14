@@ -131,6 +131,14 @@ execute:
 <a href="../../blogs.html" class="back-link">← Back to Blogs &amp; Insights</a>
 
 <div class="post-body">
+
+<script>
+window.addEventListener('load', function() {
+  if (window.MathJax && MathJax.typesetPromise) {
+    MathJax.typesetPromise();
+  }
+});
+</script>
 ```
 
 ## Introduction
