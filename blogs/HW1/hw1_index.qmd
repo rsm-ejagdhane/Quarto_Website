@@ -367,11 +367,11 @@ We set up a hypothesis test. The **null hypothesis** is $H_0: \theta = 0$ — th
 
 To test $H_0$, we **standardize** our estimate to form a test statistic:
 
-$$z = \frac{\hat\theta - 0}{SE(\hat\theta)}$$
+$$z = \frac{\hat{\theta}}{SE(\hat{\theta})}$$
 
 Why standardize? The CLT tells us $\hat\theta$ is approximately Normal for large samples. Under $H_0$, the center of that Normal is 0. Dividing a zero-centered Normal by its standard deviation yields a **standard Normal**, $N(0,1)$:
 
-$$z \;\dot\sim\; N(0,1) \quad \text{under } H_0$$
+$$z \sim N(0,1) \quad \text{under } H_0$$
 
 Because we know the distribution of $z$ under the null, we can compute a **p-value**: the probability of observing a test statistic at least as extreme as ours if $H_0$ were true. A small p-value means the data would be surprising under the null — giving us grounds to reject it.
 
