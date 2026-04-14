@@ -4,11 +4,24 @@ format:
     toc: false
     page-layout: full
     theme: none
+    mathjax: true
+    fig-format: png
+    fig-dpi: 150
+jupyter: python3
 execute:
   echo: true
+  warning: false
+  message: false
 ---
 
 ```{=html}
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -79,14 +92,16 @@ execute:
   .post-body strong { color: #2e2825; font-weight: 500; }
   .post-body em { color: #7a3b35; font-style: italic; }
 
-  /* CALLOUT OVERRIDES */
-  .callout { border-left: 3px solid #7a3b35 !important; background: #e8e3da !important; border-radius: 0 !important; }
-  .callout-header { display: none !important; }
-  .callout-body p { color: #6b6560 !important; font-size: 0.9rem !important; }
-
   /* CODE BLOCKS */
   pre { background: #e8e3da !important; border: 1px solid #c9c2b6 !important; border-radius: 2px !important; padding: 1rem !important; }
   code { font-size: 0.85rem !important; color: #2e2825 !important; }
+
+  /* TABLES */
+  table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.88rem; }
+  thead tr { border-bottom: 2px solid #c9c2b6; }
+  th { text-align: left; padding: 0.6rem 1rem; font-weight: 500; color: #2e2825; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; }
+  td { padding: 0.6rem 1rem; color: #6b6560; border-bottom: 1px solid #e8e3da; }
+  tbody tr:last-child td { border-bottom: none; }
 
   /* FOOTER */
   .footer-bar {
