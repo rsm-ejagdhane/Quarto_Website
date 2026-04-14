@@ -148,14 +148,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   .post-body strong { color: #2e2825; font-weight: 500; }
   .post-body em { color: #7a3b35; font-style: italic; }
 
-  /* CALLOUT OVERRIDES */
-  .callout { border-left: 3px solid #7a3b35 !important; background: #e8e3da !important; border-radius: 0 !important; }
-  .callout-header { display: none !important; }
-  .callout-body p { color: #6b6560 !important; font-size: 0.9rem !important; }
-
   /* CODE BLOCKS */
   pre { background: #e8e3da !important; border: 1px solid #c9c2b6 !important; border-radius: 2px !important; padding: 1rem !important; }
   code { font-size: 0.85rem !important; color: #2e2825 !important; }
+
+  /* TABLES */
+  table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.88rem; }
+  thead tr { border-bottom: 2px solid #c9c2b6; }
+  th { text-align: left; padding: 0.6rem 1rem; font-weight: 500; color: #2e2825; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; }
+  td { padding: 0.6rem 1rem; color: #6b6560; border-bottom: 1px solid #e8e3da; }
+  tbody tr:last-child td { border-bottom: none; }
 
   /* FOOTER */
   .footer-bar {
@@ -192,6 +194,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <a href="../../blogs.html" class="back-link">← Back to Blogs &amp; Insights</a>
 
 <div class="post-body">
+
+<script>
+window.addEventListener('load', function() {
+  if (window.MathJax && MathJax.typesetPromise) {
+    MathJax.typesetPromise();
+  }
+});
+</script>
 <h2 id="introduction" class="anchored">Introduction</h2>
 <p>My website’s landing page has a spot where visitors can sign up to receive a newsletter — new posts, updates, the occasional deep dive. The button and surrounding text that invite someone to subscribe is called a <strong>call to action</strong>, or CTA. A small change in wording can have a surprisingly large effect on whether someone actually clicks, so choosing the right copy matters.</p>
 <p>I’m currently deciding between two options:</p>
@@ -213,7 +223,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><span class="math display"><em>θ̂</em> = <em>X̄</em><sub><em>A</em></sub> − <em>X̄</em><sub><em>B</em></sub> = <em>π̂</em><sub><em>A</em></sub> − <em>π̂</em><sub><em>B</em></sub></span></p>
 <p>Here <span class="math inline"><em>X̄</em><sub><em>A</em></sub></span> is the fraction of CTA A visitors who signed up, and <span class="math inline"><em>X̄</em><sub><em>B</em></sub></span> is the same for CTA B. The rest of this post is devoted to understanding this estimator: when can we trust it, how precise is it, and how do we test whether the difference we observe is real?</p>
 <h2 id="simulating-data" class="anchored">Simulating Data</h2>
-<div id="282349ed" class="cell" data-execution_count="1">
+<div id="1240a911" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>matplotlib inline</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -268,15 +278,15 @@ Estimated θ̂  = 0.0250</code></pre>
 <p>To see it in action, we compute the <strong>running cumulative average</strong> of the element-wise differences between the CTA A and CTA B draws. After <span class="math inline"><em>k</em></span> observations, this is:</p>
 <p><span class="math display">$$\bar{d}_k = \frac{1}{k}\sum_{i=1}^{k}(X_{A,i} - X_{B,i})$$</span></p>
 <p>Plotting <span class="math inline"><em>d̄</em><sub><em>k</em></sub></span> against <span class="math inline"><em>k</em></span> lets us watch the estimate settle down as data accumulates.</p>
-<div id="9412904f" class="cell" data-execution_count="2">
+<div id="5bf2e427" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>diffs        <span class="op">=</span> draws_a <span class="op">-</span> draws_b</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>running_mean <span class="op">=</span> np.cumsum(diffs) <span class="op">/</span> np.arange(<span class="dv">1</span>, N <span class="op">+</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="05aec7fb" class="cell" data-execution_count="3">
+<div id="46b76838" class="cell" data-execution_count="3">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
-<p><img src="hw1_index_files/figure-html/cell-4-output-1.png" width="808" height="372"></p>
+<p><img src="hw1_index_files/figure-html/cell-4-output-1.png" class="img-fluid"></p>
 </figure>
 </div>
 </div>
@@ -285,7 +295,7 @@ Estimated θ̂  = 0.0250</code></pre>
 <h2 id="bootstrap-standard-errors" class="anchored">Bootstrap Standard Errors</h2>
 <p>A point estimate alone isn’t very informative. We also want to know <strong>how precise</strong> it is — ideally a confidence interval that communicates our uncertainty about <span class="math inline"><em>θ</em></span>.</p>
 <p>One elegant way to quantify that uncertainty is the <strong>bootstrap</strong>, a resampling method introduced by Bradley Efron in 1979. The idea: treat the observed sample as if it <em>were</em> the population, and simulate re-running the experiment by drawing from it <em>with replacement</em> many times. Each such “bootstrap resample” gives a new estimate <span class="math inline"><em>θ̂</em><sup>*</sup></span>. The variability across many bootstrap estimates approximates the sampling variability of <span class="math inline"><em>θ̂</em></span> itself — no distributional assumptions required.</p>
-<div id="61779589" class="cell" data-execution_count="4">
+<div id="be33aee0" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>B           <span class="op">=</span> <span class="dv">1000</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>boot_thetas <span class="op">=</span> np.empty(B)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -298,7 +308,7 @@ Estimated θ̂  = 0.0250</code></pre>
 </div>
 <p>We compare this to the <strong>analytical standard error</strong> for the difference of two independent Bernoulli proportions:</p>
 <p><span class="math display">$$SE(\hat\theta) = \sqrt{\frac{\hat\pi_A(1 - \hat\pi_A)}{n_A} + \frac{\hat\pi_B(1 - \hat\pi_B)}{n_B}}$$</span></p>
-<div id="3357104f" class="cell" data-execution_count="5">
+<div id="e6bd2385" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>pi_hat_a      <span class="op">=</span> draws_a.mean()</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>pi_hat_b      <span class="op">=</span> draws_b.mean()</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>se_analytical <span class="op">=</span> np.sqrt(</span>
@@ -319,11 +329,11 @@ Analytical SE:  0.01825
 </div>
 </div>
 <p>The two standard errors are nearly identical — reassuring, since the bootstrap makes no distributional assumptions yet arrives at essentially the same answer as the closed-form formula. This agreement validates both approaches.</p>
-<p>Using the bootstrapped standard error, our <strong>95% confidence interval</strong> for <span class="math inline"><em>θ</em></span> is approximately <span class="math inline">[<em>c</em><em>i</em><sub><em>l</em></sub><em>o</em><em>w</em><em>e</em><em>r</em> : .4<em>f</em>, <em>c</em><em>i</em><sub><em>u</em></sub><em>p</em><em>p</em><em>e</em><em>r</em> : .4<em>f</em>]</span>. This interval does not contain zero, which is our first strong indication that CTA A’s advantage may be real rather than a fluke. The interval also says something about <em>magnitude</em>: we’re fairly confident the true benefit of CTA A lies somewhere between roughly 1 and 7 percentage points — modest, but meaningful at scale.</p>
+<p>Using the bootstrapped standard error, our <strong>95% confidence interval</strong> for <span class="math inline"><em>θ</em></span> is printed in the output above. The interval is fairly wide, spanning from just below zero to about 0.06 — reflecting genuine sampling uncertainty with 1,000 observations per group. Its proximity to zero is a signal we’ll return to in the hypothesis testing section.</p>
 <h2 id="the-central-limit-theorem" class="anchored">The Central Limit Theorem</h2>
 <p>The confidence interval we just constructed assumed that <span class="math inline"><em>θ̂</em></span> is approximately <strong>normally distributed</strong>. That assumption comes from the <strong>Central Limit Theorem (CLT)</strong>: regardless of the shape of the underlying population distribution, the sampling distribution of the sample mean becomes approximately Normal as the sample size grows. Even though individual sign-ups are Bernoulli (just 0s and 1s), the average sign-up rate over many visitors is bell-shaped for large enough <span class="math inline"><em>n</em></span> — and the same holds for the difference <span class="math inline"><em>θ̂</em> = <em>X̄</em><sub><em>A</em></sub> − <em>X̄</em><sub><em>B</em></sub></span>.</p>
 <p>To illustrate this, we simulate 1,000 experiments at four different sample sizes (<span class="math inline"><em>n</em> ∈ {25, 50, 100, 500}</span>) and plot the resulting distribution of <span class="math inline"><em>θ̂</em></span> values.</p>
-<div id="d8676c11" class="cell" data-execution_count="6">
+<div id="5ca3fa05" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>sample_sizes <span class="op">=</span> [<span class="dv">25</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">500</span>]</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>sim_results  <span class="op">=</span> {}</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -335,11 +345,11 @@ Analytical SE:  0.01825
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>        thetas[i] <span class="op">=</span> a.mean() <span class="op">-</span> b.mean()</span>
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    sim_results[n] <span class="op">=</span> thetas</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="2e54308c" class="cell" data-execution_count="7">
+<div id="26aace8a" class="cell" data-execution_count="7">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
-<p><img src="hw1_index_files/figure-html/cell-8-output-1.png" width="855" height="632"></p>
+<p><img src="hw1_index_files/figure-html/cell-8-output-1.png" class="img-fluid"></p>
 </figure>
 </div>
 </div>
@@ -349,12 +359,12 @@ Analytical SE:  0.01825
 <p>Armed with the CLT, we can now ask the formal question: <strong>is the observed difference in sign-up rates statistically distinguishable from zero, or could it simply be due to random chance?</strong></p>
 <p>We set up a hypothesis test. The <strong>null hypothesis</strong> is <span class="math inline"><em>H</em><sub>0</sub> : <em>θ</em> = 0</span> — the two CTAs produce identical sign-up rates and any difference we observe is noise. The <strong>alternative hypothesis</strong> is <span class="math inline"><em>H</em><sub>1</sub> : <em>θ</em> ≠ 0</span> — one CTA genuinely outperforms the other.</p>
 <p>To test <span class="math inline"><em>H</em><sub>0</sub></span>, we <strong>standardize</strong> our estimate to form a test statistic:</p>
-<p><span class="math display">$$z = \frac{\hat\theta - 0}{SE(\hat\theta)}$$</span></p>
+<p><span class="math display">$$z = \frac{\hat{\theta}}{SE(\hat{\theta})}$$</span></p>
 <p>Why standardize? The CLT tells us <span class="math inline"><em>θ̂</em></span> is approximately Normal for large samples. Under <span class="math inline"><em>H</em><sub>0</sub></span>, the center of that Normal is 0. Dividing a zero-centered Normal by its standard deviation yields a <strong>standard Normal</strong>, <span class="math inline"><em>N</em>(0, 1)</span>:</p>
-<p><span class="math display">$$z \;\dot\sim\; N(0,1) \quad \text{under } H_0$$</span></p>
+<p><span class="math display"><em>z</em> ∼ <em>N</em>(0, 1)  under <em>H</em><sub>0</sub></span></p>
 <p>Because we know the distribution of <span class="math inline"><em>z</em></span> under the null, we can compute a <strong>p-value</strong>: the probability of observing a test statistic at least as extreme as ours if <span class="math inline"><em>H</em><sub>0</sub></span> were true. A small p-value means the data would be surprising under the null — giving us grounds to reject it.</p>
 <p><strong>A note on “t-tests”:</strong> You may have heard this procedure called a t-test. Technically, the classical t-test applies when data come from a Normal distribution and the variance is unknown — in that exact setting the ratio follows a Student’s t-distribution. Our data are Bernoulli, not Normal, so there’s no exact t-distribution result here. We’re invoking the CLT to justify approximate Normality, making this more precisely a <strong>z-test</strong>. For a sample size of 1,000, the t-distribution and standard Normal are virtually indistinguishable, so the distinction has no practical consequence — but it’s worth understanding why.</p>
-<div id="d1748f3b" class="cell" data-execution_count="8">
+<div id="b306cf95" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>z_stat  <span class="op">=</span> theta_hat <span class="op">/</span> se_analytical</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>p_value <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> stats.norm.cdf(<span class="bu">abs</span>(z_stat)))</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -369,7 +379,7 @@ z-statistic:          1.370
 p-value:              0.1708</code></pre>
 </div>
 </div>
-<p>With a p-value well below 0.05, we <strong>reject the null hypothesis</strong>. The data provide strong evidence that CTA A produces a meaningfully higher sign-up rate than CTA B. In this simulation we know the truth (<span class="math inline"><em>θ</em> = 0.04</span>), so this isn’t a surprise — but it’s satisfying to watch the formal machinery arrive at the right answer.</p>
+<p>With a p-value of approximately 0.17 — well above the conventional 0.05 threshold — we <strong>fail to reject the null hypothesis</strong>. This might seem surprising given that we <em>know</em> the true difference is <span class="math inline"><em>θ</em> = 0.04</span>. But it illustrates an important point: statistical significance depends not just on the true effect size, but on the amount of noise in the sample. In this particular draw of 1,000 observations, our estimate <span class="math inline"><em>θ̂</em> = 0.025</span> happened to land far enough from the truth that it doesn’t clear the significance bar. This is a <strong>Type II error</strong> — failing to detect a real effect. It’s a reminder that even with 1,000 observations, small true effects can be hard to detect reliably, and that a single experiment’s outcome is itself a random variable.</p>
 <h2 id="the-t-test-as-a-regression" class="anchored">The T-Test as a Regression</h2>
 <p>Here’s a useful fact that’s easy to miss: the two-sample test we just ran is <strong>mathematically equivalent</strong> to a simple linear regression. This matters because the regression framework is far more flexible — it generalizes naturally to multiple treatment arms, control variables, and interaction effects — while producing identical results in the simple case.</p>
 <p>The setup: stack the CTA A and CTA B outcomes into a single dataset with two columns — an outcome <span class="math inline"><em>Y</em><sub><em>i</em></sub></span> (1 if the visitor subscribed, 0 otherwise) and a treatment indicator <span class="math inline"><em>D</em><sub><em>i</em></sub></span> (1 if they saw CTA A, 0 if they saw CTA B). Then fit:</p>
@@ -380,14 +390,14 @@ p-value:              0.1708</code></pre>
 <li>When <span class="math inline"><em>D</em><sub><em>i</em></sub> = 1</span> (CTA A): <span class="math inline"><em>E</em>[<em>Y</em><sub><em>i</em></sub>] = <em>β</em><sub>0</sub> + <em>β</em><sub>1</sub></span>, so <span class="math inline"><em>β̂</em><sub>0</sub> + <em>β̂</em><sub>1</sub></span> estimates <span class="math inline"><em>π</em><sub><em>A</em></sub></span>.</li>
 <li>Therefore <span class="math inline"><em>β</em><sub>1</sub> = <em>π</em><sub><em>A</em></sub> − <em>π</em><sub><em>B</em></sub> = <em>θ</em></span>, and <span class="math inline"><em>β̂</em><sub>1</sub></span> is numerically identical to <span class="math inline"><em>θ̂</em> = <em>X̄</em><sub><em>A</em></sub> − <em>X̄</em><sub><em>B</em></sub></span>.</li>
 </ol>
-<div id="b0591d4c" class="cell" data-execution_count="9">
+<div id="08d52a95" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>Y  <span class="op">=</span> np.concatenate([draws_a, draws_b])</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>D  <span class="op">=</span> np.concatenate([np.ones(N), np.zeros(N)])</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame({<span class="st">"Y"</span>: Y, <span class="st">"D"</span>: D})</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> smf.ols(<span class="st">"Y ~ D"</span>, data<span class="op">=</span>df).fit()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="e56d3405" class="cell" data-execution_count="10">
+<div id="272432ea" class="cell" data-execution_count="10">
 <div class="cell-output cell-output-stdout">
 <pre><code>                    Term  Estimate  Std. Error  t-statistic  p-value
           Intercept (β₀)     0.199     0.01291       15.409   0.0000
@@ -401,7 +411,7 @@ D — CTA A indicator (β₁)     0.025     0.01826        1.369   0.1712</code>
 <p>This is called <strong>peeking</strong>, and it’s a subtle but serious problem.</p>
 <p>A single test at <span class="math inline"><em>α</em> = 0.05</span> gives us a 5% false positive rate — a 5% chance of incorrectly rejecting <span class="math inline"><em>H</em><sub>0</sub></span> when it’s true. That guarantee applies to <em>one</em> test. Each additional peek is another opportunity to observe a lucky random fluctuation and mistake it for a real effect. With 10 peeks, the probability of at least one spurious “significant” result climbs well above 5%.</p>
 <p>We quantify this with a simulation. We set up a world where the null is <em>true</em> — <span class="math inline"><em>π</em><sub><em>A</em></sub> = <em>π</em><sub><em>B</em></sub> = 0.20</span>, so <span class="math inline"><em>θ</em> = 0</span> — and ask: across 10,000 simulated experiments, in how many does at least one peek produce a false positive?</p>
-<div id="b3065772" class="cell" data-execution_count="11">
+<div id="9d64db7a" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>N_SIM           <span class="op">=</span> <span class="dv">10_000</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>PEEKS           <span class="op">=</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="dv">100</span>, <span class="dv">1001</span>, <span class="dv">100</span>))</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>PI_NULL         <span class="op">=</span> <span class="fl">0.20</span></span>
