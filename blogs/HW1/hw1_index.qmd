@@ -107,7 +107,7 @@ execute:
   <div class="post-tag">Assignment 1 — Marketing Analytics</div>
   <div class="post-title">A/B Testing a Call to Action</div>
   <div class="post-subtitle">Simulating Key Ideas from Classical Frequentist Statistics</div>
-  <div class="post-meta">Eesha Jagdhane &nbsp;·&nbsp; April 12, 2026</div>
+  <div class="post-meta">Eesha Jagdhane &nbsp;·&nbsp; April 15, 2026</div>
 </div>
 
 <a href="../../blogs.html" class="back-link">← Back to Blogs &amp; Insights</a>
