@@ -477,7 +477,7 @@ print(f"Nominal false positive rate (single test):   5.0%")
 print(f"Empirical false positive rate with peeking:  {fpr:.1%}")
 ```
 
-The empirical false positive rate under peeking lands roughly two to three times the nominal 5% level. In experiments where the two CTAs are *identical*, we would incorrectly declare a winner in about 1 in 8 trials — purely from repeated checking.
+The empirical false positive rate under peeking lands roughly two to three times the nominal 5% level. In experiments where the two CTAs are *identical*, we would incorrectly declare a winner in about 1 in 5 trials — purely from repeated checking.
 
 This isn't a theoretical concern; it's one of the most common statistical mistakes in real A/B testing. The remedy isn't to never monitor your experiment — it's to use methods designed for sequential testing, such as alpha-spending functions or Bayesian adaptive designs, that explicitly account for multiple looks. But if you're using classical frequentist tests, the safest rule is simple: **decide your sample size in advance, collect all the data, then test once**.
 

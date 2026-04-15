@@ -199,7 +199,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 <p>The quantity we care about is <span class="math inline"><em>θ</em> = <em>π</em><sub><em>A</em></sub> − <em>π</em><sub><em>B</em></sub></span>, the <strong>difference in sign-up rates</strong>. If <span class="math inline"><em>θ</em> &gt; 0</span>, CTA A outperforms CTA B; if <span class="math inline"><em>θ</em> &lt; 0</span>, B is better; and if <span class="math inline"><em>θ</em> = 0</span>, the wording doesn’t matter.</p>
 <p>We can’t observe <span class="math inline"><em>θ</em></span> directly — we only see each visitor’s individual outcome (1 if they signed up, 0 if not). So we <strong>estimate</strong> it using the difference in observed proportions:</p>
-<div id="d36655fc" class="cell" data-execution_count="2">
+<div id="aea2fb86" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
@@ -210,7 +210,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>Here <span class="math inline"><em>X̄</em><sub><em>A</em></sub></span> is the fraction of CTA A visitors who signed up, and <span class="math inline"><em>X̄</em><sub><em>B</em></sub></span> is the same for CTA B. The rest of this post is devoted to understanding this estimator: when can we trust it, how precise is it, and how do we test whether the difference we observe is real?</p>
 <h2 id="simulating-data" class="anchored">Simulating Data</h2>
-<div id="dcb54131" class="cell" data-execution_count="3">
+<div id="96862673" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">42</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>PI_A <span class="op">=</span> <span class="fl">0.22</span></span>
@@ -233,7 +233,7 @@ Estimated θ̂  = 0.0250</code></pre>
 <h2 id="the-law-of-large-numbers" class="anchored">The Law of Large Numbers</h2>
 <p>The <strong>Law of Large Numbers (LLN)</strong> says that as the sample size grows, the sample mean converges to the true population mean. Applied here: as we observe more visitors, <span class="math inline"><em>π̂</em><sub><em>A</em></sub> → <em>π</em><sub><em>A</em></sub></span> and <span class="math inline"><em>π̂</em><sub><em>B</em></sub> → <em>π</em><sub><em>B</em></sub></span>, and therefore <span class="math inline"><em>θ̂</em> → <em>θ</em></span>. This is the theoretical guarantee that our estimator is trustworthy — given enough data, we will recover the truth.</p>
 <p>To see it in action, we compute the <strong>running cumulative average</strong> of the element-wise differences between the CTA A and CTA B draws. After <span class="math inline"><em>k</em></span> observations, this is:</p>
-<div id="a4bba4a5" class="cell" data-execution_count="4">
+<div id="1a840800" class="cell" data-execution_count="4">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
@@ -243,11 +243,11 @@ Estimated θ̂  = 0.0250</code></pre>
 </div>
 </div>
 <p>Plotting <span class="math inline"><em>d̄</em><sub><em>k</em></sub></span> against <span class="math inline"><em>k</em></span> lets us watch the estimate settle down as data accumulates.</p>
-<div id="a7421250" class="cell" data-execution_count="5">
+<div id="b84a5345" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>diffs        <span class="op">=</span> draws_a <span class="op">-</span> draws_b</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>running_mean <span class="op">=</span> np.cumsum(diffs) <span class="op">/</span> np.arange(<span class="dv">1</span>, N <span class="op">+</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="e6fa5e5f" class="cell" data-execution_count="6">
+<div id="6da4df7e" class="cell" data-execution_count="6">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
@@ -260,7 +260,7 @@ Estimated θ̂  = 0.0250</code></pre>
 <h2 id="bootstrap-standard-errors" class="anchored">Bootstrap Standard Errors</h2>
 <p>A point estimate alone isn’t very informative. We also want to know <strong>how precise</strong> it is — ideally a confidence interval that communicates our uncertainty about <span class="math inline"><em>θ</em></span>.</p>
 <p>One elegant way to quantify that uncertainty is the <strong>bootstrap</strong>, a resampling method introduced by Bradley Efron in 1979. The idea: treat the observed sample as if it <em>were</em> the population, and simulate re-running the experiment by drawing from it <em>with replacement</em> many times. Each such “bootstrap resample” gives a new estimate <span class="math inline"><em>θ̂</em><sup>*</sup></span>. The variability across many bootstrap estimates approximates the sampling variability of <span class="math inline"><em>θ̂</em></span> itself — no distributional assumptions required.</p>
-<div id="cab15043" class="cell" data-execution_count="7">
+<div id="5036a78a" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>B           <span class="op">=</span> <span class="dv">1000</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>boot_thetas <span class="op">=</span> np.empty(B)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -272,7 +272,7 @@ Estimated θ̂  = 0.0250</code></pre>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>se_boot <span class="op">=</span> boot_thetas.std()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>We compare this to the <strong>analytical standard error</strong> for the difference of two independent Bernoulli proportions:</p>
-<div id="7e4a202a" class="cell" data-execution_count="8">
+<div id="0b4d9fb9" class="cell" data-execution_count="8">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
@@ -281,7 +281,7 @@ Estimated θ̂  = 0.0250</code></pre>
 </div>
 </div>
 </div>
-<div id="bcd5b858" class="cell" data-execution_count="9">
+<div id="cf8055ee" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>pi_hat_a      <span class="op">=</span> draws_a.mean()</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>pi_hat_b      <span class="op">=</span> draws_b.mean()</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>se_analytical <span class="op">=</span> np.sqrt(</span>
@@ -306,7 +306,7 @@ Analytical SE:  0.01825
 <h2 id="the-central-limit-theorem" class="anchored">The Central Limit Theorem</h2>
 <p>The confidence interval we just constructed assumed that <span class="math inline"><em>θ̂</em></span> is approximately <strong>normally distributed</strong>. That assumption comes from the <strong>Central Limit Theorem (CLT)</strong>: regardless of the shape of the underlying population distribution, the sampling distribution of the sample mean becomes approximately Normal as the sample size grows. Even though individual sign-ups are Bernoulli (just 0s and 1s), the average sign-up rate over many visitors is bell-shaped for large enough <span class="math inline"><em>n</em></span> — and the same holds for the difference <span class="math inline"><em>θ̂</em> = <em>X̄</em><sub><em>A</em></sub> − <em>X̄</em><sub><em>B</em></sub></span>.</p>
 <p>To illustrate this, we simulate 1,000 experiments at four different sample sizes (<span class="math inline"><em>n</em> ∈ {25, 50, 100, 500}</span>) and plot the resulting distribution of <span class="math inline"><em>θ̂</em></span> values.</p>
-<div id="35234455" class="cell" data-execution_count="10">
+<div id="25561c7a" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>sample_sizes <span class="op">=</span> [<span class="dv">25</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">500</span>]</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>sim_results  <span class="op">=</span> {}</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -318,7 +318,7 @@ Analytical SE:  0.01825
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>        thetas[i] <span class="op">=</span> a.mean() <span class="op">-</span> b.mean()</span>
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    sim_results[n] <span class="op">=</span> thetas</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="be82d342" class="cell" data-execution_count="11">
+<div id="3b017e0c" class="cell" data-execution_count="11">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
@@ -332,7 +332,7 @@ Analytical SE:  0.01825
 <p>Armed with the CLT, we can now ask the formal question: <strong>is the observed difference in sign-up rates statistically distinguishable from zero, or could it simply be due to random chance?</strong></p>
 <p>We set up a hypothesis test. The <strong>null hypothesis</strong> is <span class="math inline"><em>H</em><sub>0</sub> : <em>θ</em> = 0</span> — the two CTAs produce identical sign-up rates and any difference we observe is noise. The <strong>alternative hypothesis</strong> is <span class="math inline"><em>H</em><sub>1</sub> : <em>θ</em> ≠ 0</span> — one CTA genuinely outperforms the other.</p>
 <p>To test <span class="math inline"><em>H</em><sub>0</sub></span>, we <strong>standardize</strong> our estimate to form a test statistic:</p>
-<div id="ed1a6345" class="cell" data-execution_count="12">
+<div id="b312ad19" class="cell" data-execution_count="12">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
@@ -342,7 +342,7 @@ Analytical SE:  0.01825
 </div>
 </div>
 <p>Why standardize? The CLT tells us <span class="math inline"><em>θ̂</em></span> is approximately Normal for large samples. Under <span class="math inline"><em>H</em><sub>0</sub></span>, the center of that Normal is 0. Dividing a zero-centered Normal by its standard deviation yields a <strong>standard Normal</strong>, <span class="math inline"><em>N</em>(0, 1)</span>:</p>
-<div id="31645ac4" class="cell" data-execution_count="13">
+<div id="1817d32d" class="cell" data-execution_count="13">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
@@ -353,7 +353,7 @@ Analytical SE:  0.01825
 </div>
 <p>Because we know the distribution of <span class="math inline"><em>z</em></span> under the null, we can compute a <strong>p-value</strong>: the probability of observing a test statistic at least as extreme as ours if <span class="math inline"><em>H</em><sub>0</sub></span> were true. A small p-value means the data would be surprising under the null — giving us grounds to reject it.</p>
 <p><strong>A note on “t-tests”:</strong> You may have heard this procedure called a t-test. Technically, the classical t-test applies when data come from a Normal distribution and the variance is unknown — in that exact setting the ratio follows a Student’s t-distribution. Our data are Bernoulli, not Normal, so there’s no exact t-distribution result here. We’re invoking the CLT to justify approximate Normality, making this more precisely a <strong>z-test</strong>. For a sample size of 1,000, the t-distribution and standard Normal are virtually indistinguishable, so the distinction has no practical consequence — but it’s worth understanding why.</p>
-<div id="7c254247" class="cell" data-execution_count="14">
+<div id="d9135479" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>z_stat  <span class="op">=</span> theta_hat <span class="op">/</span> se_analytical</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>p_value <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> stats.norm.cdf(<span class="bu">abs</span>(z_stat)))</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -372,7 +372,7 @@ p-value:              0.1708</code></pre>
 <h2 id="the-t-test-as-a-regression" class="anchored">The T-Test as a Regression</h2>
 <p>Here’s a useful fact that’s easy to miss: the two-sample test we just ran is <strong>mathematically equivalent</strong> to a simple linear regression. This matters because the regression framework is far more flexible — it generalizes naturally to multiple treatment arms, control variables, and interaction effects — while producing identical results in the simple case.</p>
 <p>The setup: stack the CTA A and CTA B outcomes into a single dataset with two columns — an outcome <span class="math inline"><em>Y</em><sub><em>i</em></sub></span> (1 if the visitor subscribed, 0 otherwise) and a treatment indicator <span class="math inline"><em>D</em><sub><em>i</em></sub></span> (1 if they saw CTA A, 0 if they saw CTA B). Then fit:</p>
-<div id="7fcd7927" class="cell" data-execution_count="15">
+<div id="45f711aa" class="cell" data-execution_count="15">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
@@ -387,14 +387,14 @@ p-value:              0.1708</code></pre>
 <li>When <span class="math inline"><em>D</em><sub><em>i</em></sub> = 1</span> (CTA A): <span class="math inline"><em>E</em>[<em>Y</em><sub><em>i</em></sub>] = <em>β</em><sub>0</sub> + <em>β</em><sub>1</sub></span>, so <span class="math inline"><em>β̂</em><sub>0</sub> + <em>β̂</em><sub>1</sub></span> estimates <span class="math inline"><em>π</em><sub><em>A</em></sub></span>.</li>
 <li>Therefore <span class="math inline"><em>β</em><sub>1</sub> = <em>π</em><sub><em>A</em></sub> − <em>π</em><sub><em>B</em></sub> = <em>θ</em></span>, and <span class="math inline"><em>β̂</em><sub>1</sub></span> is numerically identical to <span class="math inline"><em>θ̂</em> = <em>X̄</em><sub><em>A</em></sub> − <em>X̄</em><sub><em>B</em></sub></span>.</li>
 </ol>
-<div id="60fef6d6" class="cell" data-execution_count="16">
+<div id="dc1dd20e" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>Y  <span class="op">=</span> np.concatenate([draws_a, draws_b])</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>D  <span class="op">=</span> np.concatenate([np.ones(N), np.zeros(N)])</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame({<span class="st">"Y"</span>: Y, <span class="st">"D"</span>: D})</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> smf.ols(<span class="st">"Y ~ D"</span>, data<span class="op">=</span>df).fit()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="ac77443d" class="cell" data-execution_count="17">
+<div id="aa8e8686" class="cell" data-execution_count="17">
 <div class="cell-output cell-output-display">
 <table class="dataframe caption-top" data-border="1">
 <thead>
@@ -432,7 +432,7 @@ p-value:              0.1708</code></pre>
 <p>This is called <strong>peeking</strong>, and it’s a subtle but serious problem.</p>
 <p>A single test at <span class="math inline"><em>α</em> = 0.05</span> gives us a 5% false positive rate — a 5% chance of incorrectly rejecting <span class="math inline"><em>H</em><sub>0</sub></span> when it’s true. That guarantee applies to <em>one</em> test. Each additional peek is another opportunity to observe a lucky random fluctuation and mistake it for a real effect. With 10 peeks, the probability of at least one spurious “significant” result climbs well above 5%.</p>
 <p>We quantify this with a simulation. We set up a world where the null is <em>true</em> — <span class="math inline"><em>π</em><sub><em>A</em></sub> = <em>π</em><sub><em>B</em></sub> = 0.20</span>, so <span class="math inline"><em>θ</em> = 0</span> — and ask: across 10,000 simulated experiments, in how many does at least one peek produce a false positive?</p>
-<div id="72c2d847" class="cell" data-execution_count="18">
+<div id="4930eb56" class="cell" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>N_SIM           <span class="op">=</span> <span class="dv">10_000</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>PEEKS           <span class="op">=</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="dv">100</span>, <span class="dv">1001</span>, <span class="dv">100</span>))</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>PI_NULL         <span class="op">=</span> <span class="fl">0.20</span></span>
@@ -472,7 +472,7 @@ p-value:              0.1708</code></pre>
 Empirical false positive rate with peeking:  19.4%</code></pre>
 </div>
 </div>
-<p>The empirical false positive rate under peeking lands roughly two to three times the nominal 5% level. In experiments where the two CTAs are <em>identical</em>, we would incorrectly declare a winner in about 1 in 8 trials — purely from repeated checking.</p>
+<p>The empirical false positive rate under peeking lands roughly two to three times the nominal 5% level. In experiments where the two CTAs are <em>identical</em>, we would incorrectly declare a winner in about 1 in 5 trials — purely from repeated checking.</p>
 <p>This isn’t a theoretical concern; it’s one of the most common statistical mistakes in real A/B testing. The remedy isn’t to never monitor your experiment — it’s to use methods designed for sequential testing, such as alpha-spending functions or Bayesian adaptive designs, that explicitly account for multiple looks. But if you’re using classical frequentist tests, the safest rule is simple: <strong>decide your sample size in advance, collect all the data, then test once</strong>.</p>
 <hr>
 <p><em>All code is written in Python using NumPy, SciPy, statsmodels, pandas, and matplotlib. A fixed random seed (<code>np.random.default_rng(42)</code>) ensures full reproducibility.</em></p>
