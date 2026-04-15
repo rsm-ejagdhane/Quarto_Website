@@ -191,7 +191,7 @@ execute:
       <div class="blog-title">A/B Testing a Call to Action</div>
       <div class="blog-desc">Exploring A/B testing through simulation — covering the Law of Large Numbers, Bootstrap Standard Errors, the Central Limit Theorem, Hypothesis Testing, and the problem with peeking.</div>
       <div class="blog-footer">
-        <span class="blog-date">April 12, 2026</span>
+        <span class="blog-date">April 15, 2026</span>
         <a href="blogs/HW1/hw1_index.html" class="blog-link">Read more →</a>
       </div>
     </div>
