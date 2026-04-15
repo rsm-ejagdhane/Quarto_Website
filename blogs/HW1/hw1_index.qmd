@@ -4,14 +4,8 @@ format:
     toc: false
     page-layout: full
     theme: none
-    fig-format: png
-    fig-dpi: 150
-    include-in-header: mathjax.html
-jupyter: python3
 execute:
   echo: true
-  warning: false
-  message: false
 ---
 
 ```{=html}
@@ -85,16 +79,14 @@ execute:
   .post-body strong { color: #2e2825; font-weight: 500; }
   .post-body em { color: #7a3b35; font-style: italic; }
 
+  /* CALLOUT OVERRIDES */
+  .callout { border-left: 3px solid #7a3b35 !important; background: #e8e3da !important; border-radius: 0 !important; }
+  .callout-header { display: none !important; }
+  .callout-body p { color: #6b6560 !important; font-size: 0.9rem !important; }
+
   /* CODE BLOCKS */
   pre { background: #e8e3da !important; border: 1px solid #c9c2b6 !important; border-radius: 2px !important; padding: 1rem !important; }
   code { font-size: 0.85rem !important; color: #2e2825 !important; }
-
-  /* TABLES */
-  table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.88rem; }
-  thead tr { border-bottom: 2px solid #c9c2b6; }
-  th { text-align: left; padding: 0.6rem 1rem; font-weight: 500; color: #2e2825; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; }
-  td { padding: 0.6rem 1rem; color: #6b6560; border-bottom: 1px solid #e8e3da; }
-  tbody tr:last-child td { border-bottom: none; }
 
   /* FOOTER */
   .footer-bar {
@@ -131,14 +123,6 @@ execute:
 <a href="../../blogs.html" class="back-link">← Back to Blogs &amp; Insights</a>
 
 <div class="post-body">
-
-<script>
-window.addEventListener('load', function() {
-  if (window.MathJax && MathJax.typesetPromise) {
-    MathJax.typesetPromise();
-  }
-});
-</script>
 ```
 
 ## Introduction
@@ -367,11 +351,11 @@ We set up a hypothesis test. The **null hypothesis** is $H_0: \theta = 0$ — th
 
 To test $H_0$, we **standardize** our estimate to form a test statistic:
 
-$$z = \frac{\hat{\theta}}{SE(\hat{\theta})}$$
+$$z = \frac{\hat\theta - 0}{SE(\hat\theta)}$$
 
 Why standardize? The CLT tells us $\hat\theta$ is approximately Normal for large samples. Under $H_0$, the center of that Normal is 0. Dividing a zero-centered Normal by its standard deviation yields a **standard Normal**, $N(0,1)$:
 
-$$z \sim N(0,1) \quad \text{under } H_0$$
+$$z \;\dot\sim\; N(0,1) \quad \text{under } H_0$$
 
 Because we know the distribution of $z$ under the null, we can compute a **p-value**: the probability of observing a test statistic at least as extreme as ours if $H_0$ were true. A small p-value means the data would be surprising under the null — giving us grounds to reject it.
 
