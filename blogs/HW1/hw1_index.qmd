@@ -4,8 +4,14 @@ format:
     toc: false
     page-layout: full
     theme: none
+    fig-format: png
+    fig-dpi: 150
+    include-in-header: mathjax.html
+jupyter: python3
 execute:
   echo: true
+  warning: false
+  message: false
 ---
 
 ```{=html}
@@ -14,7 +20,6 @@ execute:
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { background: #f0ece4; color: #2e2825; font-family: 'DM Sans', sans-serif; }
   a { color: inherit; text-decoration: none; }
-
   .nav {
     display: flex; justify-content: space-between; align-items: center;
     padding: 1.5rem 4rem; border-bottom: 1px solid #c9c2b6;
@@ -34,8 +39,6 @@ execute:
     transition: background 0.2s;
   }
   .nav-cta:hover { background: #7a3b35; }
-
-  /* POST HEADER */
   .post-header {
     padding: 5rem 4rem 3rem;
     border-bottom: 1px solid #c9c2b6;
@@ -49,8 +52,6 @@ execute:
   }
   .post-subtitle { font-size: 1rem; color: #8a8278; margin-bottom: 1rem; font-style: italic; }
   .post-meta { font-size: 0.75rem; color: #8a8278; }
-
-  /* BACK LINK */
   .back-link {
     display: inline-block; margin: 2rem 4rem 0;
     font-size: 0.75rem; color: #7a3b35;
@@ -59,18 +60,12 @@ execute:
     transition: color 0.2s, border-color 0.2s;
   }
   .back-link:hover { color: #2e2825; border-color: #2e2825; }
-
-  /* POST BODY */
-  .post-body {
-    padding: 3rem 4rem 5rem;
-    max-width: 860px;
-  }
+  .post-body { padding: 3rem 4rem 5rem; max-width: 860px; }
   .post-body h2 {
     font-family: 'Playfair Display', serif;
     font-size: 1.8rem; font-weight: 700;
     color: #2e2825; margin: 3rem 0 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid #c9c2b6;
+    padding-bottom: 0.5rem; border-bottom: 1px solid #c9c2b6;
   }
   .post-body h3 { font-size: 1.1rem; font-weight: 500; color: #2e2825; margin: 2rem 0 0.75rem; }
   .post-body p { font-size: 0.95rem; color: #6b6560; line-height: 1.9; margin-bottom: 1.25rem; }
@@ -78,24 +73,19 @@ execute:
   .post-body li { font-size: 0.95rem; color: #6b6560; line-height: 1.9; margin-bottom: 0.4rem; }
   .post-body strong { color: #2e2825; font-weight: 500; }
   .post-body em { color: #7a3b35; font-style: italic; }
-
-  /* CALLOUT OVERRIDES */
-  .callout { border-left: 3px solid #7a3b35 !important; background: #e8e3da !important; border-radius: 0 !important; }
-  .callout-header { display: none !important; }
-  .callout-body p { color: #6b6560 !important; font-size: 0.9rem !important; }
-
-  /* CODE BLOCKS */
   pre { background: #e8e3da !important; border: 1px solid #c9c2b6 !important; border-radius: 2px !important; padding: 1rem !important; }
   code { font-size: 0.85rem !important; color: #2e2825 !important; }
-
-  /* FOOTER */
+  table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.88rem; }
+  thead tr { border-bottom: 2px solid #c9c2b6; }
+  th { text-align: left; padding: 0.6rem 1rem; font-weight: 500; color: #2e2825; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; }
+  td { padding: 0.6rem 1rem; color: #6b6560; border-bottom: 1px solid #e8e3da; }
+  tbody tr:last-child td { border-bottom: none; }
   .footer-bar {
     margin: 0 4rem; padding: 2rem 0;
     border-top: 1px solid #c9c2b6;
     display: flex; justify-content: space-between;
     font-size: 0.7rem; color: #8a8278;
   }
-
   @media (max-width: 800px) {
     .nav { padding: 1rem 1.5rem; }
     .post-header, .post-body { padding: 3rem 1.5rem; }
@@ -125,6 +115,48 @@ execute:
 <div class="post-body">
 ```
 
+```{python}
+#| echo: false
+%matplotlib inline
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.ticker as mticker
+from scipy import stats
+import statsmodels.formula.api as smf
+
+plt.rcParams.update({
+    "figure.facecolor": "#f0ece4",
+    "axes.facecolor":   "#e8e3da",
+    "axes.grid": True,
+    "grid.color": "#c9c2b6",
+    "grid.linewidth": 0.7,
+    "axes.spines.top": False,
+    "axes.spines.right": False,
+    "axes.spines.left": False,
+    "axes.spines.bottom": False,
+    "font.family": "sans-serif",
+    "axes.titlesize": 12,
+    "axes.labelsize": 10,
+    "xtick.labelsize": 9,
+    "ytick.labelsize": 9,
+    "text.color": "#2e2825",
+    "axes.labelcolor": "#2e2825",
+    "xtick.color": "#8a8278",
+    "ytick.color": "#8a8278",
+})
+
+def render_formula(latex, figwidth=5.5, figheight=0.75):
+    """Render a LaTeX formula as a matplotlib figure."""
+    fig, ax = plt.subplots(figsize=(figwidth, figheight))
+    ax.text(0.5, 0.5, latex, ha='center', va='center',
+            fontsize=15, color='#2e2825', transform=ax.transAxes)
+    ax.axis('off')
+    fig.patch.set_facecolor('#f0ece4')
+    plt.tight_layout(pad=0.1)
+    plt.show()
+```
+
 ## Introduction
 
 My website's landing page has a spot where visitors can sign up to receive a newsletter — new posts, updates, the occasional deep dive. The button and surrounding text that invite someone to subscribe is called a **call to action**, or CTA. A small change in wording can have a surprisingly large effect on whether someone actually clicks, so choosing the right copy matters.
@@ -151,7 +183,10 @@ The quantity we care about is $\theta = \pi_A - \pi_B$, the **difference in sign
 
 We can't observe $\theta$ directly — we only see each visitor's individual outcome (1 if they signed up, 0 if not). So we **estimate** it using the difference in observed proportions:
 
-$$\hat\theta = \bar{X}_A - \bar{X}_B = \hat\pi_A - \hat\pi_B$$
+```{python}
+#| echo: false
+render_formula(r'$\hat{\theta} = \bar{X}_A - \bar{X}_B = \hat{\pi}_A - \hat{\pi}_B$')
+```
 
 Here $\bar{X}_A$ is the fraction of CTA A visitors who signed up, and $\bar{X}_B$ is the same for CTA B. The rest of this post is devoted to understanding this estimator: when can we trust it, how precise is it, and how do we test whether the difference we observe is real?
 
@@ -159,36 +194,6 @@ Here $\bar{X}_A$ is the fraction of CTA A visitors who signed up, and $\bar{X}_B
 
 ```{python}
 #| echo: true
-%matplotlib inline
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import matplotlib.ticker as mticker
-from scipy import stats
-import statsmodels.formula.api as smf
-
-# Plot style to match site aesthetic
-plt.rcParams.update({
-    "figure.facecolor": "#f0ece4",
-    "axes.facecolor":   "#e8e3da",
-    "axes.grid": True,
-    "grid.color": "#c9c2b6",
-    "grid.linewidth": 0.7,
-    "axes.spines.top": False,
-    "axes.spines.right": False,
-    "axes.spines.left": False,
-    "axes.spines.bottom": False,
-    "font.family": "sans-serif",
-    "axes.titlesize": 12,
-    "axes.labelsize": 10,
-    "xtick.labelsize": 9,
-    "ytick.labelsize": 9,
-    "text.color": "#2e2825",
-    "axes.labelcolor": "#2e2825",
-    "xtick.color": "#8a8278",
-    "ytick.color": "#8a8278",
-})
-
 rng = np.random.default_rng(42)
 
 PI_A = 0.22
@@ -212,7 +217,10 @@ The **Law of Large Numbers (LLN)** says that as the sample size grows, the sampl
 
 To see it in action, we compute the **running cumulative average** of the element-wise differences between the CTA A and CTA B draws. After $k$ observations, this is:
 
-$$\bar{d}_k = \frac{1}{k}\sum_{i=1}^{k}(X_{A,i} - X_{B,i})$$
+```{python}
+#| echo: false
+render_formula(r'$\bar{d}_k = \frac{1}{k}\sum_{i=1}^{k}(X_{A,i} - X_{B,i})$', figwidth=5.5, figheight=0.85)
+```
 
 Plotting $\bar{d}_k$ against $k$ lets us watch the estimate settle down as data accumulates.
 
@@ -225,19 +233,16 @@ running_mean = np.cumsum(diffs) / np.arange(1, N + 1)
 ```{python}
 #| echo: false
 fig, ax = plt.subplots(figsize=(8.5, 4))
-
 ax.plot(np.arange(1, N + 1), running_mean,
         color="#7a3b35", lw=1.4, alpha=0.9, label=r"Running average $\bar{d}_k$")
 ax.axhline(theta_true, color="#2e2825", lw=1.6, ls="--", label=f"True θ = {theta_true}")
 ax.axhline(0, color="#8a8278", lw=0.8, ls=":", alpha=0.5)
-
 ax.set_xlabel("Number of observations (per group)")
 ax.set_ylabel("Cumulative average difference")
 ax.set_title("Law of Large Numbers: Running Average of $\\hat{\\theta}$")
 ax.legend(frameon=True, framealpha=0.95, edgecolor="#c9c2b6", fontsize=9)
 ax.set_xlim(1, N)
 ax.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.3f"))
-
 plt.tight_layout()
 plt.show()
 ```
@@ -265,7 +270,10 @@ se_boot = boot_thetas.std()
 
 We compare this to the **analytical standard error** for the difference of two independent Bernoulli proportions:
 
-$$SE(\hat\theta) = \sqrt{\frac{\hat\pi_A(1 - \hat\pi_A)}{n_A} + \frac{\hat\pi_B(1 - \hat\pi_B)}{n_B}}$$
+```{python}
+#| echo: false
+render_formula(r'$SE(\hat{\theta}) = \sqrt{\frac{\hat{\pi}_A(1-\hat{\pi}_A)}{n_A} + \frac{\hat{\pi}_B(1-\hat{\pi}_B)}{n_B}}$', figwidth=6.5, figheight=0.95)
+```
 
 ```{python}
 #| echo: true
@@ -315,18 +323,15 @@ colors    = ["#7a3b35", "#2e2825", "#7a3b35", "#2e2825"]
 xlim      = (-0.28, 0.36)
 
 for ax, n, color in zip(axes.flat, sample_sizes, colors):
-    data          = sim_results[n]
-    mu, sigma     = data.mean(), data.std()
-
+    data      = sim_results[n]
+    mu, sigma = data.mean(), data.std()
     ax.hist(data, bins=35, color=color, edgecolor="#f0ece4",
             linewidth=0.4, alpha=0.8, density=True)
-
     x = np.linspace(xlim[0], xlim[1], 300)
     ax.plot(x, stats.norm.pdf(x, mu, sigma),
             color="#8a8278", lw=1.5, ls="--", label="Normal fit")
     ax.axvline(theta_true, color="#c9a09b", lw=1.4, ls=":",
                label=f"True θ = {theta_true}")
-
     ax.set_title(f"n = {n} per group", fontsize=11)
     ax.set_xlabel(r"$\hat{\theta}$")
     ax.set_ylabel("Density")
@@ -351,11 +356,17 @@ We set up a hypothesis test. The **null hypothesis** is $H_0: \theta = 0$ — th
 
 To test $H_0$, we **standardize** our estimate to form a test statistic:
 
-$$z = \frac{\hat\theta - 0}{SE(\hat\theta)}$$
+```{python}
+#| echo: false
+render_formula(r'$z = \frac{\hat{\theta}}{SE(\hat{\theta})}$', figwidth=3.5, figheight=0.85)
+```
 
 Why standardize? The CLT tells us $\hat\theta$ is approximately Normal for large samples. Under $H_0$, the center of that Normal is 0. Dividing a zero-centered Normal by its standard deviation yields a **standard Normal**, $N(0,1)$:
 
-$$z \;\dot\sim\; N(0,1) \quad \text{under } H_0$$
+```{python}
+#| echo: false
+render_formula(r'$z \sim N(0,1) \quad \mathrm{under}\ H_0$', figwidth=4.5, figheight=0.7)
+```
 
 Because we know the distribution of $z$ under the null, we can compute a **p-value**: the probability of observing a test statistic at least as extreme as ours if $H_0$ were true. A small p-value means the data would be surprising under the null — giving us grounds to reject it.
 
@@ -380,7 +391,10 @@ Here's a useful fact that's easy to miss: the two-sample test we just ran is **m
 
 The setup: stack the CTA A and CTA B outcomes into a single dataset with two columns — an outcome $Y_i$ (1 if the visitor subscribed, 0 otherwise) and a treatment indicator $D_i$ (1 if they saw CTA A, 0 if they saw CTA B). Then fit:
 
-$$Y_i = \beta_0 + \beta_1 D_i + \varepsilon_i$$
+```{python}
+#| echo: false
+render_formula(r'$Y_i = \beta_0 + \beta_1 D_i + \varepsilon_i$', figwidth=4.5, figheight=0.7)
+```
 
 The coefficients have clean interpretations:
 

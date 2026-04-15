@@ -75,7 +75,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <body>
 
 
+<header id="title-block-header">
+<h1 class="title">Introduction</h1>
 
+</header>
 
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&amp;family=DM+Sans:wght@300;400;500&amp;display=swap" rel="stylesheet">
@@ -83,7 +86,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { background: #f0ece4; color: #2e2825; font-family: 'DM Sans', sans-serif; }
   a { color: inherit; text-decoration: none; }
-
   .nav {
     display: flex; justify-content: space-between; align-items: center;
     padding: 1.5rem 4rem; border-bottom: 1px solid #c9c2b6;
@@ -103,8 +105,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     transition: background 0.2s;
   }
   .nav-cta:hover { background: #7a3b35; }
-
-  /* POST HEADER */
   .post-header {
     padding: 5rem 4rem 3rem;
     border-bottom: 1px solid #c9c2b6;
@@ -118,8 +118,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
   .post-subtitle { font-size: 1rem; color: #8a8278; margin-bottom: 1rem; font-style: italic; }
   .post-meta { font-size: 0.75rem; color: #8a8278; }
-
-  /* BACK LINK */
   .back-link {
     display: inline-block; margin: 2rem 4rem 0;
     font-size: 0.75rem; color: #7a3b35;
@@ -128,18 +126,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     transition: color 0.2s, border-color 0.2s;
   }
   .back-link:hover { color: #2e2825; border-color: #2e2825; }
-
-  /* POST BODY */
-  .post-body {
-    padding: 3rem 4rem 5rem;
-    max-width: 860px;
-  }
+  .post-body { padding: 3rem 4rem 5rem; max-width: 860px; }
   .post-body h2 {
     font-family: 'Playfair Display', serif;
     font-size: 1.8rem; font-weight: 700;
     color: #2e2825; margin: 3rem 0 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid #c9c2b6;
+    padding-bottom: 0.5rem; border-bottom: 1px solid #c9c2b6;
   }
   .post-body h3 { font-size: 1.1rem; font-weight: 500; color: #2e2825; margin: 2rem 0 0.75rem; }
   .post-body p { font-size: 0.95rem; color: #6b6560; line-height: 1.9; margin-bottom: 1.25rem; }
@@ -147,24 +139,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   .post-body li { font-size: 0.95rem; color: #6b6560; line-height: 1.9; margin-bottom: 0.4rem; }
   .post-body strong { color: #2e2825; font-weight: 500; }
   .post-body em { color: #7a3b35; font-style: italic; }
-
-  /* CALLOUT OVERRIDES */
-  .callout { border-left: 3px solid #7a3b35 !important; background: #e8e3da !important; border-radius: 0 !important; }
-  .callout-header { display: none !important; }
-  .callout-body p { color: #6b6560 !important; font-size: 0.9rem !important; }
-
-  /* CODE BLOCKS */
   pre { background: #e8e3da !important; border: 1px solid #c9c2b6 !important; border-radius: 2px !important; padding: 1rem !important; }
   code { font-size: 0.85rem !important; color: #2e2825 !important; }
-
-  /* FOOTER */
+  table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.88rem; }
+  thead tr { border-bottom: 2px solid #c9c2b6; }
+  th { text-align: left; padding: 0.6rem 1rem; font-weight: 500; color: #2e2825; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; }
+  td { padding: 0.6rem 1rem; color: #6b6560; border-bottom: 1px solid #e8e3da; }
+  tbody tr:last-child td { border-bottom: none; }
   .footer-bar {
     margin: 0 4rem; padding: 2rem 0;
     border-top: 1px solid #c9c2b6;
     display: flex; justify-content: space-between;
     font-size: 0.7rem; color: #8a8278;
   }
-
   @media (max-width: 800px) {
     .nav { padding: 1rem 1.5rem; }
     .post-header, .post-body { padding: 3rem 1.5rem; }
@@ -192,7 +179,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <a href="../../blogs.html" class="back-link">← Back to Blogs &amp; Insights</a>
 
 <div class="post-body">
-<h2 id="introduction" class="anchored">Introduction</h2>
 <p>My website’s landing page has a spot where visitors can sign up to receive a newsletter — new posts, updates, the occasional deep dive. The button and surrounding text that invite someone to subscribe is called a <strong>call to action</strong>, or CTA. A small change in wording can have a surprisingly large effect on whether someone actually clicks, so choosing the right copy matters.</p>
 <p>I’m currently deciding between two options:</p>
 <ul>
@@ -210,53 +196,31 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 <p>The quantity we care about is <span class="math inline"><em>θ</em> = <em>π</em><sub><em>A</em></sub> − <em>π</em><sub><em>B</em></sub></span>, the <strong>difference in sign-up rates</strong>. If <span class="math inline"><em>θ</em> &gt; 0</span>, CTA A outperforms CTA B; if <span class="math inline"><em>θ</em> &lt; 0</span>, B is better; and if <span class="math inline"><em>θ</em> = 0</span>, the wording doesn’t matter.</p>
 <p>We can’t observe <span class="math inline"><em>θ</em></span> directly — we only see each visitor’s individual outcome (1 if they signed up, 0 if not). So we <strong>estimate</strong> it using the difference in observed proportions:</p>
-<p><span class="math display"><em>θ̂</em> = <em>X̄</em><sub><em>A</em></sub> − <em>X̄</em><sub><em>B</em></sub> = <em>π̂</em><sub><em>A</em></sub> − <em>π̂</em><sub><em>B</em></sub></span></p>
+<div id="43fbd994" class="cell" data-execution_count="2">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img src="hw1_index_files/figure-html/cell-3-output-1.png" class="img-fluid"></p>
+</figure>
+</div>
+</div>
+</div>
 <p>Here <span class="math inline"><em>X̄</em><sub><em>A</em></sub></span> is the fraction of CTA A visitors who signed up, and <span class="math inline"><em>X̄</em><sub><em>B</em></sub></span> is the same for CTA B. The rest of this post is devoted to understanding this estimator: when can we trust it, how precise is it, and how do we test whether the difference we observe is real?</p>
 <h2 id="simulating-data" class="anchored">Simulating Data</h2>
-<div id="0e4243db" class="cell" data-execution_count="1">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>matplotlib inline</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.ticker <span class="im">as</span> mticker</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> stats</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> statsmodels.formula.api <span class="im">as</span> smf</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot style to match site aesthetic</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>plt.rcParams.update({</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"figure.facecolor"</span>: <span class="st">"#f0ece4"</span>,</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">"axes.facecolor"</span>:   <span class="st">"#e8e3da"</span>,</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">"axes.grid"</span>: <span class="va">True</span>,</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">"grid.color"</span>: <span class="st">"#c9c2b6"</span>,</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">"grid.linewidth"</span>: <span class="fl">0.7</span>,</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">"axes.spines.top"</span>: <span class="va">False</span>,</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">"axes.spines.right"</span>: <span class="va">False</span>,</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="st">"axes.spines.left"</span>: <span class="va">False</span>,</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">"axes.spines.bottom"</span>: <span class="va">False</span>,</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">"font.family"</span>: <span class="st">"sans-serif"</span>,</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">"axes.titlesize"</span>: <span class="dv">12</span>,</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="st">"axes.labelsize"</span>: <span class="dv">10</span>,</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">"xtick.labelsize"</span>: <span class="dv">9</span>,</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ytick.labelsize"</span>: <span class="dv">9</span>,</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="st">"text.color"</span>: <span class="st">"#2e2825"</span>,</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">"axes.labelcolor"</span>: <span class="st">"#2e2825"</span>,</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    <span class="st">"xtick.color"</span>: <span class="st">"#8a8278"</span>,</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ytick.color"</span>: <span class="st">"#8a8278"</span>,</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">42</span>)</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>PI_A <span class="op">=</span> <span class="fl">0.22</span></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>PI_B <span class="op">=</span> <span class="fl">0.18</span></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>N    <span class="op">=</span> <span class="dv">1000</span></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>draws_a    <span class="op">=</span> rng.binomial(<span class="dv">1</span>, PI_A, N)</span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>draws_b    <span class="op">=</span> rng.binomial(<span class="dv">1</span>, PI_B, N)</span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>theta_true <span class="op">=</span> PI_A <span class="op">-</span> PI_B</span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>theta_hat  <span class="op">=</span> draws_a.mean() <span class="op">-</span> draws_b.mean()</span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"True θ       = </span><span class="sc">{</span>theta_true<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Estimated θ̂  = </span><span class="sc">{</span>theta_hat<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="3e7e6f73" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">42</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>PI_A <span class="op">=</span> <span class="fl">0.22</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>PI_B <span class="op">=</span> <span class="fl">0.18</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>N    <span class="op">=</span> <span class="dv">1000</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>draws_a    <span class="op">=</span> rng.binomial(<span class="dv">1</span>, PI_A, N)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>draws_b    <span class="op">=</span> rng.binomial(<span class="dv">1</span>, PI_B, N)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>theta_true <span class="op">=</span> PI_A <span class="op">-</span> PI_B</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>theta_hat  <span class="op">=</span> draws_a.mean() <span class="op">-</span> draws_b.mean()</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"True θ       = </span><span class="sc">{</span>theta_true<span class="sc">:.4f}</span><span class="ss">"</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Estimated θ̂  = </span><span class="sc">{</span>theta_hat<span class="sc">:.4f}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>True θ       = 0.0400
 Estimated θ̂  = 0.0250</code></pre>
@@ -266,17 +230,25 @@ Estimated θ̂  = 0.0250</code></pre>
 <h2 id="the-law-of-large-numbers" class="anchored">The Law of Large Numbers</h2>
 <p>The <strong>Law of Large Numbers (LLN)</strong> says that as the sample size grows, the sample mean converges to the true population mean. Applied here: as we observe more visitors, <span class="math inline"><em>π̂</em><sub><em>A</em></sub> → <em>π</em><sub><em>A</em></sub></span> and <span class="math inline"><em>π̂</em><sub><em>B</em></sub> → <em>π</em><sub><em>B</em></sub></span>, and therefore <span class="math inline"><em>θ̂</em> → <em>θ</em></span>. This is the theoretical guarantee that our estimator is trustworthy — given enough data, we will recover the truth.</p>
 <p>To see it in action, we compute the <strong>running cumulative average</strong> of the element-wise differences between the CTA A and CTA B draws. After <span class="math inline"><em>k</em></span> observations, this is:</p>
-<p><span class="math display">$$\bar{d}_k = \frac{1}{k}\sum_{i=1}^{k}(X_{A,i} - X_{B,i})$$</span></p>
-<p>Plotting <span class="math inline"><em>d̄</em><sub><em>k</em></sub></span> against <span class="math inline"><em>k</em></span> lets us watch the estimate settle down as data accumulates.</p>
-<div id="0c52be18" class="cell" data-execution_count="2">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>diffs        <span class="op">=</span> draws_a <span class="op">-</span> draws_b</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>running_mean <span class="op">=</span> np.cumsum(diffs) <span class="op">/</span> np.arange(<span class="dv">1</span>, N <span class="op">+</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div id="0650e7bc" class="cell" data-execution_count="3">
+<div id="3e617705" class="cell" data-execution_count="4">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
-<p><img src="hw1_index_files/figure-html/cell-4-output-1.png" width="808" height="372"></p>
+<p><img src="hw1_index_files/figure-html/cell-5-output-1.png" class="img-fluid"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Plotting <span class="math inline"><em>d̄</em><sub><em>k</em></sub></span> against <span class="math inline"><em>k</em></span> lets us watch the estimate settle down as data accumulates.</p>
+<div id="0253e236" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>diffs        <span class="op">=</span> draws_a <span class="op">-</span> draws_b</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>running_mean <span class="op">=</span> np.cumsum(diffs) <span class="op">/</span> np.arange(<span class="dv">1</span>, N <span class="op">+</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="af0146a4" class="cell" data-execution_count="6">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img src="hw1_index_files/figure-html/cell-7-output-1.png" class="img-fluid"></p>
 </figure>
 </div>
 </div>
@@ -285,7 +257,7 @@ Estimated θ̂  = 0.0250</code></pre>
 <h2 id="bootstrap-standard-errors" class="anchored">Bootstrap Standard Errors</h2>
 <p>A point estimate alone isn’t very informative. We also want to know <strong>how precise</strong> it is — ideally a confidence interval that communicates our uncertainty about <span class="math inline"><em>θ</em></span>.</p>
 <p>One elegant way to quantify that uncertainty is the <strong>bootstrap</strong>, a resampling method introduced by Bradley Efron in 1979. The idea: treat the observed sample as if it <em>were</em> the population, and simulate re-running the experiment by drawing from it <em>with replacement</em> many times. Each such “bootstrap resample” gives a new estimate <span class="math inline"><em>θ̂</em><sup>*</sup></span>. The variability across many bootstrap estimates approximates the sampling variability of <span class="math inline"><em>θ̂</em></span> itself — no distributional assumptions required.</p>
-<div id="151a836b" class="cell" data-execution_count="4">
+<div id="52e86c00" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>B           <span class="op">=</span> <span class="dv">1000</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>boot_thetas <span class="op">=</span> np.empty(B)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -297,8 +269,16 @@ Estimated θ̂  = 0.0250</code></pre>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>se_boot <span class="op">=</span> boot_thetas.std()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>We compare this to the <strong>analytical standard error</strong> for the difference of two independent Bernoulli proportions:</p>
-<p><span class="math display">$$SE(\hat\theta) = \sqrt{\frac{\hat\pi_A(1 - \hat\pi_A)}{n_A} + \frac{\hat\pi_B(1 - \hat\pi_B)}{n_B}}$$</span></p>
-<div id="72175e3a" class="cell" data-execution_count="5">
+<div id="2327d346" class="cell" data-execution_count="8">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img src="hw1_index_files/figure-html/cell-9-output-1.png" class="img-fluid"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="ea30e9a9" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>pi_hat_a      <span class="op">=</span> draws_a.mean()</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>pi_hat_b      <span class="op">=</span> draws_b.mean()</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>se_analytical <span class="op">=</span> np.sqrt(</span>
@@ -323,7 +303,7 @@ Analytical SE:  0.01825
 <h2 id="the-central-limit-theorem" class="anchored">The Central Limit Theorem</h2>
 <p>The confidence interval we just constructed assumed that <span class="math inline"><em>θ̂</em></span> is approximately <strong>normally distributed</strong>. That assumption comes from the <strong>Central Limit Theorem (CLT)</strong>: regardless of the shape of the underlying population distribution, the sampling distribution of the sample mean becomes approximately Normal as the sample size grows. Even though individual sign-ups are Bernoulli (just 0s and 1s), the average sign-up rate over many visitors is bell-shaped for large enough <span class="math inline"><em>n</em></span> — and the same holds for the difference <span class="math inline"><em>θ̂</em> = <em>X̄</em><sub><em>A</em></sub> − <em>X̄</em><sub><em>B</em></sub></span>.</p>
 <p>To illustrate this, we simulate 1,000 experiments at four different sample sizes (<span class="math inline"><em>n</em> ∈ {25, 50, 100, 500}</span>) and plot the resulting distribution of <span class="math inline"><em>θ̂</em></span> values.</p>
-<div id="80697e55" class="cell" data-execution_count="6">
+<div id="5d5c9cf1" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>sample_sizes <span class="op">=</span> [<span class="dv">25</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">500</span>]</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>sim_results  <span class="op">=</span> {}</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -335,11 +315,11 @@ Analytical SE:  0.01825
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>        thetas[i] <span class="op">=</span> a.mean() <span class="op">-</span> b.mean()</span>
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    sim_results[n] <span class="op">=</span> thetas</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="4c00bb90" class="cell" data-execution_count="7">
+<div id="142d4e4a" class="cell" data-execution_count="11">
 <div class="cell-output cell-output-display">
 <div>
 <figure>
-<p><img src="hw1_index_files/figure-html/cell-8-output-1.png" width="855" height="632"></p>
+<p><img src="hw1_index_files/figure-html/cell-12-output-1.png" class="img-fluid"></p>
 </figure>
 </div>
 </div>
@@ -349,12 +329,28 @@ Analytical SE:  0.01825
 <p>Armed with the CLT, we can now ask the formal question: <strong>is the observed difference in sign-up rates statistically distinguishable from zero, or could it simply be due to random chance?</strong></p>
 <p>We set up a hypothesis test. The <strong>null hypothesis</strong> is <span class="math inline"><em>H</em><sub>0</sub> : <em>θ</em> = 0</span> — the two CTAs produce identical sign-up rates and any difference we observe is noise. The <strong>alternative hypothesis</strong> is <span class="math inline"><em>H</em><sub>1</sub> : <em>θ</em> ≠ 0</span> — one CTA genuinely outperforms the other.</p>
 <p>To test <span class="math inline"><em>H</em><sub>0</sub></span>, we <strong>standardize</strong> our estimate to form a test statistic:</p>
-<p><span class="math display">$$z = \frac{\hat\theta - 0}{SE(\hat\theta)}$$</span></p>
+<div id="2a6aa175" class="cell" data-execution_count="12">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img src="hw1_index_files/figure-html/cell-13-output-1.png" class="img-fluid"></p>
+</figure>
+</div>
+</div>
+</div>
 <p>Why standardize? The CLT tells us <span class="math inline"><em>θ̂</em></span> is approximately Normal for large samples. Under <span class="math inline"><em>H</em><sub>0</sub></span>, the center of that Normal is 0. Dividing a zero-centered Normal by its standard deviation yields a <strong>standard Normal</strong>, <span class="math inline"><em>N</em>(0, 1)</span>:</p>
-<p><span class="math display">$$z \;\dot\sim\; N(0,1) \quad \text{under } H_0$$</span></p>
+<div id="ccfcc8d6" class="cell" data-execution_count="13">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img src="hw1_index_files/figure-html/cell-14-output-1.png" class="img-fluid"></p>
+</figure>
+</div>
+</div>
+</div>
 <p>Because we know the distribution of <span class="math inline"><em>z</em></span> under the null, we can compute a <strong>p-value</strong>: the probability of observing a test statistic at least as extreme as ours if <span class="math inline"><em>H</em><sub>0</sub></span> were true. A small p-value means the data would be surprising under the null — giving us grounds to reject it.</p>
 <p><strong>A note on “t-tests”:</strong> You may have heard this procedure called a t-test. Technically, the classical t-test applies when data come from a Normal distribution and the variance is unknown — in that exact setting the ratio follows a Student’s t-distribution. Our data are Bernoulli, not Normal, so there’s no exact t-distribution result here. We’re invoking the CLT to justify approximate Normality, making this more precisely a <strong>z-test</strong>. For a sample size of 1,000, the t-distribution and standard Normal are virtually indistinguishable, so the distinction has no practical consequence — but it’s worth understanding why.</p>
-<div id="c2baddb9" class="cell" data-execution_count="8">
+<div id="8b85e6c4" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>z_stat  <span class="op">=</span> theta_hat <span class="op">/</span> se_analytical</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>p_value <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> (<span class="dv">1</span> <span class="op">-</span> stats.norm.cdf(<span class="bu">abs</span>(z_stat)))</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -373,21 +369,29 @@ p-value:              0.1708</code></pre>
 <h2 id="the-t-test-as-a-regression" class="anchored">The T-Test as a Regression</h2>
 <p>Here’s a useful fact that’s easy to miss: the two-sample test we just ran is <strong>mathematically equivalent</strong> to a simple linear regression. This matters because the regression framework is far more flexible — it generalizes naturally to multiple treatment arms, control variables, and interaction effects — while producing identical results in the simple case.</p>
 <p>The setup: stack the CTA A and CTA B outcomes into a single dataset with two columns — an outcome <span class="math inline"><em>Y</em><sub><em>i</em></sub></span> (1 if the visitor subscribed, 0 otherwise) and a treatment indicator <span class="math inline"><em>D</em><sub><em>i</em></sub></span> (1 if they saw CTA A, 0 if they saw CTA B). Then fit:</p>
-<p><span class="math display"><em>Y</em><sub><em>i</em></sub> = <em>β</em><sub>0</sub> + <em>β</em><sub>1</sub><em>D</em><sub><em>i</em></sub> + <em>ε</em><sub><em>i</em></sub></span></p>
+<div id="fcf6febd" class="cell" data-execution_count="15">
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img src="hw1_index_files/figure-html/cell-16-output-1.png" class="img-fluid"></p>
+</figure>
+</div>
+</div>
+</div>
 <p>The coefficients have clean interpretations:</p>
 <ol type="1">
 <li>When <span class="math inline"><em>D</em><sub><em>i</em></sub> = 0</span> (CTA B): <span class="math inline"><em>E</em>[<em>Y</em><sub><em>i</em></sub>] = <em>β</em><sub>0</sub></span>, so <span class="math inline"><em>β̂</em><sub>0</sub></span> estimates <span class="math inline"><em>π</em><sub><em>B</em></sub></span>.</li>
 <li>When <span class="math inline"><em>D</em><sub><em>i</em></sub> = 1</span> (CTA A): <span class="math inline"><em>E</em>[<em>Y</em><sub><em>i</em></sub>] = <em>β</em><sub>0</sub> + <em>β</em><sub>1</sub></span>, so <span class="math inline"><em>β̂</em><sub>0</sub> + <em>β̂</em><sub>1</sub></span> estimates <span class="math inline"><em>π</em><sub><em>A</em></sub></span>.</li>
 <li>Therefore <span class="math inline"><em>β</em><sub>1</sub> = <em>π</em><sub><em>A</em></sub> − <em>π</em><sub><em>B</em></sub> = <em>θ</em></span>, and <span class="math inline"><em>β̂</em><sub>1</sub></span> is numerically identical to <span class="math inline"><em>θ̂</em> = <em>X̄</em><sub><em>A</em></sub> − <em>X̄</em><sub><em>B</em></sub></span>.</li>
 </ol>
-<div id="6863ae14" class="cell" data-execution_count="9">
+<div id="b183f9db" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>Y  <span class="op">=</span> np.concatenate([draws_a, draws_b])</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>D  <span class="op">=</span> np.concatenate([np.ones(N), np.zeros(N)])</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame({<span class="st">"Y"</span>: Y, <span class="st">"D"</span>: D})</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> smf.ols(<span class="st">"Y ~ D"</span>, data<span class="op">=</span>df).fit()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<div id="9f48a98c" class="cell" data-execution_count="10">
+<div id="95d036fd" class="cell" data-execution_count="17">
 <div class="cell-output cell-output-stdout">
 <pre><code>                    Term  Estimate  Std. Error  t-statistic  p-value
           Intercept (β₀)     0.199     0.01291       15.409   0.0000
@@ -401,7 +405,7 @@ D — CTA A indicator (β₁)     0.025     0.01826        1.369   0.1712</code>
 <p>This is called <strong>peeking</strong>, and it’s a subtle but serious problem.</p>
 <p>A single test at <span class="math inline"><em>α</em> = 0.05</span> gives us a 5% false positive rate — a 5% chance of incorrectly rejecting <span class="math inline"><em>H</em><sub>0</sub></span> when it’s true. That guarantee applies to <em>one</em> test. Each additional peek is another opportunity to observe a lucky random fluctuation and mistake it for a real effect. With 10 peeks, the probability of at least one spurious “significant” result climbs well above 5%.</p>
 <p>We quantify this with a simulation. We set up a world where the null is <em>true</em> — <span class="math inline"><em>π</em><sub><em>A</em></sub> = <em>π</em><sub><em>B</em></sub> = 0.20</span>, so <span class="math inline"><em>θ</em> = 0</span> — and ask: across 10,000 simulated experiments, in how many does at least one peek produce a false positive?</p>
-<div id="a4ebce67" class="cell" data-execution_count="11">
+<div id="3dbc12ac" class="cell" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>N_SIM           <span class="op">=</span> <span class="dv">10_000</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>PEEKS           <span class="op">=</span> <span class="bu">list</span>(<span class="bu">range</span>(<span class="dv">100</span>, <span class="dv">1001</span>, <span class="dv">100</span>))</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>PI_NULL         <span class="op">=</span> <span class="fl">0.20</span></span>
