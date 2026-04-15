@@ -413,6 +413,8 @@ model = smf.ols("Y ~ D", data=df).fit()
 
 ```{python}
 #| echo: false
+from IPython.display import display, HTML
+
 coef_df = pd.DataFrame({
     "Term":        ["Intercept (β₀)", "D — CTA A indicator (β₁)"],
     "Estimate":    model.params.round(4).values,
@@ -420,7 +422,7 @@ coef_df = pd.DataFrame({
     "t-statistic": model.tvalues.round(3).values,
     "p-value":     model.pvalues.round(4).values,
 })
-print(coef_df.to_string(index=False))
+display(HTML(coef_df.to_html(index=False)))
 ```
 
 The intercept $\hat\beta_0 \approx \hat\pi_B$ and the slope $\hat\beta_1 \approx \hat\theta$. The t-statistic and p-value align closely with the two-sample test (a minor difference in the standard error arises because OLS uses a pooled variance estimate while our earlier formula allowed separate variances per group — for balanced, similar-proportion designs this difference is negligible).
