@@ -276,7 +276,7 @@ execute:
       <span class="role">UCSD MS in Business Analytics Student</span>
     </div>
     <p class="hero-bio">
-      Turning data into insight, and insight into impact
+      Turning data into insights, and insights into impact
     </p>
   </div>
   <div class="profile-box">
