@@ -35,6 +35,17 @@ execute:
     z-index: 10;
   }
   .nav-logo { font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase; color: #7a3b35; }
+  .nav-logo-link {
+    display: inline-block;
+    padding: 0.4rem 0.75rem;
+    border: 1px solid #c9c2b6;
+    transition: color 0.2s, border-color 0.2s, transform 0.2s;
+  }
+  .nav-logo-link:hover {
+    color: #2e2825;
+    border-color: #7a3b35;
+    transform: translateY(-2px);
+  }
   .nav-links { display: flex; gap: 2rem; list-style: none; }
   .nav-links a {
     font-size: 0.8rem; color: #8a8278;
@@ -243,7 +254,7 @@ execute:
 
 <!-- NAV -->
 <div class="nav">
-  <span class="nav-logo">Eesha Jagdhane // Portfolio</span>
+  <a href="#top" class="nav-logo nav-logo-link">Eesha Jagdhane // Portfolio</a>
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
     <li><a href="#experience">Experience</a></li>
@@ -255,7 +266,7 @@ execute:
 </div>
 
 <!-- HERO -->
-<div class="hero">
+<div class="hero" id="top">
   <div>
     <div class="hero-name">
       <span class="outlined">Eesha</span>
