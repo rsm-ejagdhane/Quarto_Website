@@ -1,0 +1,475 @@
+---
+format:
+  html:
+    toc: false
+    page-layout: full
+    theme: none
+    fig-format: png
+    fig-dpi: 150
+    include-in-header: mathjax.html
+jupyter: python3
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+```{=html}
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #f0ece4; color: #2e2825; font-family: 'DM Sans', sans-serif; }
+  a { color: inherit; text-decoration: none; }
+  .nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.5rem 4rem; border-bottom: 1px solid #c9c2b6;
+    background: #f0ece4; position: sticky; top: 0; z-index: 10;
+  }
+  .nav-logo { font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase; color: #7a3b35; }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.8rem; color: #8a8278; text-transform: uppercase;
+    letter-spacing: 0.08em; padding: 0.4rem 0.75rem; display: inline-block;
+    transition: color 0.2s, background 0.2s, transform 0.2s;
+  }
+  .nav-links a:hover { color: #2e2825; background: #e8e3da; transform: translateY(-2px); }
+  .nav-cta {
+    background: #2e2825; color: #f0ece4; padding: 0.5rem 1.2rem;
+    font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase;
+    transition: background 0.2s;
+  }
+  .nav-cta:hover { background: #7a3b35; }
+  .post-header {
+    padding: 5rem 4rem 3rem;
+    border-bottom: 1px solid #c9c2b6;
+    max-width: 860px;
+  }
+  .post-tag { font-size: 0.7rem; color: #7a3b35; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 0.5rem; }
+  .post-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 900; line-height: 1.1; color: #2e2825; margin-bottom: 0.5rem;
+  }
+  .post-subtitle { font-size: 1rem; color: #8a8278; margin-bottom: 1rem; font-style: italic; }
+  .post-meta { font-size: 0.75rem; color: #8a8278; }
+  .back-link {
+    display: inline-block; margin: 2rem 4rem 0;
+    font-size: 0.75rem; color: #7a3b35;
+    border-bottom: 1px solid #c9a09b; padding-bottom: 2px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .back-link:hover { color: #2e2825; border-color: #2e2825; }
+  .post-body { padding: 3rem 4rem 5rem; max-width: 860px; }
+  .post-body h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem; font-weight: 700;
+    color: #2e2825; margin: 3rem 0 1rem;
+    padding-bottom: 0.5rem; border-bottom: 1px solid #c9c2b6;
+  }
+  .post-body h3 { font-size: 1.1rem; font-weight: 500; color: #2e2825; margin: 2rem 0 0.75rem; }
+  .post-body p { font-size: 0.95rem; color: #6b6560; line-height: 1.9; margin-bottom: 1.25rem; }
+  .post-body ul, .post-body ol { padding-left: 1.5rem; margin-bottom: 1.25rem; }
+  .post-body li { font-size: 0.95rem; color: #6b6560; line-height: 1.9; margin-bottom: 0.4rem; }
+  .post-body strong { color: #2e2825; font-weight: 500; }
+  .post-body em { color: #7a3b35; font-style: italic; }
+  pre { background: #e8e3da !important; border: 1px solid #c9c2b6 !important; border-radius: 2px !important; padding: 1rem !important; }
+  code { font-size: 0.85rem !important; color: #2e2825 !important; }
+  table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.88rem; }
+  thead tr { border-bottom: 2px solid #c9c2b6; }
+  th { text-align: left; padding: 0.6rem 1rem; font-weight: 500; color: #2e2825; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; }
+  td { padding: 0.6rem 1rem; color: #6b6560; border-bottom: 1px solid #e8e3da; }
+  tbody tr:last-child td { border-bottom: none; }
+  .footer-bar {
+    margin: 0 4rem; padding: 2rem 0;
+    border-top: 1px solid #c9c2b6;
+    display: flex; justify-content: space-between;
+    font-size: 0.7rem; color: #8a8278;
+  }
+  @media (max-width: 800px) {
+    .nav { padding: 1rem 1.5rem; }
+    .post-header, .post-body { padding: 3rem 1.5rem; }
+    .back-link { margin: 1.5rem; }
+    .footer-bar { margin: 0 1.5rem; flex-direction: column; gap: 0.5rem; }
+  }
+</style>
+
+<div class="nav">
+  <span class="nav-logo">Eesha Jagdhane // Portfolio</span>
+  <ul class="nav-links">
+    <li><a href="../../index.html">Home</a></li>
+    <li><a href="../../blogs.html">Blogs &amp; Insights</a></li>
+  </ul>
+  <a href="../../index.html#contact" class="nav-cta">Get in touch</a>
+</div>
+
+<div class="post-header">
+  <div class="post-tag">Assignment 2 — Marketing Analytics</div>
+  <div class="post-title">Minimum Wages and Employment</div>
+  <div class="post-subtitle">Replication notes for Card and Krueger (1994)</div>
+  <div class="post-meta">Eesha Jagdhane &nbsp;·&nbsp; April 22, 2026</div>
+</div>
+
+<a href="../../blogs.html" class="back-link">← Back to Blogs &amp; Insights</a>
+
+<div class="post-body">
+```
+
+## Introduction
+
+In 1992, New Jersey raised its minimum wage while neighboring Pennsylvania did not. David Card and Alan Krueger exploited this policy discontinuity as a *natural experiment*: fast-food restaurants in eastern Pennsylvania serve as a comparison group for restaurants in New Jersey that faced the same local demand shocks but not the same minimum-wage shock. The authors surveyed stores before and after the policy change and compared employment, wages, and prices across states and across waves.
+
+The paper became famous because it challenged a simple textbook prediction that a higher minimum wage must reduce employment, at least in the short run, in a low-wage, high-turnover industry where firms have some wage-setting power and adjustment margins beyond immediate layoffs. The “NJ vs. PA” comparison is the key identification move: it supplies a plausible counterfactual trend for what would have happened in New Jersey absent the reform.
+
+This post replicates a few of the paper’s headline descriptive facts and the simplest regression specification using the public-use flat file (`public.dat`) and the published codebook and SAS check program logic.
+
+## Data processing
+
+The public-use file is fixed-width ASCII (410 stores). Column locations follow the `codebook` file in `njmin/`, and variable definitions follow `check.sas` (for example, `EMPTOT` and `GAP`).
+
+## Table 2 (Wave 1 means)
+
+Table 2 reports simple averages in the pre-period. Here are Wave 1 means for FTE employment, starting wage, and the “full meal” price index (medium soda + small fries + entree), split by state.
+
+## Table 3 (first three rows, first three columns)
+
+For the “before / after / change” comparison, Card and Krueger summarize state-level averages where the *after* mean uses all non-missing second-wave employment values (and treats permanently closed stores as having zero employment in wave 2, as in the paper’s discussion of closures).
+
+Row 3’s “change” is computed from the state-level means (equivalently, it matches the difference-in-differences of the two changes).
+
+## Table 4, column (i): OLS of $\Delta FTE$ on the NJ dummy
+
+This is the simplest “difference-in-differences in regression form” specification:
+
+$$
+\Delta FTE_i = \alpha + \beta \cdot NJ_i + u_i
+$$
+
+Following the discussion in Card and Krueger (and common replication code), I restrict to restaurants with non-missing employment change and non-missing starting wages in *both* survey waves.
+
+## Something additional: a DiD plot
+
+This figure summarizes the Table 3 comparison visually: Pennsylvania provides the “would have happened anyway” trend between waves, while New Jersey deviates upward in the second wave relative to that benchmark.
+
+```{python}
+#| fig-cap: "Average FTE employment before and after the minimum-wage increase, by state (public-use sample)."
+
+from __future__ import annotations
+
+from pathlib import Path
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import statsmodels.api as sm
+from IPython.display import Markdown, display
+
+
+def markdown_table(headers: list[str], rows: list[list[str]]) -> str:
+    out = []
+    out.append("| " + " | ".join(headers) + " |")
+    out.append("| " + " | ".join(["---"] * len(headers)) + " |")
+    for r in rows:
+        out.append("| " + " | ".join(r) + " |")
+    return "\n".join(out)
+
+
+plt.rcParams.update({
+    "figure.facecolor": "#f0ece4",
+    "axes.facecolor":   "#e8e3da",
+    "axes.grid": True,
+    "grid.color": "#c9c2b6",
+    "grid.linewidth": 0.7,
+    "axes.spines.top": False,
+    "axes.spines.right": False,
+    "axes.spines.left": False,
+    "axes.spines.bottom": False,
+    "font.family": "sans-serif",
+    "axes.titlesize": 12,
+    "axes.labelsize": 10,
+    "xtick.labelsize": 9,
+    "ytick.labelsize": 9,
+    "text.color": "#2e2825",
+    "axes.labelcolor": "#2e2825",
+    "xtick.color": "#8a8278",
+    "ytick.color": "#8a8278",
+})
+
+DATA_PATH = Path("njmin/public.dat")
+
+# Codebook columns are 1-based inclusive; pandas colspecs are 0-based [start, end).
+colspecs = [
+    ("SHEET", 0, 3),
+    ("CHAIN", 4, 5),
+    ("CO_OWNED", 6, 7),
+    ("STATE", 8, 9),
+    ("SOUTHJ", 10, 11),
+    ("CENTRALJ", 12, 13),
+    ("NORTHJ", 14, 15),
+    ("PA1", 16, 17),
+    ("PA2", 18, 19),
+    ("SHORE", 20, 21),
+    ("NCALLS", 22, 24),
+    ("EMPFT", 25, 30),
+    ("EMPPT", 31, 36),
+    ("NMGRS", 37, 42),
+    ("WAGE_ST", 43, 48),
+    ("INCTIME", 49, 54),
+    ("FIRSTINC", 55, 60),
+    ("BONUS", 61, 62),
+    ("PCTAFF", 63, 68),
+    ("MEALS", 69, 70),
+    ("OPEN", 71, 76),
+    ("HRSOPEN", 77, 82),
+    ("PSODA", 83, 88),
+    ("PFRY", 89, 94),
+    ("PENTREE", 95, 100),
+    ("NREGS", 101, 103),
+    ("NREGS11", 104, 106),
+    ("TYPE2", 107, 108),
+    ("STATUS2", 109, 110),
+    ("DATE2", 111, 117),
+    ("NCALLS2", 118, 120),
+    ("EMPFT2", 121, 126),
+    ("EMPPT2", 127, 132),
+    ("NMGRS2", 133, 138),
+    ("WAGE_ST2", 139, 144),
+    ("INCTIME2", 145, 150),
+    ("FIRSTIN2", 151, 156),
+    ("SPECIAL2", 157, 158),
+    ("MEALS2", 159, 160),
+    ("OPEN2R", 161, 166),
+    ("HRSOPEN2", 167, 172),
+    ("PSODA2", 173, 178),
+    ("PFRY2", 179, 184),
+    ("PENTREE2", 185, 190),
+    ("NREGS2", 191, 193),
+    ("NREGS112", 194, 196),
+]
+
+df = pd.read_fwf(
+    DATA_PATH,
+    colspecs=[(a, b) for _, a, b in colspecs],
+    names=[n for n, _, _ in colspecs],
+    dtype=str,
+)
+
+for c in df.columns:
+    df[c] = df[c].str.strip()
+
+num_cols = [c for c in df.columns if c != "SHEET"]
+df[num_cols] = df[num_cols].apply(pd.to_numeric, errors="coerce")
+
+df["NJ"] = (df["STATE"] == 1).astype(int)
+
+df["FTE_W1"] = df["EMPFT"] + df["NMGRS"] + 0.5 * df["EMPPT"]
+df["FTE_W2_RAW"] = df["EMPFT2"] + df["NMGRS2"] + 0.5 * df["EMPPT2"]
+
+# Permanently closed stores: wave-2 employment is 0 (homework instruction; STATUS2 == 3).
+df["FTE_W2"] = np.where(df["STATUS2"] == 3, 0.0, df["FTE_W2_RAW"])
+
+df["PMEAL_W1"] = df["PSODA"] + df["PFRY"] + df["PENTREE"]
+
+# GAP definition from check.sas (useful for extensions beyond Table 4 col. (i))
+df["GAP"] = np.where(df["STATE"] == 0, 0.0, np.nan)
+mask_nj_below = (df["STATE"] == 1) & df["WAGE_ST"].notna()
+df.loc[mask_nj_below & (df["WAGE_ST"] >= 5.05), "GAP"] = 0.0
+df.loc[mask_nj_below & (df["WAGE_ST"] > 0) & (df["WAGE_ST"] < 5.05), "GAP"] = (5.05 - df["WAGE_ST"]) / df["WAGE_ST"]
+
+df["D_FTE"] = df["FTE_W2"] - df["FTE_W1"]
+reg_df = df.loc[df["D_FTE"].notna() & df["WAGE_ST"].notna() & df["WAGE_ST2"].notna()].copy()
+
+display(Markdown("### Peek at the loaded data"))
+display(df.head())
+
+
+def wave1_table(x: pd.DataFrame) -> str:
+    md_rows: list[list[str]] = []
+    for state, label in [(0, "Pennsylvania"), (1, "New Jersey")]:
+        sub = x.loc[x["STATE"] == state]
+
+        fte = sub.loc[sub["FTE_W1"].notna(), "FTE_W1"]
+        wage = sub.loc[sub["WAGE_ST"].notna(), "WAGE_ST"]
+        meal = sub.loc[sub["PMEAL_W1"].notna(), "PMEAL_W1"]
+
+        md_rows.append(
+            [
+                label,
+                str(int(fte.shape[0])),
+                f"{float(fte.mean()):.2f}",
+                str(int(wage.shape[0])),
+                f"{float(wage.mean()):.2f}",
+                str(int(meal.shape[0])),
+                f"{float(meal.mean()):.2f}",
+            ]
+        )
+
+    md = markdown_table(
+        [
+            "State",
+            "n (FTE)",
+            "Wave 1 FTE",
+            "n (wage)",
+            "Starting wage ($/hr)",
+            "n (meal)",
+            "Full meal price",
+        ],
+        md_rows,
+    )
+
+    note = (
+        "_Note:_ Means use all non-missing values within each state (`na.rm`-style). "
+        "Counts differ across columns because some stores are missing individual items."
+    )
+    return md + "\n\n" + note
+
+
+display(Markdown("### Table 2 — Wave 1 means"))
+display(Markdown(wave1_table(df)))
+
+
+def table3_block(x: pd.DataFrame) -> tuple[pd.DataFrame, str]:
+    rows = []
+    for state, label in [(0, "Pennsylvania"), (1, "New Jersey")]:
+        sub = x.loc[x["STATE"] == state]
+        before = sub["FTE_W1"].mean()
+        after = sub["FTE_W2"].mean()
+        change = after - before
+        rows.append({"state": label, "wave1_fte": before, "wave2_fte": after, "change_fte": change})
+
+    out = pd.DataFrame(rows)
+    pa = out.loc[out["state"] == "Pennsylvania"].iloc[0]
+    nj = out.loc[out["state"] == "New Jersey"].iloc[0]
+
+    diff = pd.Series(
+        {
+            "state": "NJ − PA",
+            "wave1_fte": nj["wave1_fte"] - pa["wave1_fte"],
+            "wave2_fte": nj["wave2_fte"] - pa["wave2_fte"],
+            "change_fte": nj["change_fte"] - pa["change_fte"],
+        }
+    )
+
+    tbl = pd.concat([out, diff.to_frame().T], ignore_index=True)
+
+    md = markdown_table(
+        ["", "Pennsylvania", "New Jersey", "NJ − PA"],
+        [
+            [
+                "Wave 1 FTE",
+                f"{float(pa['wave1_fte']):.2f}",
+                f"{float(nj['wave1_fte']):.2f}",
+                f"{float(diff['wave1_fte']):.2f}",
+            ],
+            [
+                "Wave 2 FTE",
+                f"{float(pa['wave2_fte']):.2f}",
+                f"{float(nj['wave2_fte']):.2f}",
+                f"{float(diff['wave2_fte']):.2f}",
+            ],
+            [
+                "Change in mean FTE",
+                f"{float(pa['change_fte']):.2f}",
+                f"{float(nj['change_fte']):.2f}",
+                f"{float(diff['change_fte']):.2f}",
+            ],
+        ],
+    )
+
+    return tbl, md
+
+
+display(Markdown("### Table 3 — employment levels and changes"))
+tbl3, tbl3_md = table3_block(df)
+display(Markdown(tbl3_md))
+
+
+display(Markdown("### Table 4 — OLS (column (i) style)"))
+
+y = reg_df["D_FTE"].astype(float)
+X = sm.add_constant(reg_df["NJ"].astype(float))
+
+m_ols = sm.OLS(y, X).fit(cov_type="HC1")
+
+ols_tbl = pd.DataFrame(
+    {
+        "coef": m_ols.params,
+        "se": m_ols.bse,
+        "t": m_ols.tvalues,
+        "p": m_ols.pvalues,
+    }
+)
+
+ols_md_rows = [
+    [
+        str(i),
+        f"{float(r['coef']):.6f}",
+        f"{float(r['se']):.6f}",
+        f"{float(r['t']):.3f}",
+        f"{float(r['p']):.6f}",
+    ]
+    for i, r in ols_tbl.iterrows()
+]
+
+display(Markdown(markdown_table(["term", "coef", "se", "t", "p"], ols_md_rows)))
+
+beta = float(m_ols.params["NJ"])
+se = float(m_ols.bse["NJ"])
+nobs = int(m_ols.nobs)
+
+display(
+    Markdown(
+        f"""
+**Interpretation:** the estimated coefficient on the New Jersey dummy is **{beta:.3f}** FTE employees per store
+(HC1 robust SE **{se:.3f}**, $n={nobs}$).
+
+This lines up closely with published magnitudes, but it is not always identical to the paper’s printed **2.33**
+for a **357**-store sample when using this ASCII public-use extract: many replications end up with **351** usable rows
+under a “non-missing wages in both waves” rule.
+"""
+    )
+)
+
+
+plot_tbl = tbl3.loc[tbl3["state"].isin(["Pennsylvania", "New Jersey"])].copy()
+plot_tbl2 = plot_tbl.assign(wave="Wave 1", fte=plot_tbl["wave1_fte"])
+plot_tbl3 = plot_tbl.assign(wave="Wave 2", fte=plot_tbl["wave2_fte"])
+plot_df = pd.concat(
+    [plot_tbl2[["state", "wave", "fte"]], plot_tbl3[["state", "wave", "fte"]]],
+    ignore_index=True,
+)
+
+fig, ax = plt.subplots(figsize=(8.5, 4.2))
+sns.lineplot(
+    data=plot_df,
+    x="wave",
+    y="fte",
+    hue="state",
+    marker="o",
+    sort=False,
+    palette={"Pennsylvania": "#2e2825", "New Jersey": "#7a3b35"},
+    linewidth=2.2,
+    ax=ax,
+)
+ax.set_title("Difference-in-differences (visual)")
+ax.set_xlabel("")
+ax.set_ylabel("Mean FTE employees per store")
+ax.legend(title="", frameon=True, framealpha=0.95, edgecolor="#c9c2b6")
+plt.tight_layout()
+plt.show()
+```
+
+## Methodological note: why DiD is stronger than “NJ only”
+
+A before-and-after comparison in New Jersey alone conflates the minimum wage increase with *any* aggregate trend affecting fast-food employment between early 1992 and late 1992 (seasonality, local demand, macro shocks, supply disruptions, and so on). A Pennsylvania control group is meant to absorb those common shocks under a parallel trends assumption: absent the policy, NJ and PA would have evolved similarly. The difference-in-differences estimand compares *changes* across states, which removes time-invariant differences between regions and isolates a policy-induced shift relative to a credible counterfactual trend.
+
+```{=html}
+</div>
+
+<div class="footer-bar">
+  <span>© 2026 Eesha Jagdhane</span>
+  <span style="color: #7a3b35;">Built with Quarto</span>
+  <span>San Diego, CA</span>
+</div>
+```
