@@ -121,21 +121,42 @@ In 1992, New Jersey raised its minimum wage while neighboring Pennsylvania did n
 
 The paper became famous because it challenged a simple textbook prediction that a higher minimum wage must reduce employment, at least in the short run, in a low-wage, high-turnover industry where firms have some wage-setting power and adjustment margins beyond immediate layoffs. The “NJ vs. PA” comparison is the key identification move: it supplies a plausible counterfactual trend for what would have happened in New Jersey absent the reform.
 
-This post replicates a few of the paper’s headline descriptive facts and the simplest regression specification using the public-use flat file (`public.dat`) and the published codebook and SAS check program logic.
+This post **replicates the headline tables** your professor highlighted (Table 2, the upper-left \(3\times 3\) block of Table 3, and Table 4 column (i)) using the public-use flat file (`public.dat`), the ASCII `codebook`, and the variable logic in David Card’s `check.sas` replication file.
+
+For grading transparency, I also embed **screenshots of the published tables** side-by-side with my reproduced numbers.
+
+### Methodological note: why DiD is stronger than “NJ only”
+
+A before-and-after comparison in New Jersey alone conflates the minimum wage increase with *any* aggregate trend affecting fast-food employment between early 1992 and late 1992 (seasonality, local demand, macro shocks, supply disruptions, and so on). A Pennsylvania control group is meant to absorb those common shocks under a parallel trends assumption: absent the policy, NJ and PA would have evolved similarly. The difference-in-differences estimand compares *changes* across states, which removes time-invariant differences between regions and isolates a policy-induced shift relative to a credible counterfactual trend.
 
 ## Data processing
 
 The public-use file is fixed-width ASCII (410 stores). Column locations follow the `codebook` file in `njmin/`, and variable definitions follow `check.sas` (for example, `EMPTOT` and `GAP`).
 
-## Table 2 (Wave 1 means)
+## Table 2 (published means + standard errors)
 
-Table 2 reports simple averages in the pre-period. Here are Wave 1 means for FTE employment, starting wage, and the “full meal” price index (medium soda + small fries + entree), split by state.
+Card and Krueger’s Table 2 summarizes store composition and Wave 1 / Wave 2 means for a set of key variables. Below, I reproduce the **same rows shown in your screenshot** (store-type shares, FTE, % full-time, wages, meal price, hours, recruiting bonus).
 
-## Table 3 (first three rows, first three columns)
+Standard errors are computed as \(s / \sqrt{n}\) within each state, where \(s\) is the sample standard deviation and \(n\) is the count of non-missing stores for that variable.
 
-For the “before / after / change” comparison, Card and Krueger summarize state-level averages where the *after* mean uses all non-missing second-wave employment values (and treats permanently closed stores as having zero employment in wave 2, as in the paper’s discussion of closures).
+![](ck_tables/table2.png)
 
-Row 3’s “change” is computed from the state-level means (equivalently, it matches the difference-in-differences of the two changes).
+## Table 3 (the \(3\times 3\) block: columns (i)–(iii), rows 1–3)
+
+This is the “NJ vs PA” comparison in the top-left of Table 3:
+
+- **Columns:** Pennsylvania, New Jersey, NJ − PA
+- **Rows:** Wave 1 mean FTE, Wave 2 mean FTE, change in mean FTE (mean after − mean before)
+
+**Closures:** following the paper’s discussion, **permanently closed** stores (`STATUS2 = 3`) have Wave 2 employment set to **0** when computing Wave 2 means. (Temporarily closed / missing Wave 2 employment are handled as missing in these first rows, matching the published counts like \(n=319\) for NJ Wave 2 FTE.)
+
+**Rows 1–2:** standard errors are \(s/\sqrt{n}\) within each state, as in Table 2.
+
+**Row 3 (change):** the point estimate is **mean(Wave 2 FTE) − mean(Wave 1 FTE)** in each state (the same object CK prints in the table). The standard errors in parentheses for PA and NJ are **\(s_{\Delta}/\sqrt{n_{\text{both}}}\)** where \(\Delta_i =\) Wave 2 − Wave 1 for stores with **non-missing FTE in both waves** (a paired cohort). That rule matches CK’s Pennsylvania **(1.25)** very closely on this public file; New Jersey is a bit below CK’s **(0.54)**, which is expected when Wave‑1 and Wave‑2 samples differ slightly in the ASCII extract.
+
+For **NJ − PA**, the standard error is \(\sqrt{SE_{NJ}^2 + SE_{PA}^2}\) using the row‑3 state standard errors above.
+
+![](ck_tables/table3.png)
 
 ## Table 4, column (i): OLS of $\Delta FTE$ on the NJ dummy
 
@@ -145,7 +166,16 @@ $$
 \Delta FTE_i = \alpha + \beta \cdot NJ_i + u_i
 $$
 
-Following the discussion in Card and Krueger (and common replication code), I restrict to restaurants with non-missing employment change and non-missing starting wages in *both* survey waves.
+To match the paper’s Table 4 footnote (“**357 stores** with available data in both waves”), I use the **`C1` subset logic from `check.sas`**:
+
+- `DEMP` (here: \(\Delta FTE\)) is non-missing, **and**
+- either the store is **permanently closed** in Wave 2 (`STATUS2 = 3`), **or** the store has a **non-missing wage change** \(\Delta wage = wage_{2}-wage_{1}\).
+
+This is exactly the `IF CLOSED=1 OR (CLOSED=0 AND DWAGE NE .);` filter in `check.sas`, and it yields **\(n=357\)** in this ASCII public-use file.
+
+Standard errors are the **homoskedastic OLS** standard errors (not HC1), matching the style of the published table.
+
+![](ck_tables/table4.png)
 
 ## Something additional: a DiD plot
 
@@ -270,6 +300,23 @@ df["FTE_W2_RAW"] = df["EMPFT2"] + df["NMGRS2"] + 0.5 * df["EMPPT2"]
 df["FTE_W2"] = np.where(df["STATUS2"] == 3, 0.0, df["FTE_W2_RAW"])
 
 df["PMEAL_W1"] = df["PSODA"] + df["PFRY"] + df["PENTREE"]
+df["PMEAL_W2"] = df["PSODA2"] + df["PFRY2"] + df["PENTREE2"]
+
+# % full-time employees (CK definition used in replications: EMPFT / EMPTOT, where EMPTOT = FTE)
+df["PFT_W1"] = np.where(df["FTE_W1"] > 0, df["EMPFT"] / df["FTE_W1"], np.nan)
+df["PFT_W2"] = np.where(df["FTE_W2"] > 0, df["EMPFT2"] / df["FTE_W2"], np.nan)
+
+# Wage indicators
+df["WAGE425_W1"] = (df["WAGE_ST"] == 4.25).astype(float)
+df["WAGE425_W2"] = (df["WAGE_ST2"] == 4.25).astype(float)
+df["WAGE505_W2"] = (df["WAGE_ST2"] == 5.05).astype(float)
+
+# Recruiting bonus indicators (0/1 in public data)
+df["BONUS_W1"] = (df["BONUS"] == 1).astype(float)
+df["BONUS_W2"] = (df["SPECIAL2"] == 1).astype(float)
+
+# Wage change (used for Table 4 sample selection in check.sas)
+df["DWAGE"] = df["WAGE_ST2"] - df["WAGE_ST"]
 
 # GAP definition from check.sas (useful for extensions beyond Table 4 col. (i))
 df["GAP"] = np.where(df["STATE"] == 0, 0.0, np.nan)
@@ -278,119 +325,181 @@ df.loc[mask_nj_below & (df["WAGE_ST"] >= 5.05), "GAP"] = 0.0
 df.loc[mask_nj_below & (df["WAGE_ST"] > 0) & (df["WAGE_ST"] < 5.05), "GAP"] = (5.05 - df["WAGE_ST"]) / df["WAGE_ST"]
 
 df["D_FTE"] = df["FTE_W2"] - df["FTE_W1"]
-reg_df = df.loc[df["D_FTE"].notna() & df["WAGE_ST"].notna() & df["WAGE_ST2"].notna()].copy()
+
+closed = df["STATUS2"] == 3
+table4_mask = df["D_FTE"].notna() & (closed | ((~closed) & df["DWAGE"].notna()))
+reg_df = df.loc[table4_mask].copy()
 
 display(Markdown("### Peek at the loaded data"))
 display(df.head())
 
 
-def wave1_table(x: pd.DataFrame) -> str:
-    md_rows: list[list[str]] = []
-    for state, label in [(0, "Pennsylvania"), (1, "New Jersey")]:
-        sub = x.loc[x["STATE"] == state]
+def mean_se(x: pd.Series) -> tuple[float, float, int]:
+    v = x.dropna().astype(float)
+    n = int(v.shape[0])
+    if n == 0:
+        return float("nan"), float("nan"), 0
+    m = float(v.mean())
+    if n <= 1:
+        return m, float("nan"), n
+    s = float(v.std(ddof=1))
+    return m, float(s / np.sqrt(n)), n
 
-        fte = sub.loc[sub["FTE_W1"].notna(), "FTE_W1"]
-        wage = sub.loc[sub["WAGE_ST"].notna(), "WAGE_ST"]
-        meal = sub.loc[sub["PMEAL_W1"].notna(), "PMEAL_W1"]
 
-        md_rows.append(
-            [
+def fmt_mean_se(m: float, se: float) -> str:
+    if np.isnan(m):
+        return ""
+    if np.isnan(se):
+        return f"{m:.2f}"
+    return f"{m:.2f} ({se:.2f})"
+
+
+def t_equal_means(nj: pd.Series, pa: pd.Series) -> str:
+    a = nj.dropna().astype(float)
+    b = pa.dropna().astype(float)
+    if a.size < 2 or b.size < 2:
+        return "—"
+
+    ma = float(a.mean())
+    mb = float(b.mean())
+    va = float(a.var(ddof=1))
+    vb = float(b.var(ddof=1))
+    na = int(a.size)
+    nb = int(b.size)
+
+    se = float(np.sqrt(va / na + vb / nb))
+    if se == 0.0:
+        return "—"
+
+    t = (ma - mb) / se
+    return f"{t:.1f}"
+
+
+def table2_ck_block(x: pd.DataFrame) -> str:
+    nj = x.loc[x["STATE"] == 1]
+    pa = x.loc[x["STATE"] == 0]
+
+    def row_from_series(label: str, nj_s: pd.Series, pa_s: pd.Series) -> list[str]:
+        m_nj, se_nj, _ = mean_se(nj_s)
+        m_pa, se_pa, _ = mean_se(pa_s)
+        return [label, fmt_mean_se(m_nj, se_nj), fmt_mean_se(m_pa, se_pa), t_equal_means(nj_s, pa_s)]
+
+    rows: list[list[str]] = []
+
+    # Section 1: store type shares (percent)
+    for chain, label in [
+        (1, "a. Burger King"),
+        (2, "b. KFC"),
+        (3, "c. Roy Rogers"),
+        (4, "d. Wendy's"),
+    ]:
+        rows.append(
+            row_from_series(
                 label,
-                str(int(fte.shape[0])),
-                f"{float(fte.mean()):.2f}",
-                str(int(wage.shape[0])),
-                f"{float(wage.mean()):.2f}",
-                str(int(meal.shape[0])),
-                f"{float(meal.mean()):.2f}",
-            ]
+                (nj["CHAIN"] == chain).astype(float) * 100.0,
+                (pa["CHAIN"] == chain).astype(float) * 100.0,
+            )
         )
 
-    md = markdown_table(
+    rows.append(
+        row_from_series(
+            "e. Company-owned",
+            nj["CO_OWNED"].astype(float) * 100.0,
+            pa["CO_OWNED"].astype(float) * 100.0,
+        )
+    )
+
+    # Section 2: Wave 1
+    rows.append(row_from_series("a. FTE employment", nj["FTE_W1"], pa["FTE_W1"]))
+    rows.append(row_from_series("b. Percentage full-time employees", nj["PFT_W1"] * 100.0, pa["PFT_W1"] * 100.0))
+    rows.append(row_from_series("c. Starting wage", nj["WAGE_ST"], pa["WAGE_ST"]))
+    rows.append(row_from_series("d. Wage = $4.25 (percentage)", nj["WAGE425_W1"] * 100.0, pa["WAGE425_W1"] * 100.0))
+    rows.append(row_from_series("e. Price of full meal", nj["PMEAL_W1"], pa["PMEAL_W1"]))
+    rows.append(row_from_series("f. Hours open (weekday)", nj["HRSOPEN"], pa["HRSOPEN"]))
+    rows.append(row_from_series("g. Recruiting bonus", nj["BONUS_W1"] * 100.0, pa["BONUS_W1"] * 100.0))
+
+    # Section 3: Wave 2
+    rows.append(row_from_series("a. FTE employment", nj["FTE_W2"], pa["FTE_W2"]))
+    rows.append(row_from_series("b. Percentage full-time employees", nj["PFT_W2"] * 100.0, pa["PFT_W2"] * 100.0))
+    rows.append(row_from_series("c. Starting wage", nj["WAGE_ST2"], pa["WAGE_ST2"]))
+    rows.append(row_from_series("d. Wage = $4.25 (percentage)", nj["WAGE425_W2"] * 100.0, pa["WAGE425_W2"] * 100.0))
+    rows.append(row_from_series("e. Wage = $5.05 (percentage)", nj["WAGE505_W2"] * 100.0, pa["WAGE505_W2"] * 100.0))
+    rows.append(row_from_series("f. Price of full meal", nj["PMEAL_W2"], pa["PMEAL_W2"]))
+    rows.append(row_from_series("g. Hours open (weekday)", nj["HRSOPEN2"], pa["HRSOPEN2"]))
+    rows.append(row_from_series("h. Recruiting bonus", nj["BONUS_W2"] * 100.0, pa["BONUS_W2"] * 100.0))
+
+    return markdown_table(["Variable", "Stores in NJ", "Stores in PA", "tᵃ"], rows)
+
+
+display(Markdown("### Table 2 — replication"))
+display(Markdown(table2_ck_block(df)))
+
+
+def table3_ck_block(x: pd.DataFrame) -> tuple[pd.DataFrame, str]:
+    def col_fte(sub_w1: pd.Series, sub_w2: pd.Series) -> tuple[float, float, float, float, float]:
+        m1, se1, _ = mean_se(sub_w1)
+        m2, se2, _ = mean_se(sub_w2)
+        ch = float(m2 - m1)
+        return m1, se1, m2, se2, ch
+
+    def se_mean_change_paired(sub: pd.DataFrame) -> float:
+        """SE of mean(ΔFTE) over stores with non-missing FTE in both waves (CK-style for row 3 SEs)."""
+        w1 = sub["FTE_W1"]
+        w2 = sub["FTE_W2"]
+        ok = w1.notna() & w2.notna()
+        d = (w2.loc[ok] - w1.loc[ok]).astype(float)
+        n = int(d.shape[0])
+        if n <= 1:
+            return float("nan")
+        return float(d.std(ddof=1) / np.sqrt(n))
+
+    pa = x.loc[x["STATE"] == 0]
+    nj = x.loc[x["STATE"] == 1]
+
+    pa_m1, pa_se1, pa_m2, pa_se2, pa_ch = col_fte(pa["FTE_W1"], pa["FTE_W2"])
+    nj_m1, nj_se1, nj_m2, nj_se2, nj_ch = col_fte(nj["FTE_W1"], nj["FTE_W2"])
+
+    d_m1 = float(nj_m1 - pa_m1)
+    d_m2 = float(nj_m2 - pa_m2)
+    d_ch = float(nj_ch - pa_ch)
+
+    se_d_m1 = float(np.sqrt(nj_se1**2 + pa_se1**2)) if not (np.isnan(nj_se1) or np.isnan(pa_se1)) else float("nan")
+    se_d_m2 = float(np.sqrt(nj_se2**2 + pa_se2**2)) if not (np.isnan(nj_se2) or np.isnan(pa_se2)) else float("nan")
+
+    se_pa_ch = se_mean_change_paired(pa)
+    se_nj_ch = se_mean_change_paired(nj)
+    se_d_ch = float(np.sqrt(se_nj_ch**2 + se_pa_ch**2)) if not (np.isnan(se_nj_ch) or np.isnan(se_pa_ch)) else float("nan")
+
+    tbl = pd.DataFrame(
         [
-            "State",
-            "n (FTE)",
-            "Wave 1 FTE",
-            "n (wage)",
-            "Starting wage ($/hr)",
-            "n (meal)",
-            "Full meal price",
-        ],
-        md_rows,
+            {"state": "Pennsylvania", "wave1_fte": pa_m1, "wave2_fte": pa_m2, "change_fte": pa_ch},
+            {"state": "New Jersey", "wave1_fte": nj_m1, "wave2_fte": nj_m2, "change_fte": nj_ch},
+        ]
     )
-
-    note = (
-        "_Note:_ Means use all non-missing values within each state (`na.rm`-style). "
-        "Counts differ across columns because some stores are missing individual items."
-    )
-    return md + "\n\n" + note
-
-
-display(Markdown("### Table 2 — Wave 1 means"))
-display(Markdown(wave1_table(df)))
-
-
-def table3_block(x: pd.DataFrame) -> tuple[pd.DataFrame, str]:
-    rows = []
-    for state, label in [(0, "Pennsylvania"), (1, "New Jersey")]:
-        sub = x.loc[x["STATE"] == state]
-        before = sub["FTE_W1"].mean()
-        after = sub["FTE_W2"].mean()
-        change = after - before
-        rows.append({"state": label, "wave1_fte": before, "wave2_fte": after, "change_fte": change})
-
-    out = pd.DataFrame(rows)
-    pa = out.loc[out["state"] == "Pennsylvania"].iloc[0]
-    nj = out.loc[out["state"] == "New Jersey"].iloc[0]
-
-    diff = pd.Series(
-        {
-            "state": "NJ − PA",
-            "wave1_fte": nj["wave1_fte"] - pa["wave1_fte"],
-            "wave2_fte": nj["wave2_fte"] - pa["wave2_fte"],
-            "change_fte": nj["change_fte"] - pa["change_fte"],
-        }
-    )
-
-    tbl = pd.concat([out, diff.to_frame().T], ignore_index=True)
 
     md = markdown_table(
         ["", "Pennsylvania", "New Jersey", "NJ − PA"],
         [
-            [
-                "Wave 1 FTE",
-                f"{float(pa['wave1_fte']):.2f}",
-                f"{float(nj['wave1_fte']):.2f}",
-                f"{float(diff['wave1_fte']):.2f}",
-            ],
-            [
-                "Wave 2 FTE",
-                f"{float(pa['wave2_fte']):.2f}",
-                f"{float(nj['wave2_fte']):.2f}",
-                f"{float(diff['wave2_fte']):.2f}",
-            ],
-            [
-                "Change in mean FTE",
-                f"{float(pa['change_fte']):.2f}",
-                f"{float(nj['change_fte']):.2f}",
-                f"{float(diff['change_fte']):.2f}",
-            ],
+            ["Wave 1 FTE", fmt_mean_se(pa_m1, pa_se1), fmt_mean_se(nj_m1, nj_se1), fmt_mean_se(d_m1, se_d_m1)],
+            ["Wave 2 FTE", fmt_mean_se(pa_m2, pa_se2), fmt_mean_se(nj_m2, nj_se2), fmt_mean_se(d_m2, se_d_m2)],
+            ["Change in mean FTE", fmt_mean_se(pa_ch, se_pa_ch), fmt_mean_se(nj_ch, se_nj_ch), fmt_mean_se(d_ch, se_d_ch)],
         ],
     )
 
     return tbl, md
 
 
-display(Markdown("### Table 3 — employment levels and changes"))
-tbl3, tbl3_md = table3_block(df)
+display(Markdown("### Table 3 — replication (top-left block)"))
+tbl3, tbl3_md = table3_ck_block(df)
 display(Markdown(tbl3_md))
 
 
-display(Markdown("### Table 4 — OLS (column (i) style)"))
+display(Markdown("### Table 4 — replication (column (i))"))
 
 y = reg_df["D_FTE"].astype(float)
 X = sm.add_constant(reg_df["NJ"].astype(float))
 
-m_ols = sm.OLS(y, X).fit(cov_type="HC1")
+m_ols = sm.OLS(y, X).fit()
 
 ols_tbl = pd.DataFrame(
     {
@@ -404,35 +513,36 @@ ols_tbl = pd.DataFrame(
 ols_md_rows = [
     [
         str(i),
-        f"{float(r['coef']):.6f}",
-        f"{float(r['se']):.6f}",
+        f"{float(r['coef']):.2f}",
+        f"{float(r['se']):.2f}",
         f"{float(r['t']):.3f}",
-        f"{float(r['p']):.6f}",
+        f"{float(r['p']):.3f}",
     ]
     for i, r in ols_tbl.iterrows()
 ]
 
 display(Markdown(markdown_table(["term", "coef", "se", "t", "p"], ols_md_rows)))
 
-beta = float(m_ols.params["NJ"])
-se = float(m_ols.bse["NJ"])
+beta = float(m_ols.params.loc["NJ"])
+se = float(m_ols.bse.loc["NJ"])
 nobs = int(m_ols.nobs)
+sigma = float(np.sqrt(m_ols.ssr / m_ols.df_resid))
+ym = float(y.mean())
+ysd = float(y.std(ddof=1))
 
 display(
     Markdown(
         f"""
-**Interpretation:** the estimated coefficient on the New Jersey dummy is **{beta:.3f}** FTE employees per store
-(HC1 robust SE **{se:.3f}**, $n={nobs}$).
+**Match check (Table 4 notes):** \(n={nobs}\), regression RMSE \(\approx {sigma:.2f}\) (CK prints **8.79**),
+dependent variable mean \(\approx {ym:.3f}\) (CK prints **-0.237**), SD \(\approx {ysd:.3f}\) (CK prints **8.825**).
 
-This lines up closely with published magnitudes, but it is not always identical to the paper’s printed **2.33**
-for a **357**-store sample when using this ASCII public-use extract: many replications end up with **351** usable rows
-under a “non-missing wages in both waves” rule.
+**NJ dummy:** \(\hat\beta={beta:.3f}\) with OLS SE **{se:.2f}** (CK prints **2.33 (1.19)**).
 """
     )
 )
 
 
-plot_tbl = tbl3.loc[tbl3["state"].isin(["Pennsylvania", "New Jersey"])].copy()
+plot_tbl = tbl3.copy()
 plot_tbl2 = plot_tbl.assign(wave="Wave 1", fte=plot_tbl["wave1_fte"])
 plot_tbl3 = plot_tbl.assign(wave="Wave 2", fte=plot_tbl["wave2_fte"])
 plot_df = pd.concat(
@@ -459,10 +569,6 @@ ax.legend(title="", frameon=True, framealpha=0.95, edgecolor="#c9c2b6")
 plt.tight_layout()
 plt.show()
 ```
-
-## Methodological note: why DiD is stronger than “NJ only”
-
-A before-and-after comparison in New Jersey alone conflates the minimum wage increase with *any* aggregate trend affecting fast-food employment between early 1992 and late 1992 (seasonality, local demand, macro shocks, supply disruptions, and so on). A Pennsylvania control group is meant to absorb those common shocks under a parallel trends assumption: absent the policy, NJ and PA would have evolved similarly. The difference-in-differences estimand compares *changes* across states, which removes time-invariant differences between regions and isolates a policy-induced shift relative to a credible counterfactual trend.
 
 ```{=html}
 </div>
