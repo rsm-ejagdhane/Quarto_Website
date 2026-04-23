@@ -239,6 +239,8 @@ This is exactly the `IF CLOSED=1 OR (CLOSED=0 AND DWAGE NE .);` filter in `check
 
 Standard errors are the **homoskedastic OLS** standard errors (not HC1), matching the style of the published table.
 
+Card and Krueger’s printed Table 4 **does not list the intercept**, \(t\)-statistics, or \(p\)-values for column (i); it reports the **NJ dummy** (coefficient with SE in parentheses), **no** chain/region controls, and the **standard error of the regression** (RMSE). The replication below uses that same layout; the intercept is still estimated in the OLS (it equals the mean \(\Delta\)FTE in Pennsylvania in this sample) but is omitted from the table to match the paper.
+
 ![](ck_tables/table4.png)
 
 ## Something additional: a DiD plot
@@ -565,42 +567,35 @@ X = sm.add_constant(reg_df["NJ"].astype(float))
 
 m_ols = sm.OLS(y, X).fit()
 
-ols_tbl = pd.DataFrame(
-    {
-        "coef": m_ols.params,
-        "se": m_ols.bse,
-        "t": m_ols.tvalues,
-        "p": m_ols.pvalues,
-    }
-)
-
-ols_md_rows = [
-    [
-        str(i),
-        f"{float(r['coef']):.2f}",
-        f"{float(r['se']):.2f}",
-        f"{float(r['t']):.3f}",
-        f"{float(r['p']):.3f}",
-    ]
-    for i, r in ols_tbl.iterrows()
-]
-
-display(Markdown(markdown_table(["term", "coef", "se", "t", "p"], ols_md_rows)))
-
-beta = float(m_ols.params.loc["NJ"])
-se = float(m_ols.bse.loc["NJ"])
-nobs = int(m_ols.nobs)
+beta_nj = float(m_ols.params.loc["NJ"])
+se_nj = float(m_ols.bse.loc["NJ"])
+alpha_hat = float(m_ols.params.loc["const"])
 sigma = float(np.sqrt(m_ols.ssr / m_ols.df_resid))
+
+# Published Table 4 column (i) layout (CK does not print the intercept, t, or p in the table body).
+t4_ck_rows = [
+    ["1. New Jersey dummy", f"{beta_nj:.2f} ({se_nj:.2f})"],
+    ["2. Initial wage gap", "—"],
+    ["3. Controls for chain and ownership", "no"],
+    ["4. Controls for region", "no"],
+    ["5. Standard error of regression", f"{sigma:.2f}"],
+    ["6. Probability value for controls", "—"],
+]
+display(Markdown(markdown_table(["", "(i)"], t4_ck_rows)))
+
+nobs = int(m_ols.nobs)
 ym = float(y.mean())
 ysd = float(y.std(ddof=1))
 
 display(
     Markdown(
         f"""
+**Diagnostics (not printed in CK Table 4):** intercept \(\hat\alpha \approx {alpha_hat:.2f}\) (mean \(\Delta\)FTE for Pennsylvania in this \(n={nobs}\) sample).
+
 **Match check (Table 4 notes):** \(n={nobs}\), regression RMSE \(\approx {sigma:.2f}\) (CK prints **8.79**),
 dependent variable mean \(\approx {ym:.3f}\) (CK prints **-0.237**), SD \(\approx {ysd:.3f}\) (CK prints **8.825**).
 
-**NJ dummy:** \(\hat\beta={beta:.3f}\) with OLS SE **{se:.2f}** (CK prints **2.33 (1.19)**).
+**NJ dummy:** \(\hat\beta={beta_nj:.3f}\) with OLS SE **{se_nj:.2f}** (CK prints **2.33 (1.19)**).
 """
     )
 )
