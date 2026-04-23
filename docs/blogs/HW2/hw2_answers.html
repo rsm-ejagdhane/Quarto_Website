@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>hw2_answers – Eesha Jagdhane</title>
+<title>Minimum Wages and Employment (Card &amp; Krueger replication) – Eesha Jagdhane</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -92,7 +92,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <body>
 
 
+<header id="title-block-header">
+<h1 class="title">Minimum Wages and Employment (Card &amp; Krueger replication)</h1>
 
+</header>
 
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&amp;family=DM+Sans:wght@300;400;500&amp;display=swap" rel="stylesheet">
@@ -286,7 +289,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="ck_tables/table4.png" class="img-fluid"></p>
 <h2 id="something-additional-a-did-plot" class="anchored">Something additional: a DiD plot</h2>
 <p>This figure summarizes the Table 3 comparison visually: Pennsylvania provides the “would have happened anyway” trend between waves, while New Jersey deviates upward in the second wave relative to that benchmark.</p>
-<div id="a8607a8b" class="cell" data-execution_count="1">
+<div id="ec8f916b" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Show Python code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> __future__ <span class="im">import</span> annotations</span>
@@ -654,25 +657,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-363"><a href="#cb1-363" aria-hidden="true" tabindex="-1"></a>    [plot_tbl2[[<span class="st">"state"</span>, <span class="st">"wave"</span>, <span class="st">"fte"</span>]], plot_tbl3[[<span class="st">"state"</span>, <span class="st">"wave"</span>, <span class="st">"fte"</span>]]],</span>
 <span id="cb1-364"><a href="#cb1-364" aria-hidden="true" tabindex="-1"></a>    ignore_index<span class="op">=</span><span class="va">True</span>,</span>
 <span id="cb1-365"><a href="#cb1-365" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-366"><a href="#cb1-366" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-367"><a href="#cb1-367" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="fl">8.5</span>, <span class="fl">4.2</span>))</span>
-<span id="cb1-368"><a href="#cb1-368" aria-hidden="true" tabindex="-1"></a>sns.lineplot(</span>
-<span id="cb1-369"><a href="#cb1-369" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span>plot_df,</span>
-<span id="cb1-370"><a href="#cb1-370" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">"wave"</span>,</span>
-<span id="cb1-371"><a href="#cb1-371" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">"fte"</span>,</span>
-<span id="cb1-372"><a href="#cb1-372" aria-hidden="true" tabindex="-1"></a>    hue<span class="op">=</span><span class="st">"state"</span>,</span>
-<span id="cb1-373"><a href="#cb1-373" aria-hidden="true" tabindex="-1"></a>    marker<span class="op">=</span><span class="st">"o"</span>,</span>
-<span id="cb1-374"><a href="#cb1-374" aria-hidden="true" tabindex="-1"></a>    sort<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb1-375"><a href="#cb1-375" aria-hidden="true" tabindex="-1"></a>    palette<span class="op">=</span>{<span class="st">"Pennsylvania"</span>: <span class="st">"#2e2825"</span>, <span class="st">"New Jersey"</span>: <span class="st">"#7a3b35"</span>},</span>
-<span id="cb1-376"><a href="#cb1-376" aria-hidden="true" tabindex="-1"></a>    linewidth<span class="op">=</span><span class="fl">2.2</span>,</span>
-<span id="cb1-377"><a href="#cb1-377" aria-hidden="true" tabindex="-1"></a>    ax<span class="op">=</span>ax,</span>
-<span id="cb1-378"><a href="#cb1-378" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-379"><a href="#cb1-379" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Difference-in-differences (visual)"</span>)</span>
-<span id="cb1-380"><a href="#cb1-380" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">""</span>)</span>
-<span id="cb1-381"><a href="#cb1-381" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Mean FTE employees per store"</span>)</span>
-<span id="cb1-382"><a href="#cb1-382" aria-hidden="true" tabindex="-1"></a>ax.legend(title<span class="op">=</span><span class="st">""</span>, frameon<span class="op">=</span><span class="va">True</span>, framealpha<span class="op">=</span><span class="fl">0.95</span>, edgecolor<span class="op">=</span><span class="st">"#c9c2b6"</span>)</span>
-<span id="cb1-383"><a href="#cb1-383" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb1-384"><a href="#cb1-384" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-366"><a href="#cb1-366" aria-hidden="true" tabindex="-1"></a>wave_order <span class="op">=</span> [<span class="st">"Wave 1"</span>, <span class="st">"Wave 2"</span>]</span>
+<span id="cb1-367"><a href="#cb1-367" aria-hidden="true" tabindex="-1"></a>state_order <span class="op">=</span> [<span class="st">"Pennsylvania"</span>, <span class="st">"New Jersey"</span>]</span>
+<span id="cb1-368"><a href="#cb1-368" aria-hidden="true" tabindex="-1"></a>plot_df <span class="op">=</span> plot_df.copy()</span>
+<span id="cb1-369"><a href="#cb1-369" aria-hidden="true" tabindex="-1"></a>plot_df[<span class="st">"wave"</span>] <span class="op">=</span> pd.Categorical(plot_df[<span class="st">"wave"</span>], categories<span class="op">=</span>wave_order, ordered<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb1-370"><a href="#cb1-370" aria-hidden="true" tabindex="-1"></a>plot_df[<span class="st">"state"</span>] <span class="op">=</span> pd.Categorical(plot_df[<span class="st">"state"</span>], categories<span class="op">=</span>state_order, ordered<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb1-371"><a href="#cb1-371" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-372"><a href="#cb1-372" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="fl">8.5</span>, <span class="fl">4.2</span>))</span>
+<span id="cb1-373"><a href="#cb1-373" aria-hidden="true" tabindex="-1"></a>sns.lineplot(</span>
+<span id="cb1-374"><a href="#cb1-374" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span>plot_df,</span>
+<span id="cb1-375"><a href="#cb1-375" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">"wave"</span>,</span>
+<span id="cb1-376"><a href="#cb1-376" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">"fte"</span>,</span>
+<span id="cb1-377"><a href="#cb1-377" aria-hidden="true" tabindex="-1"></a>    hue<span class="op">=</span><span class="st">"state"</span>,</span>
+<span id="cb1-378"><a href="#cb1-378" aria-hidden="true" tabindex="-1"></a>    marker<span class="op">=</span><span class="st">"o"</span>,</span>
+<span id="cb1-379"><a href="#cb1-379" aria-hidden="true" tabindex="-1"></a>    sort<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb1-380"><a href="#cb1-380" aria-hidden="true" tabindex="-1"></a>    palette<span class="op">=</span>{<span class="st">"Pennsylvania"</span>: <span class="st">"#2e2825"</span>, <span class="st">"New Jersey"</span>: <span class="st">"#7a3b35"</span>},</span>
+<span id="cb1-381"><a href="#cb1-381" aria-hidden="true" tabindex="-1"></a>    linewidth<span class="op">=</span><span class="fl">2.2</span>,</span>
+<span id="cb1-382"><a href="#cb1-382" aria-hidden="true" tabindex="-1"></a>    ax<span class="op">=</span>ax,</span>
+<span id="cb1-383"><a href="#cb1-383" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-384"><a href="#cb1-384" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Difference-in-differences (visual)"</span>)</span>
+<span id="cb1-385"><a href="#cb1-385" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">""</span>)</span>
+<span id="cb1-386"><a href="#cb1-386" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Mean FTE employees per store"</span>)</span>
+<span id="cb1-387"><a href="#cb1-387" aria-hidden="true" tabindex="-1"></a>ax.legend(title<span class="op">=</span><span class="st">""</span>, frameon<span class="op">=</span><span class="va">True</span>, framealpha<span class="op">=</span><span class="fl">0.95</span>, edgecolor<span class="op">=</span><span class="st">"#c9c2b6"</span>)</span>
+<span id="cb1-388"><a href="#cb1-388" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb1-389"><a href="#cb1-389" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <section id="peek-at-the-loaded-data" class="cell-output cell-output-display cell-output-markdown">
 <h3 class="anchored">Peek at the loaded data</h3>

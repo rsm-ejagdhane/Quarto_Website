@@ -1,4 +1,5 @@
 ---
+title: "Minimum Wages and Employment (Card & Krueger replication)"
 format:
   html:
     toc: false
@@ -6,6 +7,7 @@ format:
     theme: none
     fig-format: png
     fig-dpi: 150
+    title-block: false
     code-fold: true
     code-summary: "Show Python code"
     include-in-header: mathjax.html
@@ -607,6 +609,11 @@ plot_df = pd.concat(
     [plot_tbl2[["state", "wave", "fte"]], plot_tbl3[["state", "wave", "fte"]]],
     ignore_index=True,
 )
+wave_order = ["Wave 1", "Wave 2"]
+state_order = ["Pennsylvania", "New Jersey"]
+plot_df = plot_df.copy()
+plot_df["wave"] = pd.Categorical(plot_df["wave"], categories=wave_order, ordered=True)
+plot_df["state"] = pd.Categorical(plot_df["state"], categories=state_order, ordered=True)
 
 fig, ax = plt.subplots(figsize=(8.5, 4.2))
 sns.lineplot(

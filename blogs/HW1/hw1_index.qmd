@@ -1,4 +1,5 @@
 ---
+title: "A/B Testing a Call to Action"
 format:
   html:
     toc: false
@@ -6,6 +7,7 @@ format:
     theme: none
     fig-format: png
     fig-dpi: 150
+    title-block: false
     include-in-header: mathjax.html
 jupyter: python3
 execute:
