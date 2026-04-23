@@ -172,6 +172,62 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     .back-link { margin: 1.5rem; }
     .footer-bar { margin: 0 1.5rem; flex-direction: column; gap: 0.5rem; }
   }
+  /* Folded code: Quarto wraps source in <details>; style summary as a button + state hint */
+  body details:has(pre.sourceCode) {
+    margin: 0 0 1.25rem 0;
+    border: 1px solid #c9c2b6;
+    border-radius: 2px;
+    background: #e8e3da;
+    padding: 0;
+  }
+  body details:has(pre.sourceCode) > summary {
+    cursor: pointer;
+    list-style: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #f0ece4;
+    background: #2e2825;
+    border: none;
+    border-radius: 2px 2px 0 0;
+    padding: 0.55rem 1rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  body details:has(pre.sourceCode) > summary::-webkit-details-marker { display: none; }
+  body details:has(pre.sourceCode) > summary::marker { content: ''; }
+  body details:has(pre.sourceCode) > summary::after {
+    content: "collapsed";
+    font-size: 0.68rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #c9c2b6;
+    border: 1px solid #8a8278;
+    border-radius: 2px;
+    padding: 0.2rem 0.5rem;
+    flex-shrink: 0;
+  }
+  body details:has(pre.sourceCode)[open] > summary {
+    background: #7a3b35;
+    border-bottom: 1px solid #c9a09b;
+    border-radius: 2px 2px 0 0;
+  }
+  body details:has(pre.sourceCode)[open] > summary::after {
+    content: "expanded";
+    color: #f0ece4;
+    border-color: #f0ece4;
+  }
+  body details:has(pre.sourceCode) pre.sourceCode {
+    margin: 0 !important;
+    border-radius: 0 0 2px 2px !important;
+    border-top: none !important;
+  }
 </style>
 
 <div class="nav">
@@ -230,7 +286,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="ck_tables/table4.png" class="img-fluid"></p>
 <h2 id="something-additional-a-did-plot" class="anchored">Something additional: a DiD plot</h2>
 <p>This figure summarizes the Table 3 comparison visually: Pennsylvania provides the “would have happened anyway” trend between waves, while New Jersey deviates upward in the second wave relative to that benchmark.</p>
-<div id="e22d72e4" class="cell" data-execution_count="1">
+<div id="a8607a8b" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Show Python code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> __future__ <span class="im">import</span> annotations</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
@@ -615,6 +673,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-382"><a href="#cb1-382" aria-hidden="true" tabindex="-1"></a>ax.legend(title<span class="op">=</span><span class="st">""</span>, frameon<span class="op">=</span><span class="va">True</span>, framealpha<span class="op">=</span><span class="fl">0.95</span>, edgecolor<span class="op">=</span><span class="st">"#c9c2b6"</span>)</span>
 <span id="cb1-383"><a href="#cb1-383" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb1-384"><a href="#cb1-384" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
 <section id="peek-at-the-loaded-data" class="cell-output cell-output-display cell-output-markdown">
 <h3 class="anchored">Peek at the loaded data</h3>
 <p>Average FTE employment before and after the minimum-wage increase, by state (public-use sample).</p>
