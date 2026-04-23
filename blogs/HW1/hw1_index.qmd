@@ -1,5 +1,4 @@
 ---
-title: "A/B Testing a Call to Action"
 format:
   html:
     toc: false
@@ -7,7 +6,7 @@ format:
     theme: none
     fig-format: png
     fig-dpi: 150
-    title-block: false
+    title-block-style: none
     include-in-header: mathjax.html
 jupyter: python3
 execute:
@@ -21,6 +20,11 @@ execute:
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { background: #f0ece4; color: #2e2825; font-family: 'DM Sans', sans-serif; }
+  /* No automatic Quarto title banner — custom post-header only */
+  #title-block-header,
+  header#title-block-header {
+    display: none !important;
+  }
   a { color: inherit; text-decoration: none; }
   .nav {
     display: flex; justify-content: space-between; align-items: center;

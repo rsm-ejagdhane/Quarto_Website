@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Minimum Wages and Employment (Card &amp; Krueger replication) – Eesha Jagdhane</title>
+<title>hw2_answers – Eesha Jagdhane</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -92,16 +92,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <body>
 
 
-<header id="title-block-header">
-<h1 class="title">Minimum Wages and Employment (Card &amp; Krueger replication)</h1>
 
-</header>
 
 
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&amp;family=DM+Sans:wght@300;400;500&amp;display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { background: #f0ece4; color: #2e2825; font-family: 'DM Sans', sans-serif; }
+  /* No automatic Quarto title banner — custom post-header only */
+  #title-block-header,
+  header#title-block-header {
+    display: none !important;
+  }
   a { color: inherit; text-decoration: none; }
   .nav {
     display: flex; justify-content: space-between; align-items: center;
@@ -289,7 +291,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><img src="ck_tables/table4.png" class="img-fluid"></p>
 <h2 id="something-additional-a-did-plot" class="anchored">Something additional: a DiD plot</h2>
 <p>This figure summarizes the Table 3 comparison visually: Pennsylvania provides the “would have happened anyway” trend between waves, while New Jersey deviates upward in the second wave relative to that benchmark.</p>
-<div id="ec8f916b" class="cell" data-execution_count="1">
+<div id="1cb63209" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Show Python code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> __future__ <span class="im">import</span> annotations</span>
