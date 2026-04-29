@@ -257,8 +257,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 id="introduction" class="anchored">Introduction</h2>
 <p>In 1992, New Jersey raised its minimum wage while neighboring Pennsylvania did not. David Card and Alan Krueger exploited this policy discontinuity as a <em>natural experiment</em>: fast-food restaurants in eastern Pennsylvania serve as a comparison group for restaurants in New Jersey that faced the same local demand shocks but not the same minimum-wage shock. The authors surveyed stores before and after the policy change and compared employment, wages, and prices across states and across waves.</p>
 <p>The paper became famous because it challenged a simple textbook prediction that a higher minimum wage must reduce employment, at least in the short run, in a low-wage, high-turnover industry where firms have some wage-setting power and adjustment margins beyond immediate layoffs. The “NJ vs.&nbsp;PA” comparison is the key identification move: it supplies a plausible counterfactual trend for what would have happened in New Jersey absent the reform.</p>
-<p>This post <strong>replicates the headline tables</strong> your professor highlighted (Table 2, the upper-left (3) block of Table 3, and Table 4 column (i)) using the public-use flat file (<code>public.dat</code>), the ASCII <code>codebook</code>, and the variable logic in David Card’s <code>check.sas</code> replication file.</p>
-<p>For grading transparency, I also embed <strong>screenshots of the published tables</strong> side-by-side with my reproduced numbers.</p>
+<p>This post <strong>replicates the headline tables</strong> from the paper (Table 2, the upper-left (3) block of Table 3, and Table 4 column (i)) using the public-use flat file (<code>public.dat</code>), the ASCII <code>codebook</code>, and the variable logic in David Card’s <code>check.sas</code> replication file.</p>
+<p>For reproducibility, I also embed <strong>screenshots of the published tables</strong> alongside my reproduced numbers.</p>
 <h3 id="methodological-note-why-did-is-stronger-than-nj-only" class="anchored">Methodological note: why DiD is stronger than “NJ only”</h3>
 <p>A before-and-after comparison in New Jersey alone conflates the minimum wage increase with <em>any</em> aggregate trend affecting fast-food employment between early 1992 and late 1992 (seasonality, local demand, macro shocks, supply disruptions, and so on). A Pennsylvania control group is meant to absorb those common shocks under a parallel trends assumption: absent the policy, NJ and PA would have evolved similarly. The difference-in-differences estimand compares <em>changes</em> across states, which removes time-invariant differences between regions and isolates a policy-induced shift relative to a credible counterfactual trend.</p>
 <h2 id="data-processing" class="anchored">Data processing</h2>
@@ -290,9 +290,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Standard errors are the <strong>homoskedastic OLS</strong> standard errors (not HC1), matching the style of the published table.</p>
 <p>Card and Krueger’s printed Table 4 <strong>does not list the intercept</strong>, (t)-statistics, or (p)-values for column (i); it reports the <strong>NJ dummy</strong> (coefficient with SE in parentheses), <strong>no</strong> chain/region controls, and the <strong>standard error of the regression</strong> (RMSE). The replication below uses that same layout; the intercept is still estimated in the OLS (it equals the mean ()FTE in Pennsylvania in this sample) but is omitted from the table to match the paper.</p>
 <p><img src="ck_tables/table4.png" class="img-fluid"></p>
-<h2 id="something-additional-a-did-plot" class="anchored">Something additional: a DiD plot</h2>
-<p>This figure summarizes the Table 3 comparison visually: Pennsylvania provides the “would have happened anyway” trend between waves, while New Jersey deviates upward in the second wave relative to that benchmark.</p>
-<div id="01fc0adc" class="cell" data-execution_count="1">
+<h2 id="visual-summary-difference-in-differences" class="anchored">Visual Summary: Difference-in-Differences</h2>
+<p>The plots below make the Table 3 numbers concrete. The first shows the parallel-trends logic: Pennsylvania’s trend is the counterfactual for what would have happened in New Jersey absent the reform. The dashed line extends New Jersey’s Wave-1 level by the same amount Pennsylvania changed — any gap between that line and New Jersey’s actual Wave-2 outcome is the DiD estimate. The second plot shows the distribution of the wage gap (GAP) among New Jersey stores, which captures how exposed each store was to the new minimum.</p>
+<div id="74805508" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Show Python code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> __future__ <span class="im">import</span> annotations</span>
@@ -407,7 +407,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"FTE_W1"</span>] <span class="op">=</span> df[<span class="st">"EMPFT"</span>] <span class="op">+</span> df[<span class="st">"NMGRS"</span>] <span class="op">+</span> <span class="fl">0.5</span> <span class="op">*</span> df[<span class="st">"EMPPT"</span>]</span>
 <span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"FTE_W2_RAW"</span>] <span class="op">=</span> df[<span class="st">"EMPFT2"</span>] <span class="op">+</span> df[<span class="st">"NMGRS2"</span>] <span class="op">+</span> <span class="fl">0.5</span> <span class="op">*</span> df[<span class="st">"EMPPT2"</span>]</span>
 <span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a><span class="co"># Permanently closed stores: wave-2 employment is 0 (homework instruction; STATUS2 == 3).</span></span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a><span class="co"># Permanently closed stores get Wave-2 FTE set to 0, per Card &amp; Krueger's methodology.</span></span>
 <span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"FTE_W2"</span>] <span class="op">=</span> np.where(df[<span class="st">"STATUS2"</span>] <span class="op">==</span> <span class="dv">3</span>, <span class="fl">0.0</span>, df[<span class="st">"FTE_W2_RAW"</span>])</span>
 <span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"PMEAL_W1"</span>] <span class="op">=</span> df[<span class="st">"PSODA"</span>] <span class="op">+</span> df[<span class="st">"PFRY"</span>] <span class="op">+</span> df[<span class="st">"PENTREE"</span>]</span>
@@ -634,53 +634,102 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-337"><a href="#cb1-337" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-338"><a href="#cb1-338" aria-hidden="true" tabindex="-1"></a>display(</span>
 <span id="cb1-339"><a href="#cb1-339" aria-hidden="true" tabindex="-1"></a>    Markdown(</span>
-<span id="cb1-340"><a href="#cb1-340" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"""</span></span>
-<span id="cb1-341"><a href="#cb1-341" aria-hidden="true" tabindex="-1"></a><span class="ss">**Diagnostics (not printed in CK Table 4):** intercept </span><span class="er">\</span><span class="ss">(</span><span class="er">\</span><span class="ss">hat</span><span class="ch">\a</span><span class="ss">lpha </span><span class="ch">\a</span><span class="ss">pprox </span><span class="sc">{</span>alpha_hat<span class="sc">:.2f}</span><span class="er">\</span><span class="ss">) (mean </span><span class="er">\</span><span class="ss">(</span><span class="er">\</span><span class="ss">Delta</span><span class="er">\</span><span class="ss">)FTE for Pennsylvania in this </span><span class="er">\</span><span class="ss">(n=</span><span class="sc">{</span>nobs<span class="sc">}</span><span class="er">\</span><span class="ss">) sample).</span></span>
+<span id="cb1-340"><a href="#cb1-340" aria-hidden="true" tabindex="-1"></a>        <span class="vs">rf"""</span></span>
+<span id="cb1-341"><a href="#cb1-341" aria-hidden="true" tabindex="-1"></a><span class="op">**</span><span class="vs">Diagnostics </span><span class="kw">(</span><span class="vs">not printed in CK Table 4</span><span class="kw">)</span><span class="vs">:</span><span class="op">**</span><span class="vs"> intercept </span><span class="ch">\(</span><span class="er">\</span><span class="vs">hat</span><span class="ch">{{\a</span><span class="vs">lpha</span><span class="ch">}}</span><span class="vs"> </span><span class="ch">\a</span><span class="vs">pprox </span><span class="sc">{</span>alpha_hat<span class="sc">:.2f}</span><span class="ch">\)</span><span class="vs"> </span><span class="kw">(</span><span class="vs">mean </span><span class="ch">\(</span><span class="dv">\D</span><span class="vs">elta</span><span class="ch">\)</span><span class="vs">FTE for Pennsylvania in this </span><span class="ch">\(</span><span class="vs">n=</span><span class="sc">{</span>nobs<span class="sc">}</span><span class="ch">\)</span><span class="vs"> sample</span><span class="kw">)</span><span class="dv">.</span></span>
 <span id="cb1-342"><a href="#cb1-342" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-343"><a href="#cb1-343" aria-hidden="true" tabindex="-1"></a><span class="ss">**Match check (Table 4 notes):** </span><span class="er">\</span><span class="ss">(n=</span><span class="sc">{</span>nobs<span class="sc">}</span><span class="er">\</span><span class="ss">), regression RMSE </span><span class="er">\</span><span class="ss">(</span><span class="ch">\a</span><span class="ss">pprox </span><span class="sc">{</span>sigma<span class="sc">:.2f}</span><span class="er">\</span><span class="ss">) (CK prints **8.79**),</span></span>
-<span id="cb1-344"><a href="#cb1-344" aria-hidden="true" tabindex="-1"></a><span class="ss">dependent variable mean </span><span class="er">\</span><span class="ss">(</span><span class="ch">\a</span><span class="ss">pprox </span><span class="sc">{</span>ym<span class="sc">:.3f}</span><span class="er">\</span><span class="ss">) (CK prints **-0.237**), SD </span><span class="er">\</span><span class="ss">(</span><span class="ch">\a</span><span class="ss">pprox </span><span class="sc">{</span>ysd<span class="sc">:.3f}</span><span class="er">\</span><span class="ss">) (CK prints **8.825**).</span></span>
+<span id="cb1-343"><a href="#cb1-343" aria-hidden="true" tabindex="-1"></a><span class="op">**</span><span class="vs">Match check </span><span class="kw">(</span><span class="vs">Table 4 notes</span><span class="kw">)</span><span class="vs">:</span><span class="op">**</span><span class="vs"> </span><span class="ch">\(</span><span class="vs">n=</span><span class="sc">{</span>nobs<span class="sc">}</span><span class="ch">\)</span><span class="vs">, regression RMSE </span><span class="ch">\(\a</span><span class="vs">pprox </span><span class="sc">{</span>sigma<span class="sc">:.2f}</span><span class="ch">\)</span><span class="vs"> </span><span class="kw">(</span><span class="vs">CK prints </span><span class="op">**</span><span class="vs">8</span><span class="dv">.</span><span class="vs">79</span><span class="op">**</span><span class="kw">)</span><span class="vs">,</span></span>
+<span id="cb1-344"><a href="#cb1-344" aria-hidden="true" tabindex="-1"></a><span class="vs">dependent variable mean </span><span class="ch">\(\a</span><span class="vs">pprox </span><span class="sc">{</span>ym<span class="sc">:.3f}</span><span class="ch">\)</span><span class="vs"> </span><span class="kw">(</span><span class="vs">CK prints </span><span class="op">**</span><span class="vs">-0</span><span class="dv">.</span><span class="vs">237</span><span class="op">**</span><span class="kw">)</span><span class="vs">, SD </span><span class="ch">\(\a</span><span class="vs">pprox </span><span class="sc">{</span>ysd<span class="sc">:.3f}</span><span class="ch">\)</span><span class="vs"> </span><span class="kw">(</span><span class="vs">CK prints </span><span class="op">**</span><span class="vs">8</span><span class="dv">.</span><span class="vs">825</span><span class="op">**</span><span class="kw">)</span><span class="dv">.</span></span>
 <span id="cb1-345"><a href="#cb1-345" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-346"><a href="#cb1-346" aria-hidden="true" tabindex="-1"></a><span class="ss">**NJ dummy:** </span><span class="er">\</span><span class="ss">(</span><span class="er">\</span><span class="ss">hat</span><span class="ch">\b</span><span class="ss">eta=</span><span class="sc">{</span>beta_nj<span class="sc">:.3f}</span><span class="er">\</span><span class="ss">) with OLS SE **</span><span class="sc">{</span>se_nj<span class="sc">:.2f}</span><span class="ss">** (CK prints **2.33 (1.19)**).</span></span>
-<span id="cb1-347"><a href="#cb1-347" aria-hidden="true" tabindex="-1"></a><span class="ss">"""</span></span>
+<span id="cb1-346"><a href="#cb1-346" aria-hidden="true" tabindex="-1"></a><span class="op">**</span><span class="vs">NJ dummy:</span><span class="op">**</span><span class="vs"> </span><span class="ch">\(</span><span class="er">\</span><span class="vs">hat</span><span class="ch">{{</span><span class="dv">\b</span><span class="vs">eta</span><span class="ch">}}</span><span class="vs">=</span><span class="sc">{</span>beta_nj<span class="sc">:.3f}</span><span class="ch">\)</span><span class="vs"> with OLS SE </span><span class="op">**</span><span class="sc">{</span>se_nj<span class="sc">:.2f}</span><span class="op">**</span><span class="vs"> </span><span class="kw">(</span><span class="vs">CK prints </span><span class="op">**</span><span class="vs">2</span><span class="dv">.</span><span class="vs">33 </span><span class="kw">(</span><span class="vs">1</span><span class="dv">.</span><span class="vs">19</span><span class="kw">)</span><span class="op">**</span><span class="kw">)</span><span class="dv">.</span></span>
+<span id="cb1-347"><a href="#cb1-347" aria-hidden="true" tabindex="-1"></a><span class="vs">"""</span></span>
 <span id="cb1-348"><a href="#cb1-348" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb1-349"><a href="#cb1-349" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb1-350"><a href="#cb1-350" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-351"><a href="#cb1-351" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-352"><a href="#cb1-352" aria-hidden="true" tabindex="-1"></a>plot_tbl <span class="op">=</span> tbl3.copy()</span>
-<span id="cb1-353"><a href="#cb1-353" aria-hidden="true" tabindex="-1"></a>plot_tbl2 <span class="op">=</span> plot_tbl.assign(wave<span class="op">=</span><span class="st">"Wave 1"</span>, fte<span class="op">=</span>plot_tbl[<span class="st">"wave1_fte"</span>])</span>
-<span id="cb1-354"><a href="#cb1-354" aria-hidden="true" tabindex="-1"></a>plot_tbl3 <span class="op">=</span> plot_tbl.assign(wave<span class="op">=</span><span class="st">"Wave 2"</span>, fte<span class="op">=</span>plot_tbl[<span class="st">"wave2_fte"</span>])</span>
-<span id="cb1-355"><a href="#cb1-355" aria-hidden="true" tabindex="-1"></a>plot_df <span class="op">=</span> pd.concat(</span>
-<span id="cb1-356"><a href="#cb1-356" aria-hidden="true" tabindex="-1"></a>    [plot_tbl2[[<span class="st">"state"</span>, <span class="st">"wave"</span>, <span class="st">"fte"</span>]], plot_tbl3[[<span class="st">"state"</span>, <span class="st">"wave"</span>, <span class="st">"fte"</span>]]],</span>
-<span id="cb1-357"><a href="#cb1-357" aria-hidden="true" tabindex="-1"></a>    ignore_index<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb1-358"><a href="#cb1-358" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-359"><a href="#cb1-359" aria-hidden="true" tabindex="-1"></a>wave_order <span class="op">=</span> [<span class="st">"Wave 1"</span>, <span class="st">"Wave 2"</span>]</span>
-<span id="cb1-360"><a href="#cb1-360" aria-hidden="true" tabindex="-1"></a>state_order <span class="op">=</span> [<span class="st">"Pennsylvania"</span>, <span class="st">"New Jersey"</span>]</span>
-<span id="cb1-361"><a href="#cb1-361" aria-hidden="true" tabindex="-1"></a>plot_df <span class="op">=</span> plot_df.copy()</span>
-<span id="cb1-362"><a href="#cb1-362" aria-hidden="true" tabindex="-1"></a>plot_df[<span class="st">"wave"</span>] <span class="op">=</span> pd.Categorical(plot_df[<span class="st">"wave"</span>], categories<span class="op">=</span>wave_order, ordered<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb1-363"><a href="#cb1-363" aria-hidden="true" tabindex="-1"></a>plot_df[<span class="st">"state"</span>] <span class="op">=</span> pd.Categorical(plot_df[<span class="st">"state"</span>], categories<span class="op">=</span>state_order, ordered<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb1-364"><a href="#cb1-364" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-365"><a href="#cb1-365" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="fl">8.5</span>, <span class="fl">4.2</span>))</span>
-<span id="cb1-366"><a href="#cb1-366" aria-hidden="true" tabindex="-1"></a>sns.lineplot(</span>
-<span id="cb1-367"><a href="#cb1-367" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span>plot_df,</span>
-<span id="cb1-368"><a href="#cb1-368" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">"wave"</span>,</span>
-<span id="cb1-369"><a href="#cb1-369" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">"fte"</span>,</span>
-<span id="cb1-370"><a href="#cb1-370" aria-hidden="true" tabindex="-1"></a>    hue<span class="op">=</span><span class="st">"state"</span>,</span>
-<span id="cb1-371"><a href="#cb1-371" aria-hidden="true" tabindex="-1"></a>    marker<span class="op">=</span><span class="st">"o"</span>,</span>
-<span id="cb1-372"><a href="#cb1-372" aria-hidden="true" tabindex="-1"></a>    sort<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb1-373"><a href="#cb1-373" aria-hidden="true" tabindex="-1"></a>    palette<span class="op">=</span>{<span class="st">"Pennsylvania"</span>: <span class="st">"#2e2825"</span>, <span class="st">"New Jersey"</span>: <span class="st">"#7a3b35"</span>},</span>
-<span id="cb1-374"><a href="#cb1-374" aria-hidden="true" tabindex="-1"></a>    linewidth<span class="op">=</span><span class="fl">2.2</span>,</span>
-<span id="cb1-375"><a href="#cb1-375" aria-hidden="true" tabindex="-1"></a>    ax<span class="op">=</span>ax,</span>
-<span id="cb1-376"><a href="#cb1-376" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-377"><a href="#cb1-377" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Difference-in-differences (visual)"</span>)</span>
-<span id="cb1-378"><a href="#cb1-378" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">""</span>)</span>
-<span id="cb1-379"><a href="#cb1-379" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Mean FTE employees per store"</span>)</span>
-<span id="cb1-380"><a href="#cb1-380" aria-hidden="true" tabindex="-1"></a>ax.legend(title<span class="op">=</span><span class="st">""</span>, frameon<span class="op">=</span><span class="va">True</span>, framealpha<span class="op">=</span><span class="fl">0.95</span>, edgecolor<span class="op">=</span><span class="st">"#c9c2b6"</span>)</span>
-<span id="cb1-381"><a href="#cb1-381" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
-<span id="cb1-382"><a href="#cb1-382" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-352"><a href="#cb1-352" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Plot 1: DiD with 95% CIs and NJ counterfactual ──────────────────────────</span></span>
+<span id="cb1-353"><a href="#cb1-353" aria-hidden="true" tabindex="-1"></a>pa_sub <span class="op">=</span> df[df[<span class="st">"STATE"</span>] <span class="op">==</span> <span class="dv">0</span>]</span>
+<span id="cb1-354"><a href="#cb1-354" aria-hidden="true" tabindex="-1"></a>nj_sub <span class="op">=</span> df[df[<span class="st">"STATE"</span>] <span class="op">==</span> <span class="dv">1</span>]</span>
+<span id="cb1-355"><a href="#cb1-355" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-356"><a href="#cb1-356" aria-hidden="true" tabindex="-1"></a>pa_m1_p, pa_se1_p, _ <span class="op">=</span> mean_se(pa_sub[<span class="st">"FTE_W1"</span>])</span>
+<span id="cb1-357"><a href="#cb1-357" aria-hidden="true" tabindex="-1"></a>pa_m2_p, pa_se2_p, _ <span class="op">=</span> mean_se(pa_sub[<span class="st">"FTE_W2"</span>])</span>
+<span id="cb1-358"><a href="#cb1-358" aria-hidden="true" tabindex="-1"></a>nj_m1_p, nj_se1_p, _ <span class="op">=</span> mean_se(nj_sub[<span class="st">"FTE_W1"</span>])</span>
+<span id="cb1-359"><a href="#cb1-359" aria-hidden="true" tabindex="-1"></a>nj_m2_p, nj_se2_p, _ <span class="op">=</span> mean_se(nj_sub[<span class="st">"FTE_W2"</span>])</span>
+<span id="cb1-360"><a href="#cb1-360" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-361"><a href="#cb1-361" aria-hidden="true" tabindex="-1"></a>nj_counterfactual <span class="op">=</span> nj_m1_p <span class="op">+</span> (pa_m2_p <span class="op">-</span> pa_m1_p)</span>
+<span id="cb1-362"><a href="#cb1-362" aria-hidden="true" tabindex="-1"></a>did_effect <span class="op">=</span> (nj_m2_p <span class="op">-</span> nj_m1_p) <span class="op">-</span> (pa_m2_p <span class="op">-</span> pa_m1_p)</span>
+<span id="cb1-363"><a href="#cb1-363" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-364"><a href="#cb1-364" aria-hidden="true" tabindex="-1"></a>xs <span class="op">=</span> [<span class="dv">0</span>, <span class="dv">1</span>]</span>
+<span id="cb1-365"><a href="#cb1-365" aria-hidden="true" tabindex="-1"></a>wave_labels <span class="op">=</span> [<span class="st">"Wave 1</span><span class="ch">\n</span><span class="st">(Feb–Mar 1992)"</span>, <span class="st">"Wave 2</span><span class="ch">\n</span><span class="st">(Nov–Dec 1992)"</span>]</span>
+<span id="cb1-366"><a href="#cb1-366" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-367"><a href="#cb1-367" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="fl">8.5</span>, <span class="fl">4.8</span>))</span>
+<span id="cb1-368"><a href="#cb1-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-369"><a href="#cb1-369" aria-hidden="true" tabindex="-1"></a>ax.errorbar(</span>
+<span id="cb1-370"><a href="#cb1-370" aria-hidden="true" tabindex="-1"></a>    xs, [pa_m1_p, pa_m2_p],</span>
+<span id="cb1-371"><a href="#cb1-371" aria-hidden="true" tabindex="-1"></a>    yerr<span class="op">=</span>[<span class="fl">1.96</span> <span class="op">*</span> pa_se1_p, <span class="fl">1.96</span> <span class="op">*</span> pa_se2_p],</span>
+<span id="cb1-372"><a href="#cb1-372" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">"#2e2825"</span>, marker<span class="op">=</span><span class="st">"o"</span>, linewidth<span class="op">=</span><span class="fl">2.2</span>, capsize<span class="op">=</span><span class="dv">5</span>,</span>
+<span id="cb1-373"><a href="#cb1-373" aria-hidden="true" tabindex="-1"></a>    label<span class="op">=</span><span class="st">"Pennsylvania (actual)"</span>,</span>
+<span id="cb1-374"><a href="#cb1-374" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-375"><a href="#cb1-375" aria-hidden="true" tabindex="-1"></a>ax.errorbar(</span>
+<span id="cb1-376"><a href="#cb1-376" aria-hidden="true" tabindex="-1"></a>    xs, [nj_m1_p, nj_m2_p],</span>
+<span id="cb1-377"><a href="#cb1-377" aria-hidden="true" tabindex="-1"></a>    yerr<span class="op">=</span>[<span class="fl">1.96</span> <span class="op">*</span> nj_se1_p, <span class="fl">1.96</span> <span class="op">*</span> nj_se2_p],</span>
+<span id="cb1-378"><a href="#cb1-378" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">"#7a3b35"</span>, marker<span class="op">=</span><span class="st">"o"</span>, linewidth<span class="op">=</span><span class="fl">2.2</span>, capsize<span class="op">=</span><span class="dv">5</span>,</span>
+<span id="cb1-379"><a href="#cb1-379" aria-hidden="true" tabindex="-1"></a>    label<span class="op">=</span><span class="st">"New Jersey (actual)"</span>,</span>
+<span id="cb1-380"><a href="#cb1-380" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-381"><a href="#cb1-381" aria-hidden="true" tabindex="-1"></a>ax.plot(</span>
+<span id="cb1-382"><a href="#cb1-382" aria-hidden="true" tabindex="-1"></a>    xs, [nj_m1_p, nj_counterfactual],</span>
+<span id="cb1-383"><a href="#cb1-383" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">"#7a3b35"</span>, linestyle<span class="op">=</span><span class="st">"--"</span>, linewidth<span class="op">=</span><span class="fl">1.6</span>,</span>
+<span id="cb1-384"><a href="#cb1-384" aria-hidden="true" tabindex="-1"></a>    label<span class="op">=</span><span class="st">"New Jersey (counterfactual)"</span>,</span>
+<span id="cb1-385"><a href="#cb1-385" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-386"><a href="#cb1-386" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-387"><a href="#cb1-387" aria-hidden="true" tabindex="-1"></a><span class="co"># Shade and annotate the DiD gap at Wave 2</span></span>
+<span id="cb1-388"><a href="#cb1-388" aria-hidden="true" tabindex="-1"></a>y_lo, y_hi <span class="op">=</span> <span class="bu">sorted</span>([nj_counterfactual, nj_m2_p])</span>
+<span id="cb1-389"><a href="#cb1-389" aria-hidden="true" tabindex="-1"></a>ax.fill_between([<span class="fl">0.95</span>, <span class="fl">1.05</span>], [y_lo, y_lo], [y_hi, y_hi], alpha<span class="op">=</span><span class="fl">0.15</span>, color<span class="op">=</span><span class="st">"#7a3b35"</span>)</span>
+<span id="cb1-390"><a href="#cb1-390" aria-hidden="true" tabindex="-1"></a>ax.annotate(</span>
+<span id="cb1-391"><a href="#cb1-391" aria-hidden="true" tabindex="-1"></a>    <span class="st">""</span>, xy<span class="op">=</span>(<span class="fl">1.08</span>, nj_m2_p), xytext<span class="op">=</span>(<span class="fl">1.08</span>, nj_counterfactual),</span>
+<span id="cb1-392"><a href="#cb1-392" aria-hidden="true" tabindex="-1"></a>    arrowprops<span class="op">=</span><span class="bu">dict</span>(arrowstyle<span class="op">=</span><span class="st">"&lt;-&gt;"</span>, color<span class="op">=</span><span class="st">"#7a3b35"</span>, lw<span class="op">=</span><span class="fl">1.4</span>),</span>
+<span id="cb1-393"><a href="#cb1-393" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-394"><a href="#cb1-394" aria-hidden="true" tabindex="-1"></a>ax.text(</span>
+<span id="cb1-395"><a href="#cb1-395" aria-hidden="true" tabindex="-1"></a>    <span class="fl">1.10</span>, (nj_m2_p <span class="op">+</span> nj_counterfactual) <span class="op">/</span> <span class="dv">2</span>,</span>
+<span id="cb1-396"><a href="#cb1-396" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"DiD ≈ +</span><span class="sc">{</span>did_effect<span class="sc">:.2f}</span><span class="ss"> FTE"</span>,</span>
+<span id="cb1-397"><a href="#cb1-397" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">"#7a3b35"</span>, fontsize<span class="op">=</span><span class="fl">8.5</span>, va<span class="op">=</span><span class="st">"center"</span>,</span>
+<span id="cb1-398"><a href="#cb1-398" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-399"><a href="#cb1-399" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-400"><a href="#cb1-400" aria-hidden="true" tabindex="-1"></a>ax.set_xlim(<span class="op">-</span><span class="fl">0.25</span>, <span class="fl">1.5</span>)</span>
+<span id="cb1-401"><a href="#cb1-401" aria-hidden="true" tabindex="-1"></a>ax.set_xticks(xs)</span>
+<span id="cb1-402"><a href="#cb1-402" aria-hidden="true" tabindex="-1"></a>ax.set_xticklabels(wave_labels)</span>
+<span id="cb1-403"><a href="#cb1-403" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Mean FTE employees per store"</span>)</span>
+<span id="cb1-404"><a href="#cb1-404" aria-hidden="true" tabindex="-1"></a>ax.set_title(</span>
+<span id="cb1-405"><a href="#cb1-405" aria-hidden="true" tabindex="-1"></a>    <span class="st">"NJ vs. PA Fast-Food Employment Before and After the Minimum-Wage Increase</span><span class="ch">\n</span><span class="st">"</span></span>
+<span id="cb1-406"><a href="#cb1-406" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Error bars show 95</span><span class="sc">% c</span><span class="st">onfidence intervals; dashed line is the NJ counterfactual trend."</span></span>
+<span id="cb1-407"><a href="#cb1-407" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-408"><a href="#cb1-408" aria-hidden="true" tabindex="-1"></a>ax.legend(frameon<span class="op">=</span><span class="va">True</span>, framealpha<span class="op">=</span><span class="fl">0.95</span>, edgecolor<span class="op">=</span><span class="st">"#c9c2b6"</span>)</span>
+<span id="cb1-409"><a href="#cb1-409" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb1-410"><a href="#cb1-410" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb1-411"><a href="#cb1-411" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-412"><a href="#cb1-412" aria-hidden="true" tabindex="-1"></a><span class="co"># ── Plot 2: Distribution of the wage gap (GAP) among NJ stores ──────────────</span></span>
+<span id="cb1-413"><a href="#cb1-413" aria-hidden="true" tabindex="-1"></a>nj_gap <span class="op">=</span> df.loc[(df[<span class="st">"STATE"</span>] <span class="op">==</span> <span class="dv">1</span>) <span class="op">&amp;</span> df[<span class="st">"GAP"</span>].notna(), <span class="st">"GAP"</span>]</span>
+<span id="cb1-414"><a href="#cb1-414" aria-hidden="true" tabindex="-1"></a>pct_bound <span class="op">=</span> (nj_gap <span class="op">&gt;</span> <span class="dv">0</span>).mean() <span class="op">*</span> <span class="dv">100</span></span>
+<span id="cb1-415"><a href="#cb1-415" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-416"><a href="#cb1-416" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="fl">8.5</span>, <span class="fl">4.0</span>))</span>
+<span id="cb1-417"><a href="#cb1-417" aria-hidden="true" tabindex="-1"></a>ax.hist(nj_gap, bins<span class="op">=</span><span class="dv">18</span>, color<span class="op">=</span><span class="st">"#7a3b35"</span>, edgecolor<span class="op">=</span><span class="st">"#f0ece4"</span>, linewidth<span class="op">=</span><span class="fl">0.5</span>, alpha<span class="op">=</span><span class="fl">0.85</span>)</span>
+<span id="cb1-418"><a href="#cb1-418" aria-hidden="true" tabindex="-1"></a>ax.axvline(<span class="dv">0</span>, color<span class="op">=</span><span class="st">"#2e2825"</span>, linewidth<span class="op">=</span><span class="fl">1.5</span>, linestyle<span class="op">=</span><span class="st">"--"</span>)</span>
+<span id="cb1-419"><a href="#cb1-419" aria-hidden="true" tabindex="-1"></a>ax.text(</span>
+<span id="cb1-420"><a href="#cb1-420" aria-hidden="true" tabindex="-1"></a>    <span class="fl">0.01</span>, ax.get_ylim()[<span class="dv">1</span>] <span class="op">*</span> <span class="fl">0.92</span>,</span>
+<span id="cb1-421"><a href="#cb1-421" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"</span><span class="sc">{</span>pct_bound<span class="sc">:.0f}</span><span class="ss">% of NJ stores</span><span class="ch">\n</span><span class="ss">were wage-bound (GAP &gt; 0)"</span>,</span>
+<span id="cb1-422"><a href="#cb1-422" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="st">"#2e2825"</span>, fontsize<span class="op">=</span><span class="fl">8.5</span>,</span>
+<span id="cb1-423"><a href="#cb1-423" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-424"><a href="#cb1-424" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"GAP  =  (5.05 − wave-1 wage) / wave-1 wage   [0 if already at or above $5.05]"</span>)</span>
+<span id="cb1-425"><a href="#cb1-425" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Number of NJ stores"</span>)</span>
+<span id="cb1-426"><a href="#cb1-426" aria-hidden="true" tabindex="-1"></a>ax.set_title(</span>
+<span id="cb1-427"><a href="#cb1-427" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Wage Exposure to the New Jersey Minimum-Wage Increase</span><span class="ch">\n</span><span class="st">"</span></span>
+<span id="cb1-428"><a href="#cb1-428" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Stores with GAP &gt; 0 had to raise wages to comply; higher GAP means a larger required increase."</span></span>
+<span id="cb1-429"><a href="#cb1-429" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-430"><a href="#cb1-430" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb1-431"><a href="#cb1-431" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <section id="peek-at-the-loaded-data" class="cell-output cell-output-display cell-output-markdown">
 <h3 class="anchored">Peek at the loaded data</h3>
-<p>Average FTE employment before and after the minimum-wage increase, by state (public-use sample).</p>
+<p>DiD visualization and wage-gap distribution (public-use sample).</p>
 </section>
 <div class="cell-output cell-output-display">
 <div>
@@ -1070,14 +1119,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </table>
 </div>
 <div class="cell-output cell-output-display cell-output-markdown">
-<p><strong>Diagnostics (not printed in CK Table 4):</strong> intercept (lpha pprox -2.13) (mean ()FTE for Pennsylvania in this (n=357) sample).</p>
-<p><strong>Match check (Table 4 notes):</strong> (n=357), regression RMSE (pprox 8.79) (CK prints <strong>8.79</strong>), dependent variable mean (pprox -0.238) (CK prints <strong>-0.237</strong>), SD (pprox 8.825) (CK prints <strong>8.825</strong>).</p>
-<p><strong>NJ dummy:</strong> (eta=2.326) with OLS SE <strong>1.19</strong> (CK prints <strong>2.33 (1.19)</strong>).</p>
+<p><strong>Diagnostics (not printed in CK Table 4):</strong> intercept ( ) (mean ()FTE for Pennsylvania in this (n=357) sample).</p>
+<p><strong>Match check (Table 4 notes):</strong> (n=357), regression RMSE () (CK prints <strong>8.79</strong>), dependent variable mean () (CK prints <strong>-0.237</strong>), SD () (CK prints <strong>8.825</strong>).</p>
+<p><strong>NJ dummy:</strong> (=2.326) with OLS SE <strong>1.19</strong> (CK prints <strong>2.33 (1.19)</strong>).</p>
 </div>
 <div class="cell-output cell-output-display">
 <div>
 <figure>
 <p><img src="hw2_answers_files/figure-html/cell-2-output-10.png" class="img-fluid"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure>
+<p><img src="hw2_answers_files/figure-html/cell-2-output-11.png" class="img-fluid"></p>
 </figure>
 </div>
 </div>

@@ -185,9 +185,9 @@ In 1992, New Jersey raised its minimum wage while neighboring Pennsylvania did n
 
 The paper became famous because it challenged a simple textbook prediction that a higher minimum wage must reduce employment, at least in the short run, in a low-wage, high-turnover industry where firms have some wage-setting power and adjustment margins beyond immediate layoffs. The “NJ vs. PA” comparison is the key identification move: it supplies a plausible counterfactual trend for what would have happened in New Jersey absent the reform.
 
-This post **replicates the headline tables** your professor highlighted (Table 2, the upper-left \(3\times 3\) block of Table 3, and Table 4 column (i)) using the public-use flat file (`public.dat`), the ASCII `codebook`, and the variable logic in David Card’s `check.sas` replication file.
+This post **replicates the headline tables** from the paper (Table 2, the upper-left \(3\times 3\) block of Table 3, and Table 4 column (i)) using the public-use flat file (`public.dat`), the ASCII `codebook`, and the variable logic in David Card’s `check.sas` replication file.
 
-For grading transparency, I also embed **screenshots of the published tables** side-by-side with my reproduced numbers.
+For reproducibility, I also embed **screenshots of the published tables** alongside my reproduced numbers.
 
 ### Methodological note: why DiD is stronger than “NJ only”
 
@@ -243,12 +243,12 @@ Card and Krueger’s printed Table 4 **does not list the intercept**, \(t\)-stat
 
 ![](ck_tables/table4.png)
 
-## Something additional: a DiD plot
+## Visual Summary: Difference-in-Differences
 
-This figure summarizes the Table 3 comparison visually: Pennsylvania provides the “would have happened anyway” trend between waves, while New Jersey deviates upward in the second wave relative to that benchmark.
+The plots below make the Table 3 numbers concrete. The first shows the parallel-trends logic: Pennsylvania's trend is the counterfactual for what would have happened in New Jersey absent the reform. The dashed line extends New Jersey's Wave-1 level by the same amount Pennsylvania changed — any gap between that line and New Jersey's actual Wave-2 outcome is the DiD estimate. The second plot shows the distribution of the wage gap (GAP) among New Jersey stores, which captures how exposed each store was to the new minimum.
 
 ```{python}
-#| fig-cap: "Average FTE employment before and after the minimum-wage increase, by state (public-use sample)."
+#| fig-cap: "DiD visualization and wage-gap distribution (public-use sample)."
 
 from __future__ import annotations
 
@@ -362,7 +362,7 @@ df["NJ"] = (df["STATE"] == 1).astype(int)
 df["FTE_W1"] = df["EMPFT"] + df["NMGRS"] + 0.5 * df["EMPPT"]
 df["FTE_W2_RAW"] = df["EMPFT2"] + df["NMGRS2"] + 0.5 * df["EMPPT2"]
 
-# Permanently closed stores: wave-2 employment is 0 (homework instruction; STATUS2 == 3).
+# Permanently closed stores get Wave-2 FTE set to 0, per Card & Krueger's methodology.
 df["FTE_W2"] = np.where(df["STATUS2"] == 3, 0.0, df["FTE_W2_RAW"])
 
 df["PMEAL_W1"] = df["PSODA"] + df["PFRY"] + df["PENTREE"]
@@ -589,47 +589,96 @@ ysd = float(y.std(ddof=1))
 
 display(
     Markdown(
-        f"""
-**Diagnostics (not printed in CK Table 4):** intercept \(\hat\alpha \approx {alpha_hat:.2f}\) (mean \(\Delta\)FTE for Pennsylvania in this \(n={nobs}\) sample).
+        rf"""
+**Diagnostics (not printed in CK Table 4):** intercept \(\hat{{\alpha}} \approx {alpha_hat:.2f}\) (mean \(\Delta\)FTE for Pennsylvania in this \(n={nobs}\) sample).
 
 **Match check (Table 4 notes):** \(n={nobs}\), regression RMSE \(\approx {sigma:.2f}\) (CK prints **8.79**),
 dependent variable mean \(\approx {ym:.3f}\) (CK prints **-0.237**), SD \(\approx {ysd:.3f}\) (CK prints **8.825**).
 
-**NJ dummy:** \(\hat\beta={beta_nj:.3f}\) with OLS SE **{se_nj:.2f}** (CK prints **2.33 (1.19)**).
+**NJ dummy:** \(\hat{{\beta}}={beta_nj:.3f}\) with OLS SE **{se_nj:.2f}** (CK prints **2.33 (1.19)**).
 """
     )
 )
 
 
-plot_tbl = tbl3.copy()
-plot_tbl2 = plot_tbl.assign(wave="Wave 1", fte=plot_tbl["wave1_fte"])
-plot_tbl3 = plot_tbl.assign(wave="Wave 2", fte=plot_tbl["wave2_fte"])
-plot_df = pd.concat(
-    [plot_tbl2[["state", "wave", "fte"]], plot_tbl3[["state", "wave", "fte"]]],
-    ignore_index=True,
-)
-wave_order = ["Wave 1", "Wave 2"]
-state_order = ["Pennsylvania", "New Jersey"]
-plot_df = plot_df.copy()
-plot_df["wave"] = pd.Categorical(plot_df["wave"], categories=wave_order, ordered=True)
-plot_df["state"] = pd.Categorical(plot_df["state"], categories=state_order, ordered=True)
+# ── Plot 1: DiD with 95% CIs and NJ counterfactual ──────────────────────────
+pa_sub = df[df["STATE"] == 0]
+nj_sub = df[df["STATE"] == 1]
 
-fig, ax = plt.subplots(figsize=(8.5, 4.2))
-sns.lineplot(
-    data=plot_df,
-    x="wave",
-    y="fte",
-    hue="state",
-    marker="o",
-    sort=False,
-    palette={"Pennsylvania": "#2e2825", "New Jersey": "#7a3b35"},
-    linewidth=2.2,
-    ax=ax,
+pa_m1_p, pa_se1_p, _ = mean_se(pa_sub["FTE_W1"])
+pa_m2_p, pa_se2_p, _ = mean_se(pa_sub["FTE_W2"])
+nj_m1_p, nj_se1_p, _ = mean_se(nj_sub["FTE_W1"])
+nj_m2_p, nj_se2_p, _ = mean_se(nj_sub["FTE_W2"])
+
+nj_counterfactual = nj_m1_p + (pa_m2_p - pa_m1_p)
+did_effect = (nj_m2_p - nj_m1_p) - (pa_m2_p - pa_m1_p)
+
+xs = [0, 1]
+wave_labels = ["Wave 1\n(Feb–Mar 1992)", "Wave 2\n(Nov–Dec 1992)"]
+
+fig, ax = plt.subplots(figsize=(8.5, 4.8))
+
+ax.errorbar(
+    xs, [pa_m1_p, pa_m2_p],
+    yerr=[1.96 * pa_se1_p, 1.96 * pa_se2_p],
+    color="#2e2825", marker="o", linewidth=2.2, capsize=5,
+    label="Pennsylvania (actual)",
 )
-ax.set_title("Difference-in-differences (visual)")
-ax.set_xlabel("")
+ax.errorbar(
+    xs, [nj_m1_p, nj_m2_p],
+    yerr=[1.96 * nj_se1_p, 1.96 * nj_se2_p],
+    color="#7a3b35", marker="o", linewidth=2.2, capsize=5,
+    label="New Jersey (actual)",
+)
+ax.plot(
+    xs, [nj_m1_p, nj_counterfactual],
+    color="#7a3b35", linestyle="--", linewidth=1.6,
+    label="New Jersey (counterfactual)",
+)
+
+# Shade and annotate the DiD gap at Wave 2
+y_lo, y_hi = sorted([nj_counterfactual, nj_m2_p])
+ax.fill_between([0.95, 1.05], [y_lo, y_lo], [y_hi, y_hi], alpha=0.15, color="#7a3b35")
+ax.annotate(
+    "", xy=(1.08, nj_m2_p), xytext=(1.08, nj_counterfactual),
+    arrowprops=dict(arrowstyle="<->", color="#7a3b35", lw=1.4),
+)
+ax.text(
+    1.10, (nj_m2_p + nj_counterfactual) / 2,
+    f"DiD ≈ +{did_effect:.2f} FTE",
+    color="#7a3b35", fontsize=8.5, va="center",
+)
+
+ax.set_xlim(-0.25, 1.5)
+ax.set_xticks(xs)
+ax.set_xticklabels(wave_labels)
 ax.set_ylabel("Mean FTE employees per store")
-ax.legend(title="", frameon=True, framealpha=0.95, edgecolor="#c9c2b6")
+ax.set_title(
+    "NJ vs. PA Fast-Food Employment Before and After the Minimum-Wage Increase\n"
+    "Error bars show 95% confidence intervals; dashed line is the NJ counterfactual trend."
+)
+ax.legend(frameon=True, framealpha=0.95, edgecolor="#c9c2b6")
+plt.tight_layout()
+plt.show()
+
+# ── Plot 2: Distribution of the wage gap (GAP) among NJ stores ──────────────
+nj_gap = df.loc[(df["STATE"] == 1) & df["GAP"].notna(), "GAP"]
+pct_bound = (nj_gap > 0).mean() * 100
+
+fig, ax = plt.subplots(figsize=(8.5, 4.0))
+ax.hist(nj_gap, bins=18, color="#7a3b35", edgecolor="#f0ece4", linewidth=0.5, alpha=0.85)
+ax.axvline(0, color="#2e2825", linewidth=1.5, linestyle="--")
+ax.text(
+    0.01, ax.get_ylim()[1] * 0.92,
+    f"{pct_bound:.0f}% of NJ stores\nwere wage-bound (GAP > 0)",
+    color="#2e2825", fontsize=8.5,
+)
+ax.set_xlabel("GAP  =  (5.05 − wave-1 wage) / wave-1 wage   [0 if already at or above $5.05]")
+ax.set_ylabel("Number of NJ stores")
+ax.set_title(
+    "Wage Exposure to the New Jersey Minimum-Wage Increase\n"
+    "Stores with GAP > 0 had to raise wages to comply; higher GAP means a larger required increase."
+)
 plt.tight_layout()
 plt.show()
 ```
