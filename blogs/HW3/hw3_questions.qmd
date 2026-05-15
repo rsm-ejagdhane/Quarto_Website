@@ -3,6 +3,7 @@ title: "Poisson Regression and Maximum Likelihood Estimation"
 subtitle: "A Case Study of Blueprinty's Software and Patent Awards"
 author: "Your Name"
 date: today
+draft: true
 ---
 
 
@@ -42,7 +43,7 @@ Write a short introduction for the reader that sets the scene. Cover the followi
 - Write down the likelihood and log-likelihood for $Y \sim \text{Poisson}(\lambda)$, using the fact that
 
 $$
-f(Y|\lambda) = \frac{e^{-\lambda}\lambda^{Y}}{Y!}
+f(y \mid \lambda) = \frac{e^{-\lambda} \lambda^{y}}{\Gamma(y+1)}
 $$
 
   Show the derivation step by step so the reader can follow how the joint likelihood is built from the iid assumption and how the log-likelihood simplifies.

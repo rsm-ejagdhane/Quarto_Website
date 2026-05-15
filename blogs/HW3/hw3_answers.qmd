@@ -10,6 +10,9 @@ format:
     code-fold: true
     code-summary: "Show Python code"
     include-in-header: mathjax.html
+    html-math-method:
+      method: mathjax
+      prefer-html: false
 jupyter: python3
 execute:
   echo: true
@@ -364,32 +367,32 @@ Patent counts are **non-negative integers**. A Normal model can predict impossib
 
 ### Likelihood and log-likelihood
 
-For a single observation $Y \sim \text{Poisson}(\lambda)$,
+For a single observation $Y \sim \mathrm{Poisson}(\lambda)$,
 
 $$
-f(Y \mid \lambda) = \frac{e^{-\lambda}\lambda^{Y}}{Y!}.
+f(y \mid \lambda) = \frac{e^{-\lambda} \lambda^{y}}{\Gamma(y+1)}
 $$
 
 Assuming i.i.d. draws $Y_1, \ldots, Y_n$, the joint likelihood is
 
 $$
-L(\lambda) = \prod_{i=1}^{n} \frac{e^{-\lambda}\lambda^{Y_i}}{Y_i!}
-= \frac{e^{-n\lambda}\,\lambda^{\sum_i Y_i}}{\prod_i Y_i!}.
+L(\lambda) = \prod_{i=1}^{n} \frac{e^{-\lambda}\lambda^{Y_i}}{\Gamma(Y_i+1)}
+= \frac{e^{-n\lambda} \lambda^{\sum_{i=1}^{n} Y_i}}{\prod_{i=1}^{n} \Gamma(Y_i+1)}
 $$
 
-Taking logs (constants in $Y_i!$ drop out of optimization):
+Taking logs (constants involving $\Gamma(Y_i+1)$ drop out of optimization):
 
 $$
-\ell(\lambda) = \sum_{i=1}^{n} \bigl[ Y_i \log \lambda - \lambda - \log(Y_i!) \bigr].
+\log L(\lambda) = \sum_{i=1}^{n} ( Y_i \log \lambda - \lambda - \log \Gamma(Y_i+1) )
 $$
 
 The first derivative is
 
 $$
-\frac{d\ell}{d\lambda} = \sum_{i=1}^{n} \left( \frac{Y_i}{\lambda} - 1 \right) = \frac{n\bar{Y}}{\lambda} - n.
+\frac{d \log L}{d\lambda} = \sum_{i=1}^{n} ( \frac{Y_i}{\lambda} - 1 ) = \frac{n\bar{Y}}{\lambda} - n
 $$
 
-Setting this to zero gives the closed-form MLE $\hat\lambda_{\text{MLE}} = \bar{Y}$ — the sample mean, which equals the Poisson mean parameter.
+Setting this to zero gives the closed-form MLE $\hat{\lambda}_{\mathrm{MLE}} = \bar{Y}$ — the sample mean, which equals the Poisson mean parameter.
 
 ### Coding the log-likelihood and finding the MLE
 
@@ -443,17 +446,17 @@ The curve is **concave** with a single peak. Reading horizontally, the MLE is th
 The simple model forces every firm to share one patent rate. **Poisson regression** lets each firm's expected count depend on covariates:
 
 $$
-Y_i \sim \text{Poisson}(\lambda_i), \qquad \lambda_i = \exp(X_i'\beta).
+Y_i \sim \mathrm{Poisson}(\lambda_i), \qquad \lambda_i = \exp(X_i^{\top}\beta).
 $$
 
-The **log link** is standard: $\lambda_i$ must be positive, but the linear predictor $X_i'\beta$ can be any real number. The exponential maps the real line onto $(0, \infty)$.
+The **log link** is standard: $\lambda_i$ must be positive, but the linear predictor $X_i^{\top}\beta$ can be any real number. The exponential maps the real line onto $(0, \infty)$.
 
 ### Log-likelihood with covariates
 
-Substituting $\lambda_i = \exp(X_i'\beta)$ into the Poisson pmf and summing across firms,
+Substituting $\lambda_i = \exp(X_i^{\top}\beta)$ into the Poisson pmf and summing across firms,
 
 $$
-\ell(\beta) = \sum_{i=1}^{n} \Bigl[ Y_i (X_i'\beta) - \exp(X_i'\beta) - \log(Y_i!) \Bigr].
+\log L(\beta) = \sum_{i=1}^{n} ( Y_i (X_i^{\top}\beta) - \exp(X_i^{\top}\beta) - \log \Gamma(Y_i+1) )
 $$
 
 ```{python}
@@ -507,6 +510,8 @@ opt_reg = optimize.minimize(neg_ll_reg, glm_start, method="BFGS")
 beta_hat = opt_reg.x
 
 # Standard errors from the inverse Hessian of the *negative* log-likelihood
+from scipy.stats import norm
+
 opt_reg_hess = optimize.minimize(
     neg_ll_reg,
     beta_hat,
