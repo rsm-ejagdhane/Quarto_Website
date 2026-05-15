@@ -1,0 +1,108 @@
+---
+title: "Poisson Regression and Maximum Likelihood Estimation"
+subtitle: "A Case Study of Blueprinty's Software and Patent Awards"
+author: "Your Name"
+date: today
+---
+
+
+## Introduction
+
+::: {.callout-note}
+Write a short introduction for the reader that sets the scene. Cover the following points in your own words:
+
+- Blueprinty is a small firm that makes software for developing blueprints specifically for submitting patent applications to the US patent office.
+
+- Their marketing team would like to make the claim that patent applicants using Blueprinty's software are more successful in getting their patent applications approved.
+
+- The ideal dataset for studying such an effect would include each firm's success rate before using Blueprinty's software and after using it, but no such data is available.
+
+- Instead, Blueprinty has collected data on 1,500 mature (non-startup) engineering firms. The data include each firm's number of patents awarded over the last 5 years, regional location, age since incorporation, and whether or not the firm uses Blueprinty's software.
+
+- The marketing team wants to use this data to argue that firms using Blueprinty's software are more successful in getting their patent applications approved. Explain to the reader why this is a non-trivial claim to evaluate: Blueprinty's customers are not selected at random, so any raw difference in patent counts could reflect characteristics of the firms (e.g., age, region) rather than the software itself.
+:::
+
+
+## Exploring the Data
+
+::: {.callout-note}
+- Read in the data from `blueprinty.csv`.
+
+- Compare histograms of the number of patents by customer status (customers vs non-customers) and report the means of each group. Place the two histograms side by side with consistent x-axis scales so they are easy to compare. After the plots, write a few sentences describing what you observe.
+
+- Blueprinty's customers are not selected at random. It may be important to account for systematic differences in firm age and regional location between customers and non-customers. Compare the distribution of regions by customer status, and compare histograms of firm age by customer status. After each comparison, write a few sentences describing what you observe and explain to the reader why these differences matter for the analysis that follows.
+:::
+
+
+## A Simple Poisson Model via Maximum Likelihood
+
+::: {.callout-note}
+- The outcome variable is a count — the number of patents awarded to each firm over the last 5 years — so we can model it as a draw from a Poisson distribution. Write a short introduction explaining this modeling choice to the reader: counts cannot be negative and must be integer-valued, so the Normal distribution is a poor fit, and the Poisson distribution is the natural starting point for non-negative integer outcomes.
+
+- Write down the likelihood and log-likelihood for $Y \sim \text{Poisson}(\lambda)$, using the fact that
+
+$$
+f(Y|\lambda) = \frac{e^{-\lambda}\lambda^{Y}}{Y!}
+$$
+
+  Show the derivation step by step so the reader can follow how the joint likelihood is built from the iid assumption and how the log-likelihood simplifies.
+
+- Code the log-likelihood function in the language of your choice. It should be a function of $\lambda$ and $Y$. For example, in R:
+
+    ```r
+    poisson_loglikelihood <- function(lambda, Y){
+       ...
+    }
+    ```
+
+- Use your function to plot $\lambda$ on the horizontal axis and the log-likelihood on the vertical axis for a range of values of $\lambda$, using the observed number of patents as the input for $Y$. After the plot, write a sentence or two explaining what the curve shows and how to "read" the MLE off it visually.
+
+- If you're feeling mathematical, take the first derivative of the log-likelihood, set it equal to zero, and solve for $\lambda$. You will find $\hat\lambda_{\text{MLE}} = \bar{Y}$, which "feels right" because the mean of a Poisson distribution is $\lambda$.
+
+- Find the MLE numerically by maximizing your log-likelihood function with R's `optim()` or Python's `sp.optimize()`. Compare your numerical answer to the sample mean — they should be (nearly) identical, and you should explain to the reader why.
+:::
+
+
+## Poisson Regression
+
+::: {.callout-note}
+- Now extend the simple Poisson model to a Poisson regression model so that each firm's rate parameter depends on its own characteristics:
+
+$$
+Y_i \sim \text{Poisson}(\lambda_i) \qquad \text{where} \qquad \lambda_i = \exp(X_i'\beta)
+$$
+
+  Write a short introduction explaining this extension to the reader. Instead of assuming every firm has the same patent rate $\lambda$, we now let $\lambda$ vary across firms as a function of age, region, and customer status. Explain why we use $\exp(\cdot)$ as the inverse link: $\lambda_i$ must be positive, but $X_i'\beta$ can be any real number, so the exponential keeps $\lambda_i$ on the positive real line.
+
+- Update your log-likelihood function from the previous section to take in a covariate matrix $X$ and a parameter vector $\beta$ in place of the scalar $\lambda$. For example:
+
+    ```r
+    poisson_regression_loglikelihood <- function(beta, Y, X){
+       ...
+    }
+    ```
+
+- Construct $X$ so that the first column is all 1's (for the intercept), followed by columns for age, age squared, binary indicators for all but one of the regions, and the binary customer variable. Explain to the reader why you include age squared (the relationship between age and patenting is unlikely to be perfectly linear) and why you must drop one region (to avoid perfect collinearity with the intercept).
+
+- Use `optim()` (or `sp.optimize()`) to find the MLE $\hat\beta$, asking the optimizer to also return the Hessian. Use the Hessian to compute standard errors for the coefficients — the standard errors are the square roots of the diagonal of the negative inverse Hessian. Present a table of coefficients and standard errors.
+
+- Check your results by fitting the same model with R's `glm(..., family = poisson)` or Python's `sm.GLM()`. The coefficient estimates should match closely; the standard errors may differ slightly due to the numerical approximation of the Hessian — explain this to the reader.
+
+- Interpret the results. Walk the reader through what each coefficient tells you, paying particular attention to the sign and magnitude of the customer coefficient. Are the signs and magnitudes sensible?
+:::
+
+
+## The Effect of Blueprinty's Software
+
+::: {.callout-note}
+- The coefficients from a Poisson regression are not directly interpretable as "additional patents" because the model is multiplicative in $\lambda$, not additive. To get a more interpretable answer, construct two counterfactual datasets:
+
+    1. $X_0$: a copy of your $X$ matrix where every firm's `iscustomer` value is set to 0.
+    2. $X_1$: a copy of your $X$ matrix where every firm's `iscustomer` value is set to 1.
+
+- Use your fitted model to predict the expected number of patents for every firm under each counterfactual, producing two vectors $\hat{y}_0$ and $\hat{y}_1$.
+
+- Compute the average of $\hat{y}_1 - \hat{y}_0$. This is your estimate of the average effect of being a Blueprinty customer, holding age and region fixed at their observed values for each firm.
+
+- Report the result and interpret it for the reader. Conclude with a careful statement about what the analysis does and does not establish: it provides evidence consistent with Blueprinty's marketing claim, but because this is an observational study (not a randomized experiment), we cannot rule out unobserved characteristics that differ between customers and non-customers and could also drive patent counts.
+:::

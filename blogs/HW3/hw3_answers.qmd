@@ -1,0 +1,651 @@
+---
+format:
+  html:
+    toc: false
+    page-layout: full
+    theme: none
+    fig-format: png
+    fig-dpi: 150
+    title-block-style: none
+    code-fold: true
+    code-summary: "Show Python code"
+    include-in-header: mathjax.html
+jupyter: python3
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+```{=html}
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #f0ece4; color: #2e2825; font-family: 'DM Sans', sans-serif; }
+  #title-block-header,
+  header#title-block-header { display: none !important; }
+  a { color: inherit; text-decoration: none; }
+  .nav {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.5rem 4rem; border-bottom: 1px solid #c9c2b6;
+    background: #f0ece4; position: sticky; top: 0; z-index: 10;
+  }
+  .nav-logo { font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase; color: #7a3b35; }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.8rem; color: #8a8278; text-transform: uppercase;
+    letter-spacing: 0.08em; padding: 0.4rem 0.75rem; display: inline-block;
+    transition: color 0.2s, background 0.2s, transform 0.2s;
+  }
+  .nav-links a:hover { color: #2e2825; background: #e8e3da; transform: translateY(-2px); }
+  .nav-cta {
+    background: #2e2825; color: #f0ece4; padding: 0.5rem 1.2rem;
+    font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase;
+    transition: background 0.2s;
+  }
+  .nav-cta:hover { background: #7a3b35; }
+  .post-header {
+    padding: 5rem 4rem 3rem;
+    border-bottom: 1px solid #c9c2b6;
+    max-width: 860px;
+  }
+  .post-tag { font-size: 0.7rem; color: #7a3b35; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 0.5rem; }
+  .post-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 900; line-height: 1.1; color: #2e2825; margin-bottom: 0.5rem;
+  }
+  .post-subtitle { font-size: 1rem; color: #8a8278; margin-bottom: 1rem; font-style: italic; }
+  .post-meta { font-size: 0.75rem; color: #8a8278; }
+  .back-link {
+    display: inline-block; margin: 2rem 4rem 0;
+    font-size: 0.75rem; color: #7a3b35;
+    border-bottom: 1px solid #c9a09b; padding-bottom: 2px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .back-link:hover { color: #2e2825; border-color: #2e2825; }
+  .post-body { padding: 3rem 4rem 5rem; max-width: 860px; }
+  .post-body h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem; font-weight: 700;
+    color: #2e2825; margin: 3rem 0 1rem;
+    padding-bottom: 0.5rem; border-bottom: 1px solid #c9c2b6;
+  }
+  .post-body h3 { font-size: 1.1rem; font-weight: 500; color: #2e2825; margin: 2rem 0 0.75rem; }
+  .post-body p { font-size: 0.95rem; color: #6b6560; line-height: 1.9; margin-bottom: 1.25rem; }
+  .post-body ul, .post-body ol { padding-left: 1.5rem; margin-bottom: 1.25rem; }
+  .post-body li { font-size: 0.95rem; color: #6b6560; line-height: 1.9; margin-bottom: 0.4rem; }
+  .post-body strong { color: #2e2825; font-weight: 500; }
+  .post-body em { color: #7a3b35; font-style: italic; }
+  pre { background: #e8e3da !important; border: 1px solid #c9c2b6 !important; border-radius: 2px !important; padding: 1rem !important; }
+  code { font-size: 0.85rem !important; color: #2e2825 !important; }
+  table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.88rem; }
+  thead tr { border-bottom: 2px solid #c9c2b6; }
+  th { text-align: left; padding: 0.6rem 1rem; font-weight: 500; color: #2e2825; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; }
+  td { padding: 0.6rem 1rem; color: #6b6560; border-bottom: 1px solid #e8e3da; }
+  tbody tr:last-child td { border-bottom: none; }
+  .footer-bar {
+    margin: 0 4rem; padding: 2rem 0;
+    border-top: 1px solid #c9c2b6;
+    display: flex; justify-content: space-between;
+    font-size: 0.7rem; color: #8a8278;
+  }
+  @media (max-width: 800px) {
+    .nav { padding: 1rem 1.5rem; }
+    .post-header, .post-body { padding: 3rem 1.5rem; }
+    .back-link { margin: 1.5rem; }
+    .footer-bar { margin: 0 1.5rem; flex-direction: column; gap: 0.5rem; }
+  }
+  body details:has(pre.sourceCode) {
+    margin: 0 0 1.25rem 0;
+    border: 1px solid #c9c2b6;
+    border-radius: 2px;
+    background: #e8e3da;
+    padding: 0;
+  }
+  body details:has(pre.sourceCode) > summary {
+    cursor: pointer;
+    list-style: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #f0ece4;
+    background: #2e2825;
+    border: none;
+    border-radius: 2px 2px 0 0;
+    padding: 0.55rem 1rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  body details:has(pre.sourceCode) > summary::-webkit-details-marker { display: none; }
+  body details:has(pre.sourceCode) > summary::marker { content: ''; }
+  body details:has(pre.sourceCode) > summary::after {
+    content: "collapsed";
+    font-size: 0.68rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #c9c2b6;
+    border: 1px solid #8a8278;
+    border-radius: 2px;
+    padding: 0.2rem 0.5rem;
+    flex-shrink: 0;
+  }
+  body details:has(pre.sourceCode)[open] > summary {
+    background: #7a3b35;
+    border-bottom: 1px solid #c9a09b;
+  }
+  body details:has(pre.sourceCode)[open] > summary::after { content: "expanded"; color: #f0ece4; border-color: #f0ece4; }
+  body details:has(pre.sourceCode) pre.sourceCode {
+    margin: 0 !important;
+    border-radius: 0 0 2px 2px !important;
+    border-top: none !important;
+  }
+</style>
+
+<div class="nav">
+  <span class="nav-logo">Eesha Jagdhane // Portfolio</span>
+  <ul class="nav-links">
+    <li><a href="../../index.html">Home</a></li>
+    <li><a href="../../blogs.html">Blogs &amp; Insights</a></li>
+  </ul>
+  <a href="../../index.html#contact" class="nav-cta">Get in touch</a>
+</div>
+
+<div class="post-header">
+  <div class="post-tag">Assignment 3 — Marketing Analytics</div>
+  <div class="post-title">Poisson Regression &amp; Maximum Likelihood</div>
+  <div class="post-subtitle">Does Blueprinty's software help firms win more patents?</div>
+  <div class="post-meta">Eesha Jagdhane &nbsp;·&nbsp; May 15, 2026</div>
+</div>
+
+<a href="../../blogs.html" class="back-link">← Back to Blogs &amp; Insights</a>
+
+<div class="post-body">
+```
+
+## Introduction
+
+**Blueprinty** builds specialized software for drafting patent-application blueprints submitted to the U.S. Patent and Trademark Office. Their marketing team wants to claim that firms using the product are *more successful* at getting patents approved.
+
+The cleanest evidence would track each firm's patent success *before* and *after* adoption — a within-firm panel. That data does not exist. Instead, Blueprinty surveyed **1,500 mature engineering firms**, recording patents awarded in the last five years, U.S. region, firm age, and whether the firm is a current customer (`iscustomer`).
+
+A naïve comparison of average patents between customers and non-customers is tempting but misleading. Customers are **not randomly assigned**: they may be older, concentrated in patent-heavy regions, or otherwise different on dimensions that also drive patent counts. Any raw gap could reflect **who selects into Blueprinty**, not what the software does. The analysis below uses Poisson regression and maximum likelihood estimation (MLE) to separate correlation from a more disciplined estimate of the customer effect — while being explicit about what observational data can and cannot prove.
+
+## Exploring the Data
+
+```{python}
+#| echo: false
+#| output: false
+
+from pathlib import Path
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from IPython.display import Markdown, display
+from scipy import optimize
+from scipy.special import gammaln
+import statsmodels.api as sm
+
+DATA_PATH = Path("blueprinty.csv")
+
+PALETTE = {"Non-customer": "#8a8278", "Customer": "#7a3b35"}
+ACCENT = "#2e2825"
+BG = "#f0ece4"
+PANEL = "#e8e3da"
+GRID = "#c9c2b6"
+
+
+def markdown_table(headers: list[str], rows: list[list[str]]) -> str:
+    lines = [
+        "| " + " | ".join(headers) + " |",
+        "| " + " | ".join(["---"] * len(headers)) + " |",
+    ]
+    lines.extend("| " + " | ".join(r) + " |" for r in rows)
+    return "\n".join(lines)
+
+
+def style_axes(ax):
+    ax.set_facecolor(PANEL)
+    ax.figure.set_facecolor(BG)
+    ax.grid(True, color=GRID, linewidth=0.7)
+    for spine in ("top", "right"):
+        ax.spines[spine].set_visible(False)
+    ax.tick_params(colors="#8a8278")
+    ax.xaxis.label.set_color(ACCENT)
+    ax.yaxis.label.set_color(ACCENT)
+    ax.title.set_color(ACCENT)
+
+
+plt.rcParams.update({
+    "figure.facecolor": BG,
+    "axes.facecolor": PANEL,
+    "font.family": "sans-serif",
+    "axes.titlesize": 12,
+    "axes.labelsize": 10,
+    "text.color": ACCENT,
+})
+
+df = pd.read_csv(DATA_PATH)
+df["customer_label"] = np.where(df["iscustomer"] == 1, "Customer", "Non-customer")
+```
+
+```{python}
+#| echo: true
+#| eval: false
+
+df.head()
+```
+
+The sample contains 1,500 firms across five regions. Patent counts are non-negative integers ranging from 0 to 16.
+
+### Patents by customer status
+
+```{python}
+#| echo: false
+#| fig-cap: "Distribution of patent counts over the last five years, by Blueprinty customer status."
+
+means = df.groupby("customer_label")["patents"].mean()
+xmax = df["patents"].max() + 1
+bins = np.arange(-0.5, xmax + 1, 1)
+
+fig, axes = plt.subplots(1, 2, figsize=(10, 4), sharey=True)
+for ax, label in zip(axes, ["Non-customer", "Customer"]):
+    sub = df.loc[df["customer_label"] == label, "patents"]
+    ax.hist(
+        sub,
+        bins=bins,
+        color=PALETTE[label],
+        edgecolor=BG,
+        linewidth=0.6,
+        alpha=0.9,
+    )
+    ax.set_xlim(-0.5, xmax + 0.5)
+    ax.set_xlabel("Patents awarded (5 years)")
+    ax.set_title(f"{label}\nmean = {sub.mean():.2f}")
+    style_axes(ax)
+axes[0].set_ylabel("Number of firms")
+fig.suptitle(
+    "Patent counts are right-skewed; customers average more patents in the raw data",
+    fontsize=12,
+    y=1.02,
+)
+plt.tight_layout()
+plt.show()
+
+display(
+    Markdown(
+        markdown_table(
+            ["Group", "N", "Mean patents", "Median"],
+            [
+                [
+                    "Non-customer",
+                    f"{(df.iscustomer == 0).sum():,}",
+                    f"{means['Non-customer']:.2f}",
+                    f"{df.loc[df.iscustomer == 0, 'patents'].median():.0f}",
+                ],
+                [
+                    "Customer",
+                    f"{(df.iscustomer == 1).sum():,}",
+                    f"{means['Customer']:.2f}",
+                    f"{df.loc[df.iscustomer == 1, 'patents'].median():.0f}",
+                ],
+            ],
+        )
+    )
+)
+```
+
+Customers average **4.13** patents versus **3.47** for non-customers — a gap of about 0.66 patents per firm. Both distributions pile up at low counts (0–5) with a long right tail, which is typical of count outcomes and motivates a Poisson model rather than Normal regression.
+
+### Age and region differ between customers and non-customers
+
+```{python}
+#| echo: false
+#| fig-cap: "Regional mix and firm age differ between customers and non-customers."
+
+region_tab = (
+    pd.crosstab(df["region"], df["customer_label"], normalize="columns")
+    .mul(100)
+    .round(1)
+)
+
+fig, axes = plt.subplots(1, 2, figsize=(10.5, 4.2))
+
+region_tab.plot(
+    kind="bar",
+    ax=axes[0],
+    color=[PALETTE["Non-customer"], PALETTE["Customer"]],
+    edgecolor=BG,
+    width=0.75,
+)
+axes[0].set_ylabel("Share of firms (%)")
+axes[0].set_xlabel("")
+axes[0].set_title("Regional mix by customer status")
+axes[0].legend(title="", frameon=True, facecolor=BG, edgecolor=GRID)
+axes[0].tick_params(axis="x", rotation=35)
+style_axes(axes[0])
+
+for label in ["Non-customer", "Customer"]:
+    sub = df.loc[df["customer_label"] == label, "age"]
+    axes[1].hist(
+        sub,
+        bins=16,
+        alpha=0.65,
+        label=f"{label} (mean {sub.mean():.1f} yr)",
+        color=PALETTE[label],
+        edgecolor=BG,
+    )
+axes[1].set_xlabel("Firm age (years since incorporation)")
+axes[1].set_ylabel("Number of firms")
+axes[1].set_title("Age distributions are similar but not identical")
+axes[1].legend(frameon=True, facecolor=BG, edgecolor=GRID)
+style_axes(axes[1])
+
+plt.tight_layout()
+plt.show()
+```
+
+The regional composition shifts noticeably: **54.6%** of customers are in the Northeast versus **45.4%** of non-customers, while Midwest and Northwest customers are under-represented relative to non-customers. Ages overlap heavily (both groups center near 26 years), but customers are slightly older on average.
+
+These patterns matter because patent intensity varies by region and lifecycle stage. If we ignore them, part of the raw customer premium may simply reflect *where* and *what kind of firm* Blueprinty sells to — not the software itself. The regression below holds age, age-squared, and region fixed while estimating a customer effect.
+
+## A Simple Poisson Model via Maximum Likelihood
+
+Patent counts are **non-negative integers**. A Normal model can predict impossible negative values and treats variance as fixed regardless of the mean. The **Poisson distribution** is the standard starting point for count data: one parameter $\lambda > 0$ governs both mean and variance, and the support is $\{0, 1, 2, \ldots\}$.
+
+### Likelihood and log-likelihood
+
+For a single observation $Y \sim \text{Poisson}(\lambda)$,
+
+$$
+f(Y \mid \lambda) = \frac{e^{-\lambda}\lambda^{Y}}{Y!}.
+$$
+
+Assuming i.i.d. draws $Y_1, \ldots, Y_n$, the joint likelihood is
+
+$$
+L(\lambda) = \prod_{i=1}^{n} \frac{e^{-\lambda}\lambda^{Y_i}}{Y_i!}
+= \frac{e^{-n\lambda}\,\lambda^{\sum_i Y_i}}{\prod_i Y_i!}.
+$$
+
+Taking logs (constants in $Y_i!$ drop out of optimization):
+
+$$
+\ell(\lambda) = \sum_{i=1}^{n} \bigl[ Y_i \log \lambda - \lambda - \log(Y_i!) \bigr].
+$$
+
+The first derivative is
+
+$$
+\frac{d\ell}{d\lambda} = \sum_{i=1}^{n} \left( \frac{Y_i}{\lambda} - 1 \right) = \frac{n\bar{Y}}{\lambda} - n.
+$$
+
+Setting this to zero gives the closed-form MLE $\hat\lambda_{\text{MLE}} = \bar{Y}$ — the sample mean, which equals the Poisson mean parameter.
+
+### Coding the log-likelihood and finding the MLE
+
+```{python}
+#| echo: true
+#| fig-cap: "Log-likelihood as a function of λ for the full sample; the peak is at the sample mean."
+
+def poisson_loglikelihood(lam, y):
+    """Log-likelihood for i.i.d. Poisson(λ) with data vector y."""
+    lam = np.asarray(lam, dtype=float)
+    y = np.asarray(y, dtype=float)
+    return np.sum(y * np.log(lam) - lam - gammaln(y + 1))
+
+
+Y = df["patents"].to_numpy()
+lam_grid = np.linspace(2.0, 5.5, 300)
+loglik = [poisson_loglikelihood(l, Y) for l in lam_grid]
+
+fig, ax = plt.subplots(figsize=(7.5, 4))
+ax.plot(lam_grid, loglik, color=PALETTE["Customer"], linewidth=2.2)
+mle_line = Y.mean()
+ax.axvline(mle_line, color=ACCENT, linestyle="--", linewidth=1.2, label=f"MLE  λ̂ = {mle_line:.3f}")
+ax.set_xlabel("λ (Poisson rate)")
+ax.set_ylabel("Log-likelihood ℓ(λ)")
+ax.set_title("Log-likelihood is concave; the MLE sits at the peak")
+ax.legend(frameon=True, facecolor=BG, edgecolor=GRID)
+style_axes(ax)
+plt.tight_layout()
+plt.show()
+
+neg_ll = lambda lam: -poisson_loglikelihood(lam, Y)
+opt_scalar = optimize.minimize_scalar(neg_ll, bounds=(0.01, 20), method="bounded")
+
+display(
+    Markdown(
+        markdown_table(
+            ["Estimator", "Value"],
+            [
+                ["Sample mean Ȳ", f"{Y.mean():.4f}"],
+                ["Numerical MLE (scipy.optimize)", f"{opt_scalar.x:.4f}"],
+            ],
+        )
+    )
+)
+```
+
+The curve is **concave** with a single peak. Reading horizontally, the MLE is the $\lambda$ where the log-likelihood is highest — here, **3.685** patents per firm over five years. Numerical maximization via `scipy.optimize.minimize_scalar` returns essentially the same value as the sample mean; any tiny difference is floating-point noise. That agreement is reassuring: for a one-parameter Poisson model, MLE theory and a simple average tell the same story.
+
+## Poisson Regression
+
+The simple model forces every firm to share one patent rate. **Poisson regression** lets each firm's expected count depend on covariates:
+
+$$
+Y_i \sim \text{Poisson}(\lambda_i), \qquad \lambda_i = \exp(X_i'\beta).
+$$
+
+The **log link** is standard: $\lambda_i$ must be positive, but the linear predictor $X_i'\beta$ can be any real number. The exponential maps the real line onto $(0, \infty)$.
+
+### Log-likelihood with covariates
+
+Substituting $\lambda_i = \exp(X_i'\beta)$ into the Poisson pmf and summing across firms,
+
+$$
+\ell(\beta) = \sum_{i=1}^{n} \Bigl[ Y_i (X_i'\beta) - \exp(X_i'\beta) - \log(Y_i!) \Bigr].
+$$
+
+```{python}
+#| echo: true
+
+def poisson_regression_loglikelihood(beta, y, X):
+    """Log-likelihood for Poisson regression with log link."""
+    eta = X @ beta
+    eta = np.clip(eta, -30, 30)  # numerical stability
+    lam = np.exp(eta)
+    return np.sum(y * eta - lam - gammaln(y + 1))
+```
+
+### Design matrix
+
+```{python}
+#| echo: true
+
+df = df.copy()
+df["age_sq"] = df["age"] ** 2
+region_dummies = pd.get_dummies(df["region"], prefix="region", drop_first=True)
+
+X_df = pd.concat(
+    [
+        pd.Series(1.0, index=df.index, name="intercept"),
+        df["age"],
+        df["age_sq"],
+        region_dummies,
+        df["iscustomer"],
+    ],
+    axis=1,
+)
+X = X_df.to_numpy(dtype=float)
+col_names = list(X_df.columns)
+```
+
+- **`age` and `age_sq`:** patent productivity often rises with maturity but eventually levels off; a quadratic allows curvature instead of forcing a straight line.
+- **Region dummies with one category dropped:** including all five regions plus an intercept creates perfect multicollinearity (dummy-variable trap). **Midwest** is the omitted baseline; other coefficients are differences relative to Midwest.
+- **`iscustomer`:** the marketing question — holding age and region constant, is the customer indicator associated with a higher patent rate?
+
+### MLE via numerical optimization
+
+```{python}
+#| echo: true
+
+neg_ll_reg = lambda b: -poisson_regression_loglikelihood(b, Y, X)
+
+# Stable starting values from IRLS (statsmodels GLM)
+glm_start = sm.GLM(Y, X, family=sm.families.Poisson()).fit().params
+opt_reg = optimize.minimize(neg_ll_reg, glm_start, method="BFGS")
+beta_hat = opt_reg.x
+
+# Standard errors from the inverse Hessian of the *negative* log-likelihood
+opt_reg_hess = optimize.minimize(
+    neg_ll_reg,
+    beta_hat,
+    method="BFGS",
+    options={"disp": False},
+)
+cov_mle = opt_reg_hess.hess_inv
+if hasattr(cov_mle, "A"):
+    cov_mle = cov_mle.A
+se_mle = np.sqrt(np.diag(cov_mle))
+z_mle = beta_hat / se_mle
+p_mle = 2 * (1 - sm.distributions.norm.cdf(np.abs(z_mle)))
+```
+
+```{python}
+#| echo: false
+
+glm = sm.GLM(Y, X, family=sm.families.Poisson())
+glm_res = glm.fit()
+
+rows = []
+for i, name in enumerate(col_names):
+    rows.append(
+        [
+            name,
+            f"{beta_hat[i]:.4f}",
+            f"({se_mle[i]:.4f})",
+            f"{glm_res.params[i]:.4f}",
+            f"({glm_res.bse[i]:.4f})",
+            f"{p_mle[i]:.3f}" if p_mle[i] >= 0.001 else "<0.001",
+        ]
+    )
+
+display(
+    Markdown(
+        "### Poisson regression: MLE vs. `statsmodels` GLM\n\n"
+        + markdown_table(
+            [
+                "Variable",
+                "MLE coef.",
+                "MLE SE",
+                "GLM coef.",
+                "GLM SE",
+                "p (MLE)",
+            ],
+            rows,
+        )
+        + "\n\n*Reference region: Midwest. Standard errors: inverse Hessian (MLE) vs. model-based (GLM).*"
+    )
+)
+```
+
+Coefficient estimates from **BFGS maximization of the log-likelihood** match **`statsmodels` GLM** to four decimal places. Standard errors are nearly identical; tiny differences arise because the MLE Hessian is obtained numerically during optimization, while GLM uses the Fisher information from IRLS.
+
+### Interpreting coefficients
+
+| Variable | Direction | Reading |
+|----------|-----------|---------|
+| **intercept** | — | Baseline log-rate for a Midwest firm at age 0 (not literally meaningful; anchors the scale). |
+| **age** | + | Patent rate rises with age at younger ages (positive linear term). |
+| **age_sq** | − | Concave age profile — growth slows as firms mature. |
+| **region dummies** | mixed | Modest shifts vs. Midwest; none are precisely estimated at conventional levels except possibly Northeast (+). |
+| **iscustomer** | **+** | **+0.208** on the log scale → $\exp(0.208) \approx 1.23$: customers have about **23% higher** expected patent counts than otherwise similar non-customers, holding age and region fixed. Highly significant ($p < 0.001$). |
+
+The customer sign is **positive and plausible in magnitude** for marketing analytics — not a 10× spike, but a meaningful lift on a multiplicative scale. It is also exactly the kind of coefficient that could reflect **selection**: firms that patent more may be more likely to buy specialized patent software.
+
+## The Effect of Blueprinty's Software
+
+Poisson coefficients live on the **log scale**. A more intuitive quantity is the expected **change in patents** if every firm were toggled from non-customer to customer, holding each firm's observed age and region.
+
+```{python}
+#| echo: true
+
+cust_idx = col_names.index("iscustomer")
+X0 = X.copy()
+X1 = X.copy()
+X0[:, cust_idx] = 0
+X1[:, cust_idx] = 1
+
+eta0 = np.clip(X0 @ beta_hat, -30, 30)
+eta1 = np.clip(X1 @ beta_hat, -30, 30)
+y0_hat = np.exp(eta0)
+y1_hat = np.exp(eta1)
+ate = (y1_hat - y0_hat).mean()
+```
+
+```{python}
+#| echo: false
+#| fig-cap: "Counterfactual expected patents per firm under customer vs. non-customer status."
+
+fig, ax = plt.subplots(figsize=(6.5, 4))
+ax.hist(
+    y1_hat - y0_hat,
+    bins=28,
+    color=PALETTE["Customer"],
+    edgecolor=BG,
+    alpha=0.9,
+)
+ax.axvline(ate, color=ACCENT, linestyle="--", linewidth=1.5, label=f"Mean effect = {ate:.2f} patents")
+ax.set_xlabel("Predicted gain in expected patents (customer − non-customer)")
+ax.set_ylabel("Number of firms")
+ax.set_title("Firm-level counterfactual gains vary; the average is the ATE estimate")
+ax.legend(frameon=True, facecolor=BG, edgecolor=GRID)
+style_axes(ax)
+plt.tight_layout()
+plt.show()
+
+display(
+    Markdown(
+        markdown_table(
+            ["Quantity", "Estimate"],
+            [
+                ["Mean predicted patents if all non-customers", f"{y0_hat.mean():.3f}"],
+                ["Mean predicted patents if all customers", f"{y1_hat.mean():.3f}"],
+                [
+                    "**Average treatment effect** (mean of ŷ₁ − ŷ₀)",
+                    f"**{ate:.3f}**",
+                ],
+            ],
+        )
+    )
+)
+```
+
+Holding each firm's age and region at its observed values, switching `iscustomer` from 0 to 1 raises predicted expected patents by about **0.79 patents per firm** on average over the five-year window — roughly a **21%** increase relative to the counterfactual mean of 3.73 patents.
+
+### What this does — and does not — establish
+
+The Poisson regression and MLE machinery provide evidence **consistent with** Blueprinty's marketing claim: after adjusting for age and region, customers exhibit higher expected patent counts, and the estimated average lift is economically meaningful.
+
+But this is an **observational** cross-section, not a randomized trial. Unobserved factors — R&D budget, patent attorney quality, industry sub-sector, prior innovation culture — may differ between customers and non-customers and also drive patents. We cannot rule out that **selection**, not software, generates the +0.21 log-rate on `iscustomer`. A convincing causal story would require richer designs: panel data before/after adoption, instrumental variables, or experimental assignment.
+
+What we *have* learned procedurally is the MLE recipe in a marketing setting: write down the Poisson likelihood, implement it, maximize numerically, verify against `glm()`, and translate log-scale coefficients into counterfactual patent counts that a marketer can actually discuss.
+
+```{=html}
+</div>
+
+<div class="footer-bar">
+  <span>© 2026 Eesha Jagdhane &nbsp;</span>
+  <span style="color: #7a3b35;">Built with Quarto</span>
+  <span>San Diego, CA</span>
+</div>
+```
