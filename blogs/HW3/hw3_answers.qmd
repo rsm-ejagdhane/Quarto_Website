@@ -192,6 +192,7 @@ import pandas as pd
 from IPython.display import Markdown, display
 from scipy import optimize
 from scipy.special import gammaln
+from scipy.stats import norm
 import statsmodels.api as sm
 
 DATA_PATH = Path("blueprinty.csv")
@@ -517,7 +518,7 @@ if hasattr(cov_mle, "A"):
     cov_mle = cov_mle.A
 se_mle = np.sqrt(np.diag(cov_mle))
 z_mle = beta_hat / se_mle
-p_mle = 2 * (1 - sm.distributions.norm.cdf(np.abs(z_mle)))
+p_mle = 2 * (1 - norm.cdf(np.abs(z_mle)))
 ```
 
 ```{python}

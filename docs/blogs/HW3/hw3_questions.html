@@ -9,7 +9,7 @@
 <meta name="author" content="Your Name">
 <meta name="dcterms.date" content="2026-05-15">
 
-<title>A/B Testing a Call to Action – Eesha Jagdhane</title>
+<title>Poisson Regression and Maximum Likelihood Estimation – Eesha Jagdhane</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,6 +23,41 @@ ul.task-list li input[type="checkbox"] {
   vertical-align: middle;
 }
 .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -43,8 +78,8 @@ ul.task-list li input[type="checkbox"] {
 
 
 <header id="title-block-header">
-<h1 class="title">A/B Testing a Call to Action</h1>
-<p class="subtitle">Simulating Key Ideas from Classical Frequentist Statistics</p>
+<h1 class="title">Poisson Regression and Maximum Likelihood Estimation</h1>
+<p class="subtitle">A Case Study of Blueprinty’s Software and Patent Awards</p>
 <p class="author">Your Name</p>
 
 <p class="date">2026-05-15</p>
@@ -57,151 +92,82 @@ ul.task-list li input[type="checkbox"] {
 <p><strong>Note</strong></p>
 <p>Write a short introduction for the reader that sets the scene. Cover the following points in your own words:</p>
 <ul>
-<li><p>You have a website and your landing page includes a place where visitors can sign up to receive your newsletter.</p></li>
-<li><p>You want to test which of two possible “calls to action” (CTAs) leads to more sign-ups. CTA A reads “Sign up for our newsletter here!” and CTA B reads “Stay up to date by signing up!” (you are welcome to change the language of the CTAs).</p></li>
-<li><p>You will evaluate which CTA performs better by running an A/B test. Explain what an A/B test is: visitors are randomly assigned to see one of the two CTAs, and you compare sign-up rates between the two groups.</p></li>
+<li><p>Blueprinty is a small firm that makes software for developing blueprints specifically for submitting patent applications to the US patent office.</p></li>
+<li><p>Their marketing team would like to make the claim that patent applicants using Blueprinty’s software are more successful in getting their patent applications approved.</p></li>
+<li><p>The ideal dataset for studying such an effect would include each firm’s success rate before using Blueprinty’s software and after using it, but no such data is available.</p></li>
+<li><p>Instead, Blueprinty has collected data on 1,500 mature (non-startup) engineering firms. The data include each firm’s number of patents awarded over the last 5 years, regional location, age since incorporation, and whether or not the firm uses Blueprinty’s software.</p></li>
+<li><p>The marketing team wants to use this data to argue that firms using Blueprinty’s software are more successful in getting their patent applications approved. Explain to the reader why this is a non-trivial claim to evaluate: Blueprinty’s customers are not selected at random, so any raw difference in patent counts could reflect characteristics of the firms (e.g., age, region) rather than the software itself.</p></li>
 </ul>
 </blockquote>
 </div>
-<h2 id="the-ab-test-as-a-statistical-problem" class="anchored">The A/B Test as a Statistical Problem</h2>
-<div>
-<blockquote>
-<p><strong>Note</strong></p>
-<p>In this section, connect the A/B test to a formal statistical framework. Address each of the following ideas:</p>
-<ul>
-<li><p>Each visitor either signs up or does not, so we can model each visitor’s outcome as a draw from a Bernoulli distribution with parameter <span class="math inline"><em>π</em></span>, the probability of signing up.</p></li>
-<li><p>Because the CTA a visitor sees may influence their probability of signing up, we allow the parameter to differ across groups: visitors who see CTA A have sign-up probability <span class="math inline"><em>π</em><sub><em>A</em></sub></span>, and visitors who see CTA B have sign-up probability <span class="math inline"><em>π</em><sub><em>B</em></sub></span>. Each visitor can either sign up (1) or not (0).</p></li>
-<li><p>The quantity we care about is <span class="math inline"><em>θ</em> = <em>π</em><sub><em>A</em></sub> − <em>π</em><sub><em>B</em></sub></span>, the difference in sign-up rates between the two CTAs.</p></li>
-<li><p>Our estimator of <span class="math inline"><em>θ</em></span> is the difference in sample means, <span class="math inline"><em>θ̂</em> = <em>X̄</em><sub><em>A</em></sub> − <em>X̄</em><sub><em>B</em></sub></span>. (Since each observation is either 0 or 1, the sample mean is simply the proportion of visitors who signed up — so <span class="math inline"><em>X̄</em><sub><em>A</em></sub> = <em>π̂</em><sub><em>A</em></sub></span> and <span class="math inline"><em>X̄</em><sub><em>B</em></sub> = <em>π̂</em><sub><em>B</em></sub></span>.)</p></li>
-</ul>
-</blockquote>
-</div>
-<h2 id="simulating-data" class="anchored">Simulating Data</h2>
+<h2 id="exploring-the-data" class="anchored">Exploring the Data</h2>
 <div>
 <blockquote>
 <p><strong>Note</strong></p>
 <ul>
-<li><p>Write a brief paragraph for the reader explaining that in the real world we would not know the true values of <span class="math inline"><em>π</em><sub><em>A</em></sub></span> and <span class="math inline"><em>π</em><sub><em>B</em></sub></span>, but for the purpose of this exercise we will set them ourselves so that we can study the behavior of our estimator when we know the truth.</p></li>
-<li><p>Suppose <span class="math inline"><em>π</em><sub><em>A</em></sub> = 0.22</span> and <span class="math inline"><em>π</em><sub><em>B</em></sub> = 0.18</span>, so the true difference is <span class="math inline"><em>θ</em> = 0.04</span>.</p></li>
-<li><p>Using a language of your choice, simulate 1,000 draws from each of the two Bernoulli distributions (2,000 total). Store the results so you can use them in the sections that follow.</p></li>
+<li><p>Read in the data from <code>blueprinty.csv</code>.</p></li>
+<li><p>Compare histograms of the number of patents by customer status (customers vs non-customers) and report the means of each group. Place the two histograms side by side with consistent x-axis scales so they are easy to compare. After the plots, write a few sentences describing what you observe.</p></li>
+<li><p>Blueprinty’s customers are not selected at random. It may be important to account for systematic differences in firm age and regional location between customers and non-customers. Compare the distribution of regions by customer status, and compare histograms of firm age by customer status. After each comparison, write a few sentences describing what you observe and explain to the reader why these differences matter for the analysis that follows.</p></li>
 </ul>
 </blockquote>
 </div>
-<h2 id="the-law-of-large-numbers" class="anchored">The Law of Large Numbers</h2>
+<h2 id="a-simple-poisson-model-via-maximum-likelihood" class="anchored">A Simple Poisson Model via Maximum Likelihood</h2>
 <div>
 <blockquote>
 <p><strong>Note</strong></p>
 <ul>
-<li><p>Write an introductory sentence or two explaining the Law of Large Numbers to the reader: as the sample size grows, the sample mean converges to the population mean. Connect this back to our estimator — the LLN is what gives us confidence that <span class="math inline"><em>θ̂</em> = <em>X̄</em><sub><em>A</em></sub> − <em>X̄</em><sub><em>B</em></sub></span> will be close to the true <span class="math inline"><em>θ</em></span> when our sample is large enough.</p></li>
-<li><p>Then demonstrate this visually. Using the simulated data from the previous section, compute the element-wise differences between the CTA A draws and the CTA B draws to get a vector of 1,000 differences. Calculate the cumulative average of that vector (i.e., the running mean after 1 draw, after 2 draws, …, after 1,000 draws) and plot it against the number of observations.</p></li>
-<li><p>The plot should show a noisy average when only a few observations are included that settles down and converges toward the true difference of 0.04 as the sample size grows.</p></li>
-<li><p>After the plot, write a few sentences explaining what the reader should take away from it.</p></li>
-</ul>
-</blockquote>
-</div>
-<h2 id="bootstrap-standard-errors" class="anchored">Bootstrap Standard Errors</h2>
-<div>
-<blockquote>
-<p><strong>Note</strong></p>
-<ul>
-<li><p>Now that we “trust” our estimator, the next natural question is: how precise is it? We would like to report not just a point estimate of <span class="math inline"><em>θ</em></span> but also a confidence interval that communicates our uncertainty.</p></li>
-<li><p>Write a short introduction explaining the idea of bootstrapping to the reader. The bootstrap is a resampling method that lets us estimate the variability of a statistic without relying on a closed-form formula. We resample (with replacement) from our observed data many times, compute the statistic of interest on each resample, and use the standard deviation of those resampled statistics as our estimate of the standard error.</p></li>
-<li><p>Then carry out the following steps:</p>
-<ol type="1">
-<li>From your 1,000 CTA A draws and 1,000 CTA B draws, draw a bootstrap resample of size 1,000 (with replacement) from each group. Compute <span class="math inline"><em>θ̂</em><sup>*</sup> = <em>X̄</em><sub><em>A</em></sub><sup>*</sup> − <em>X̄</em><sub><em>B</em></sub><sup>*</sup></span> for that resample.</li>
-<li>Repeat step 1 a total of 1,000 times to produce a vector of 1,000 bootstrapped estimates of <span class="math inline"><em>θ</em></span>.</li>
-<li>Compute the standard deviation of those 1,000 values. This is your bootstrapped standard error.</li>
-<li>Compare it to the analytical standard error. For the difference in means of two independent Bernoulli samples, the standard error formula is:</li>
-</ol></li>
+<li><p>The outcome variable is a count — the number of patents awarded to each firm over the last 5 years — so we can model it as a draw from a Poisson distribution. Write a short introduction explaining this modeling choice to the reader: counts cannot be negative and must be integer-valued, so the Normal distribution is a poor fit, and the Poisson distribution is the natural starting point for non-negative integer outcomes.</p></li>
+<li><p>Write down the likelihood and log-likelihood for <span class="math inline"><em>Y</em> ∼ Poisson(<em>λ</em>)</span>, using the fact that</p></li>
 </ul>
 <p><span class="math display">$$
-SE(\hat\theta) = \sqrt{\frac{\hat\pi_A(1 - \hat\pi_A)}{n_A} + \frac{\hat\pi_B(1 - \hat\pi_B)}{n_B}}
+f(Y|\lambda) = \frac{e^{-\lambda}\lambda^{Y}}{Y!}
 $$</span></p>
-<p>where <span class="math inline"><em>π̂</em><sub><em>A</em></sub></span> and <span class="math inline"><em>π̂</em><sub><em>B</em></sub></span> are the sample proportions and <span class="math inline"><em>n</em><sub><em>A</em></sub></span> and <span class="math inline"><em>n</em><sub><em>B</em></sub></span> are the sample sizes.</p>
+<p>Show the derivation step by step so the reader can follow how the joint likelihood is built from the iid assumption and how the log-likelihood simplifies.</p>
 <ul>
-<li>Report both the bootstrapped standard error and the analytical standard error and comment on how close they are to each other. Then use the bootstrapped standard error to construct a 95% confidence interval for <span class="math inline"><em>θ</em></span> and interpret it for the reader.</li>
+<li><p>Code the log-likelihood function in the language of your choice. It should be a function of <span class="math inline"><em>λ</em></span> and <span class="math inline"><em>Y</em></span>. For example, in R:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>poisson_loglikelihood <span class="ot">&lt;-</span> <span class="cf">function</span>(lambda, Y){</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>   ...</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p>Use your function to plot <span class="math inline"><em>λ</em></span> on the horizontal axis and the log-likelihood on the vertical axis for a range of values of <span class="math inline"><em>λ</em></span>, using the observed number of patents as the input for <span class="math inline"><em>Y</em></span>. After the plot, write a sentence or two explaining what the curve shows and how to “read” the MLE off it visually.</p></li>
+<li><p>If you’re feeling mathematical, take the first derivative of the log-likelihood, set it equal to zero, and solve for <span class="math inline"><em>λ</em></span>. You will find <span class="math inline"><em>λ̂</em><sub>MLE</sub> = <em>Ȳ</em></span>, which “feels right” because the mean of a Poisson distribution is <span class="math inline"><em>λ</em></span>.</p></li>
+<li><p>Find the MLE numerically by maximizing your log-likelihood function with R’s <code>optim()</code> or Python’s <code>sp.optimize()</code>. Compare your numerical answer to the sample mean — they should be (nearly) identical, and you should explain to the reader why.</p></li>
 </ul>
 </blockquote>
 </div>
-<h2 id="the-central-limit-theorem" class="anchored">The Central Limit Theorem</h2>
+<h2 id="poisson-regression" class="anchored">Poisson Regression</h2>
 <div>
 <blockquote>
 <p><strong>Note</strong></p>
 <ul>
-<li><p>Write a short introduction explaining the Central Limit Theorem to the reader: regardless of the shape of the underlying population distribution, the sampling distribution of the sample mean (and therefore of the difference in sample means) becomes approximately Normal as the sample size grows.</p></li>
-<li><p>Then demonstrate this visually by creating four histograms, one for each of the following sample sizes: <span class="math inline"><em>n</em> ∈ {25, 50, 100, 500}</span>.</p></li>
-<li><p>For each sample size <span class="math inline"><em>n</em></span>:</p>
-<ol type="1">
-<li>Draw <span class="math inline"><em>n</em></span> observations from the CTA A distribution and <span class="math inline"><em>n</em></span> observations from the CTA B distribution.</li>
-<li>Compute <span class="math inline"><em>θ̂</em> = <em>X̄</em><sub><em>A</em></sub> − <em>X̄</em><sub><em>B</em></sub></span>.</li>
-<li>Repeat steps 1–2 a total of 1,000 times to produce 1,000 values of <span class="math inline"><em>θ̂</em></span>.</li>
-<li>Plot a histogram of those 1,000 values.</li>
-</ol></li>
-<li><p>Arrange the four histograms so they can be compared easily (e.g., in a 2x2 grid with consistent x-axis scales).</p></li>
-<li><p>After the plots, write a few sentences explaining what the reader should observe: at small sample sizes the histogram may look rough or asymmetric, but as <span class="math inline"><em>n</em></span> increases the distribution of <span class="math inline"><em>θ̂</em></span> becomes smoother and more bell-shaped, illustrating the Central Limit Theorem in action.</p></li>
+<li>Now extend the simple Poisson model to a Poisson regression model so that each firm’s rate parameter depends on its own characteristics:</li>
+</ul>
+<p><span class="math display"><em>Y</em><sub><em>i</em></sub> ∼ Poisson(<em>λ</em><sub><em>i</em></sub>)   where   <em>λ</em><sub><em>i</em></sub> = exp (<em>X</em><sub><em>i</em></sub>′<em>β</em>)</span></p>
+<p>Write a short introduction explaining this extension to the reader. Instead of assuming every firm has the same patent rate <span class="math inline"><em>λ</em></span>, we now let <span class="math inline"><em>λ</em></span> vary across firms as a function of age, region, and customer status. Explain why we use <span class="math inline">exp (⋅)</span> as the inverse link: <span class="math inline"><em>λ</em><sub><em>i</em></sub></span> must be positive, but <span class="math inline"><em>X</em><sub><em>i</em></sub>′<em>β</em></span> can be any real number, so the exponential keeps <span class="math inline"><em>λ</em><sub><em>i</em></sub></span> on the positive real line.</p>
+<ul>
+<li><p>Update your log-likelihood function from the previous section to take in a covariate matrix <span class="math inline"><em>X</em></span> and a parameter vector <span class="math inline"><em>β</em></span> in place of the scalar <span class="math inline"><em>λ</em></span>. For example:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>poisson_regression_loglikelihood <span class="ot">&lt;-</span> <span class="cf">function</span>(beta, Y, X){</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>   ...</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p>Construct <span class="math inline"><em>X</em></span> so that the first column is all 1’s (for the intercept), followed by columns for age, age squared, binary indicators for all but one of the regions, and the binary customer variable. Explain to the reader why you include age squared (the relationship between age and patenting is unlikely to be perfectly linear) and why you must drop one region (to avoid perfect collinearity with the intercept).</p></li>
+<li><p>Use <code>optim()</code> (or <code>sp.optimize()</code>) to find the MLE <span class="math inline"><em>β̂</em></span>, asking the optimizer to also return the Hessian. Use the Hessian to compute standard errors for the coefficients — the standard errors are the square roots of the diagonal of the negative inverse Hessian. Present a table of coefficients and standard errors.</p></li>
+<li><p>Check your results by fitting the same model with R’s <code>glm(..., family = poisson)</code> or Python’s <code>sm.GLM()</code>. The coefficient estimates should match closely; the standard errors may differ slightly due to the numerical approximation of the Hessian — explain this to the reader.</p></li>
+<li><p>Interpret the results. Walk the reader through what each coefficient tells you, paying particular attention to the sign and magnitude of the customer coefficient. Are the signs and magnitudes sensible?</p></li>
 </ul>
 </blockquote>
 </div>
-<h2 id="hypothesis-testing" class="anchored">Hypothesis Testing</h2>
+<h2 id="the-effect-of-blueprintys-software" class="anchored">The Effect of Blueprinty’s Software</h2>
 <div>
 <blockquote>
 <p><strong>Note</strong></p>
 <ul>
-<li><p>Now that we have seen the CLT in action — that the sampling distribution of <span class="math inline"><em>θ̂</em></span> is approximately Normal for large samples — we can use this result to perform a formal hypothesis test.</p></li>
-<li><p>Write a paragraph explaining what a hypothesis test is to the reader. We set up a null hypothesis <span class="math inline"><em>H</em><sub>0</sub> : <em>θ</em> = 0</span> (i.e., the two CTAs produce the same sign-up rate) and an alternative hypothesis <span class="math inline"><em>H</em><sub>1</sub> : <em>θ</em> ≠ 0</span>. The goal is to assess whether the data provide enough evidence to reject <span class="math inline"><em>H</em><sub>0</sub></span>.</p></li>
-<li><p>Then explain why we standardize <span class="math inline"><em>θ̂</em></span> to form a test statistic. We compute:</p></li>
-</ul>
-<p><span class="math display">$$
-z = \frac{\hat\theta - 0}{SE(\hat\theta)}
-$$</span></p>
-<ul>
-<li><p>Walk the reader through the logic of this standardization step by step:</p>
+<li><p>The coefficients from a Poisson regression are not directly interpretable as “additional patents” because the model is multiplicative in <span class="math inline"><em>λ</em></span>, not additive. To get a more interpretable answer, construct two counterfactual datasets:</p>
 <ol type="1">
-<li>By the CLT, we know that <span class="math inline"><em>θ̂</em></span> is approximately Normal for large samples. Under <span class="math inline"><em>H</em><sub>0</sub></span>, the mean of that distribution is 0.</li>
-<li>When we divide a Normal random variable by its standard deviation, we get a standard Normal <span class="math inline"><em>N</em>(0, 1)</span>. So under <span class="math inline"><em>H</em><sub>0</sub></span>, <span class="math inline">$z \;\dot\sim\; N(0,1)$</span>.</li>
-<li>This means we know the distribution of our test statistic under the null, which is exactly what we need to compute a p-value.</li>
+<li><span class="math inline"><em>X</em><sub>0</sub></span>: a copy of your <span class="math inline"><em>X</em></span> matrix where every firm’s <code>iscustomer</code> value is set to 0.</li>
+<li><span class="math inline"><em>X</em><sub>1</sub></span>: a copy of your <span class="math inline"><em>X</em></span> matrix where every firm’s <code>iscustomer</code> value is set to 1.</li>
 </ol></li>
-<li><p>Explain to the reader why this is sometimes called a “t-test” even though the test statistic follows an approximate Normal distribution, not a t-distribution. The classical t-test arises when the data are drawn from a Normal distribution and the variance must be estimated — the ratio then follows an exact t-distribution. In our setting the data are Bernoulli (not Normal), so there is no exact t-distribution result. The CLT gives us approximate Normality, and since we estimate the SE from the data, what we are really doing is closer to a z-test. In practice, for large samples the t-distribution and the standard Normal are nearly identical, so the distinction has little practical consequence — but it is important to understand why.</p></li>
-<li><p>Using your simulated data, compute the test statistic and its associated p-value (using the standard Normal distribution as the reference). Interpret the result for the reader.</p></li>
-</ul>
-</blockquote>
-</div>
-<h2 id="the-t-test-as-a-regression" class="anchored">The T-Test as a Regression</h2>
-<div>
-<blockquote>
-<p><strong>Note</strong></p>
-<ul>
-<li><p>It turns out that the two-sample test we just ran is mathematically equivalent to a simple linear regression. Understanding this connection is useful because it means the same machinery — and the same software — that you use for regression can also perform hypothesis tests, and it generalizes naturally to more complex experimental designs.</p></li>
-<li><p>Explain the setup to the reader. Stack the CTA A and CTA B data into a single dataset with two columns: an outcome <span class="math inline"><em>Y</em><sub><em>i</em></sub></span> (1 if the visitor signed up, 0 otherwise) and an indicator <span class="math inline"><em>D</em><sub><em>i</em></sub></span> (1 if the visitor saw CTA A, 0 if they saw CTA B). Then fit the regression:</p></li>
-</ul>
-<p><span class="math display"><em>Y</em><sub><em>i</em></sub> = <em>β</em><sub>0</sub> + <em>β</em><sub>1</sub><em>D</em><sub><em>i</em></sub> + <em>ε</em><sub><em>i</em></sub></span></p>
-<ul>
-<li><p>Walk through the interpretation of the coefficients:</p>
-<ol type="1">
-<li><span class="math inline"><em>β</em><sub>0</sub></span> is the expected value of <span class="math inline"><em>Y</em><sub><em>i</em></sub></span> when <span class="math inline"><em>D</em><sub><em>i</em></sub> = 0</span> — i.e., the mean of the B group, which estimates <span class="math inline"><em>π</em><sub><em>B</em></sub></span>.</li>
-<li><span class="math inline"><em>β</em><sub>0</sub> + <em>β</em><sub>1</sub></span> is the expected value of <span class="math inline"><em>Y</em><sub><em>i</em></sub></span> when <span class="math inline"><em>D</em><sub><em>i</em></sub> = 1</span> — i.e., the mean of the A group, which estimates <span class="math inline"><em>π</em><sub><em>A</em></sub></span>.</li>
-<li>Therefore <span class="math inline"><em>β</em><sub>1</sub> = <em>π</em><sub><em>A</em></sub> − <em>π</em><sub><em>B</em></sub> = <em>θ</em></span>, and the OLS estimate <span class="math inline"><em>β̂</em><sub>1</sub></span> is numerically identical to <span class="math inline"><em>θ̂</em> = <em>X̄</em><sub><em>A</em></sub> − <em>X̄</em><sub><em>B</em></sub></span>.</li>
-</ol></li>
-<li><p>Fit this regression using your simulated data. Report the coefficient estimate <span class="math inline"><em>β̂</em><sub>1</sub></span>, its standard error, its t-statistic, and its p-value. Compare these to the values you computed in the previous section using the two-sample approach — they should match (up to a small difference in how the standard error is computed; standard OLS assumes a single pooled variance, while the two-sample formula we used assumes separate variances for each group).</p></li>
-<li><p>Explain to the reader why this equivalence matters: the regression framework makes it easy to add controls, interactions, or additional treatment arms, all while producing the same inference in the simple case.</p></li>
-</ul>
-</blockquote>
-</div>
-<h2 id="the-problem-with-peeking" class="anchored">The Problem with Peeking</h2>
-<div>
-<blockquote>
-<p><strong>Note</strong></p>
-<ul>
-<li><p>Your boss is impatient. Rather than waiting until all 1,000 visitors have been assigned to each group, she wants to run the hypothesis test after every 100 visitors per group — peeking at the results after 100, 200, 300, …, up to 1,000 visitors per group (10 tests in total). If any of those tests comes back significant at the <span class="math inline"><em>α</em> = 0.05</span> level, she wants to declare a winner and stop the experiment early.</p></li>
-<li><p>Explain to the reader why this is problematic under classical frequentist statistics. The key issue is that a single test at <span class="math inline"><em>α</em> = 0.05</span> has a 5% chance of a false positive (rejecting <span class="math inline"><em>H</em><sub>0</sub></span> when it is actually true). But when you conduct multiple tests on accumulating data, each peek is another opportunity to get a false positive. The overall probability of at least one false rejection across all the peeks is much higher than 5%.</p></li>
-<li><p>Demonstrate this with a simulation. The idea is as follows:</p>
-<ol type="1">
-<li>Set up a world where the null hypothesis is true: <span class="math inline"><em>π</em><sub><em>A</em></sub> = <em>π</em><sub><em>B</em></sub> = 0.20</span> (i.e., <span class="math inline"><em>θ</em> = 0</span>, there is no difference between the CTAs).</li>
-<li>Simulate a single experiment: draw 1,000 observations for group A and 1,000 for group B. After every 100 observations per group (at <span class="math inline"><em>n</em> = 100, 200, …, 1000</span>), compute the z-statistic and p-value. Record whether any of the 10 p-values falls below 0.05.</li>
-<li>Repeat step 2 a total of 10,000 times to simulate 10,000 experiments.</li>
-<li>Compute the fraction of those 10,000 experiments in which at least one peek produced a significant result. This is the empirical false positive rate under peeking.</li>
-</ol></li>
-<li><p>Compare this to the nominal 5% false positive rate of a single test. Report the result and explain to the reader why peeking inflates the Type I error rate and what this means in practice for running A/B tests.</p></li>
+<li><p>Use your fitted model to predict the expected number of patents for every firm under each counterfactual, producing two vectors <span class="math inline"><em>ŷ</em><sub>0</sub></span> and <span class="math inline"><em>ŷ</em><sub>1</sub></span>.</p></li>
+<li><p>Compute the average of <span class="math inline"><em>ŷ</em><sub>1</sub> − <em>ŷ</em><sub>0</sub></span>. This is your estimate of the average effect of being a Blueprinty customer, holding age and region fixed at their observed values for each firm.</p></li>
+<li><p>Report the result and interpret it for the reader. Conclude with a careful statement about what the analysis does and does not establish: it provides evidence consistent with Blueprinty’s marketing claim, but because this is an observational study (not a randomized experiment), we cannot rule out unobserved characteristics that differ between customers and non-customers and could also drive patent counts.</p></li>
 </ul>
 </blockquote>
 </div>
