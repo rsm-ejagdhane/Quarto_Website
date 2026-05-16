@@ -88,6 +88,43 @@ execute:
   th { text-align: left; padding: 0.6rem 1rem; font-weight: 500; color: #2e2825; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; }
   td { padding: 0.6rem 1rem; color: #6b6560; border-bottom: 1px solid #e8e3da; }
   tbody tr:last-child td { border-bottom: none; }
+  /* Matplotlib HTML animations (.animation): scale frames + slider to column (no sideways scroll) */
+  .post-body .cell-output,
+  .post-body .animation {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  .post-body .animation {
+    display: block;
+  }
+  .post-body .animation img {
+    display: block;
+    max-width: 100% !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 auto;
+  }
+  .post-body input[type="range"].anim-slider {
+    width: 100% !important;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+  }
+  .post-body .anim-controls {
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 0 2px;
+  }
+  /* Newer mpl to_jshtml may use canvas inside .animation */
+  .post-body .animation canvas {
+    display: block;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    margin: 0 auto;
+  }
   .footer-bar {
     margin: 0 4rem; padding: 2rem 0;
     border-top: 1px solid #c9c2b6;
@@ -457,7 +494,7 @@ To make the optimization itself visible, the animation below sweeps a candidate 
 sweep_lam = np.linspace(2.0, 5.5, 60)
 sweep_ll = np.array([poisson_loglikelihood(l, Y) for l in sweep_lam])
 
-fig_anim, ax_anim = plt.subplots(figsize=(8.25, 4.25))
+fig_anim, ax_anim = plt.subplots(figsize=(5.8, 2.95), dpi=88)
 ax_anim.plot(lam_grid, loglik, color=PALETTE["Non-customer"], linewidth=1.6, alpha=0.6)
 ax_anim.axvline(mle_line, color=ACCENT, linestyle="--", linewidth=1.2,
                 label=f"MLE  λ̂ = {mle_line:.3f}")
@@ -476,7 +513,7 @@ ax_anim.set_ylabel("Log-likelihood ℓ(λ)")
 ax_anim.set_title("Searching for the MLE\ncandidate λ vs. ℓ(λ)")
 ax_anim.legend(loc="lower center", frameon=True, facecolor=BG, edgecolor=GRID)
 style_axes(ax_anim)
-fig_anim.tight_layout()
+fig_anim.tight_layout(pad=0.85)
 
 def _update(i):
     xs = sweep_lam[: i + 1]
@@ -736,7 +773,7 @@ boot_ate = boot_ate[~np.isnan(boot_ate)]
 ci_lo, ci_hi = np.percentile(boot_ate, [2.5, 97.5])
 bins_b = np.linspace(boot_ate.min() - 0.02, boot_ate.max() + 0.02, 30)
 
-fig_b, ax_b = plt.subplots(figsize=(8.25, 4.25))
+fig_b, ax_b = plt.subplots(figsize=(5.8, 2.95), dpi=88)
 ax_b.set_xlim(bins_b[0], bins_b[-1])
 ax_b.set_ylim(0, np.histogram(boot_ate, bins=bins_b)[0].max() * 1.15 + 1)
 ax_b.set_xlabel("Bootstrap ATE (predicted extra patents per firm)")
@@ -770,7 +807,7 @@ def _update_boot(i):
         counter_text.set_text(f"B = {k}\nRunning mean = {boot_ate[:k].mean():.3f}")
     return (*bars, mean_line, lo_line, hi_line, counter_text)
 
-fig_b.tight_layout()
+fig_b.tight_layout(pad=0.85)
 anim_b = manim.FuncAnimation(fig_b, _update_boot, frames=len(frame_steps),
                              interval=120, blit=False)
 _anim_b_html = anim_b.to_jshtml(default_mode="once")
