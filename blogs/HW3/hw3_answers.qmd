@@ -457,7 +457,7 @@ To make the optimization itself visible, the animation below sweeps a candidate 
 sweep_lam = np.linspace(2.0, 5.5, 60)
 sweep_ll = np.array([poisson_loglikelihood(l, Y) for l in sweep_lam])
 
-fig_anim, ax_anim = plt.subplots(figsize=(7.5, 4))
+fig_anim, ax_anim = plt.subplots(figsize=(8.25, 4.25))
 ax_anim.plot(lam_grid, loglik, color=PALETTE["Non-customer"], linewidth=1.6, alpha=0.6)
 ax_anim.axvline(mle_line, color=ACCENT, linestyle="--", linewidth=1.2,
                 label=f"MLE  λ̂ = {mle_line:.3f}")
@@ -473,9 +473,10 @@ ax_anim.set_xlim(lam_grid.min(), lam_grid.max())
 ax_anim.set_ylim(min(loglik) - 5, max(loglik) + 5)
 ax_anim.set_xlabel("Candidate λ")
 ax_anim.set_ylabel("Log-likelihood ℓ(λ)")
-ax_anim.set_title("Searching for the MLE: candidate λ vs. log-likelihood")
+ax_anim.set_title("Searching for the MLE\ncandidate λ vs. ℓ(λ)")
 ax_anim.legend(loc="lower center", frameon=True, facecolor=BG, edgecolor=GRID)
 style_axes(ax_anim)
+fig_anim.tight_layout()
 
 def _update(i):
     xs = sweep_lam[: i + 1]
@@ -486,9 +487,10 @@ def _update(i):
     return marker, trail, candidate_text
 
 anim = manim.FuncAnimation(fig_anim, _update, frames=len(sweep_lam),
-                           interval=110, blit=True)
+                           interval=110, blit=False)
+_anim_html = anim.to_jshtml(default_mode="loop")
 plt.close(fig_anim)
-display(HTML(anim.to_jshtml(default_mode="loop")))
+display(HTML(_anim_html))
 ```
 
 ## Poisson Regression
@@ -734,7 +736,7 @@ boot_ate = boot_ate[~np.isnan(boot_ate)]
 ci_lo, ci_hi = np.percentile(boot_ate, [2.5, 97.5])
 bins_b = np.linspace(boot_ate.min() - 0.02, boot_ate.max() + 0.02, 30)
 
-fig_b, ax_b = plt.subplots(figsize=(7.5, 4))
+fig_b, ax_b = plt.subplots(figsize=(8.25, 4.25))
 ax_b.set_xlim(bins_b[0], bins_b[-1])
 ax_b.set_ylim(0, np.histogram(boot_ate, bins=bins_b)[0].max() * 1.15 + 1)
 ax_b.set_xlabel("Bootstrap ATE (predicted extra patents per firm)")
@@ -768,10 +770,12 @@ def _update_boot(i):
         counter_text.set_text(f"B = {k}\nRunning mean = {boot_ate[:k].mean():.3f}")
     return (*bars, mean_line, lo_line, hi_line, counter_text)
 
+fig_b.tight_layout()
 anim_b = manim.FuncAnimation(fig_b, _update_boot, frames=len(frame_steps),
                              interval=120, blit=False)
+_anim_b_html = anim_b.to_jshtml(default_mode="once")
 plt.close(fig_b)
-display(HTML(anim_b.to_jshtml(default_mode="once")))
+display(HTML(_anim_b_html))
 
 display(Markdown(
     f"The **95% bootstrap percentile interval** for the ATE is "
