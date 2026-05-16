@@ -598,7 +598,9 @@ glm_start = sm.GLM(Y, X, family=sm.families.Poisson()).fit().params
 opt_reg = optimize.minimize(neg_ll_reg, glm_start, method="BFGS")
 beta_hat = opt_reg.x
 
-# Standard errors from the inverse Hessian of the negative log-likelihood
+# Standard errors: we minimize −ℓ(β), so Hess(−ℓ) = −Hess(ℓ) and Hess(−ℓ)^{−1} = −Hess(ℓ)^{−1}.
+# scipy's approx. Hess(−ℓ)^{−1} is thus the asymptotic covariance that rubrics call −Hess(ℓ)^{−1}
+# (“negative inverse Hessian” of ℓ evaluated at β̂).
 cov_mle = opt_reg.hess_inv
 if hasattr(cov_mle, "A"):
     cov_mle = cov_mle.A
@@ -640,24 +642,85 @@ display(
             ],
             rows,
         )
-        + "\n\n*Reference region: Midwest. Standard errors: inverse Hessian (MLE) vs. model-based (GLM).*"
+        + "\n\n*Reference region: Midwest. MLE minimizes $-\\ell(\\beta)$, so BFGS’s `hess_inv` approximates $[\\mathcal{H}_{-\\ell}]^{-1}=[-\\mathcal{H}_{\\ell}]^{-1}$—the asymptotic covariance the rubric names the negative inverse Hessian for $\\ell(\\beta)$ itself. GLM columns use IRLS / expected-information SEs.*"
     )
 )
 ```
 
-Coefficient estimates from **BFGS maximization of the log-likelihood** match **`statsmodels` GLM** to four decimal places. Standard errors are nearly identical; tiny differences arise because the MLE Hessian is obtained numerically during optimization, while GLM uses the Fisher information from IRLS.
+Coefficient estimates from **BFGS maximization of the log-likelihood** match **`statsmodels` GLM** to four decimal places. Standard errors agree nearly to the fourth decimal — small gaps mostly reflect quasi-Newton versus Fisher scoring, not two different asymptotic covariances. **`opt_reg.hess_inv` is the curvature for the Hessian of $-\ell(\beta)$; because $\mathcal{H}_{-\ell}=-\mathcal{H}_\ell$ at $\hat{\beta}$, it inherits exactly the textbook “negative inverse Hessian’’ interpretation for $\ell(\beta)$.** (Brief algebra in the italic note beneath the coefficient table.)
 
-### Interpreting coefficients
+```{python}
+#| echo: false
 
-| Variable | Direction | Reading |
-|----------|-----------|---------|
-| **intercept** | — | Baseline log-rate for a Midwest firm at age 0 (not literally meaningful; anchors the scale). |
-| **age** | + | Patent rate rises with age at younger ages (positive linear term). |
-| **age_sq** | − | Concave age profile — combined with the linear term, the implied peak sits near $0.149 / (2 \cdot 0.003) \approx 25$ years, almost exactly the sample's average firm age. |
-| **region dummies** | mixed | All four region coefficients are small and statistically indistinguishable from zero ($p \geq 0.28$). After controlling for age and customer status, regional differences in patent counts essentially disappear. |
-| **iscustomer** | **+** | **+0.208** on the log scale → $\exp(0.208) \approx 1.23$: customers have about **23% higher** expected patent counts than otherwise similar non-customers, holding age and region fixed. Highly significant ($p < 0.001$). |
+i_age = col_names.index("age")
+i_sq = col_names.index("age_sq")
+i_cust = col_names.index("iscustomer")
+b_age_hat = float(beta_hat[i_age])
+b_sq_hat = float(beta_hat[i_sq])
+b_cust_hat = float(beta_hat[i_cust])
+age_peak_hat = -b_age_hat / (2 * b_sq_hat)
 
-The customer sign is **positive and plausible in magnitude** for marketing analytics — not a 10× spike, but a meaningful lift on a multiplicative scale. It is also exactly the kind of coefficient that could reflect **selection**: firms that patent more may be more likely to buy specialized patent software.
+cust_lift_pct = (np.exp(b_cust_hat) - 1) * 100
+if p_mle[i_cust] < 0.001:
+    cust_p_text = r"$p < 0.001$"
+else:
+    cust_p_text = rf"$p = {p_mle[i_cust]:.4f}$"
+
+region_idxs = [i for i, n in enumerate(col_names) if str(n).startswith("region_")]
+mean_age_years = float(df["age"].mean())
+
+if region_idxs:
+    region_min_p = float(min(float(p_mle[i]) for i in region_idxs))
+    region_text = (
+        "Compared with Midwest baseline, coefficients stay modest; among the contrasts **above**, "
+        f"$\\min_j p_j \\approx {region_min_p:.2f}$ on those MLE Wald $p$-values — none of "
+        r'those regional wedges look sharp once quadratic $\mathrm{age}$ polynomials and $\mathrm{iscustomer}$ are modeled flexibly.'
+    )
+else:
+    region_text = "(Region dummies omitted in this specification.)"
+
+# Concatenate raw math strings with f-interpolations (avoids f-string clashes with `{}` in LaTeX).
+_age_sq_cell = (
+    r"Combined with $\hat{\beta}_{\mathrm{age}}=" + f"{b_age_hat:.4f}" + r"$ and $\hat{\beta}_{\mathrm{age}^{2}}="
+    + f"{b_sq_hat:.4f}"
+    + r"$ from **the coefficients above**, concavity peaks at $\displaystyle -\frac{\hat{\beta}_{\mathrm{age}}}{2\hat{\beta}_{\mathrm{age}^{2}}}"
+    + rf" \approx {age_peak_hat:.0f}$ years, near $\\overline{{\mathrm{{age}}}}={mean_age_years:.1f}$ in this sample "
+    + r"(derivative $\hat{\beta}_{\mathrm{age}}+2\hat{\beta}_{\mathrm{age}^{2}}\cdot\mathrm{age}$ equals zero at that knot)."
+)
+
+interp_rows = [
+    [
+        "**intercept**",
+        "—",
+        r"Baseline log $\lambda$ anchor for Midwest at $\mathrm{age}=0$ (extrapolated, not substantive).",
+    ],
+    ["**age**", "+", r"Positive linear slope in $\eta=X^{\top}\beta$ while age is moderate."],
+    ["**age_sq**", "−", _age_sq_cell],
+    ["**region dummies**", "mixed", region_text],
+    [
+        "**iscustomer**",
+        "**+**",
+        (
+            rf"**{b_cust_hat:+.3f}** on the $\log$-scale $\Rightarrow$"
+            rf" $\exp(\hat{{\beta}}_{{\mathrm{{cust}}}}) \approx {np.exp(b_cust_hat):.2f}$, i.e."
+            rf" $\approx {cust_lift_pct:.0f}\%$ higher expected patents vs.\ twins holding $\mathrm{{iscustomer}}=0$."
+            rf" Highly significant ({cust_p_text})."
+        ),
+    ],
+]
+
+display(
+    Markdown(
+        "### Interpreting coefficients\n\n"
+        + markdown_table(
+            ["Variable", "Direction", "Reading"],
+            interp_rows,
+        )
+    )
+)
+```
+
+The customer sign is **positive and plausible in magnitude** for marketing analytics—not a tenfold spike, but a meaningful lift on a multiplicative scale. It remains the kind of difference that might still reflect **selection** rather than causal software uptake.
 
 ## The Effect of Blueprinty's Software
 
