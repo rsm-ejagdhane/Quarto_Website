@@ -190,13 +190,18 @@ A naïve comparison of average patents between customers and non-customers is te
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+import matplotlib.animation as manim
 import numpy as np
 import pandas as pd
-from IPython.display import Markdown, display
+import plotly.express as px
+import plotly.io as pio
+from IPython.display import HTML, Markdown, display
 from scipy import optimize
 from scipy.special import gammaln
 from scipy.stats import norm
 import statsmodels.api as sm
+
+pio.templates.default = "simple_white"
 
 DATA_PATH = Path("blueprinty.csv")
 
@@ -357,7 +362,7 @@ plt.tight_layout()
 plt.show()
 ```
 
-The regional composition shifts noticeably: **54.6%** of customers are in the Northeast versus **45.4%** of non-customers, while Midwest and Northwest customers are under-represented relative to non-customers. Ages overlap heavily (both groups center near 26 years), but customers are slightly older on average.
+The regional composition shifts dramatically: **68.2%** of customers are based in the Northeast versus just **26.8%** of non-customers, while Midwest, Northwest, South, and Southwest customers are all roughly half as common as you would expect from the non-customer mix. Ages overlap heavily (both groups center near 26 years), but customers are about a year older on average (26.9 vs 26.1).
 
 These patterns matter because patent intensity varies by region and lifecycle stage. If we ignore them, part of the raw customer premium may simply reflect *where* and *what kind of firm* Blueprinty sells to — not the software itself. The regression below holds age, age-squared, and region fixed while estimating a customer effect.
 
@@ -441,6 +446,51 @@ display(
 
 The curve is **concave** with a single peak. Reading horizontally, the MLE is the $\lambda$ where the log-likelihood is highest — here, **3.685** patents per firm over five years. Numerical maximization via `scipy.optimize.minimize_scalar` returns essentially the same value as the sample mean; any tiny difference is floating-point noise. That agreement is reassuring: for a one-parameter Poisson model, MLE theory and a simple average tell the same story.
 
+Notice that the pooled MLE of **3.685** sits squarely between the two group means we saw earlier (3.47 for non-customers, 4.13 for customers). That's exactly the failure mode the next section addresses: forcing one $\lambda$ on the whole sample averages over real heterogeneity. Letting $\lambda$ vary with firm characteristics fixes this.
+
+To make the optimization itself visible, the animation below sweeps a candidate $\lambda$ across the same grid. A moving marker traces its log-likelihood value; a vertical reference line marks the peak. This is the geometric intuition behind numerical maximization — every iteration of `optim`/`scipy.optimize` is just a smarter version of "step toward higher likelihood."
+
+```{python}
+#| echo: false
+#| fig-cap: "Animated sweep: a moving candidate λ climbs the log-likelihood curve toward the MLE."
+
+sweep_lam = np.linspace(2.0, 5.5, 60)
+sweep_ll = np.array([poisson_loglikelihood(l, Y) for l in sweep_lam])
+
+fig_anim, ax_anim = plt.subplots(figsize=(7.5, 4))
+ax_anim.plot(lam_grid, loglik, color=PALETTE["Non-customer"], linewidth=1.6, alpha=0.6)
+ax_anim.axvline(mle_line, color=ACCENT, linestyle="--", linewidth=1.2,
+                label=f"MLE  λ̂ = {mle_line:.3f}")
+marker, = ax_anim.plot([], [], "o", color=PALETTE["Customer"], markersize=11,
+                       markeredgecolor=BG, markeredgewidth=1.5, zorder=5)
+trail, = ax_anim.plot([], [], color=PALETTE["Customer"], linewidth=2.6, alpha=0.85)
+candidate_text = ax_anim.text(
+    0.02, 0.97, "", transform=ax_anim.transAxes, va="top",
+    fontsize=10, color=ACCENT,
+    bbox=dict(facecolor=BG, edgecolor=GRID, boxstyle="round,pad=0.4"),
+)
+ax_anim.set_xlim(lam_grid.min(), lam_grid.max())
+ax_anim.set_ylim(min(loglik) - 5, max(loglik) + 5)
+ax_anim.set_xlabel("Candidate λ")
+ax_anim.set_ylabel("Log-likelihood ℓ(λ)")
+ax_anim.set_title("Searching for the MLE: candidate λ vs. log-likelihood")
+ax_anim.legend(loc="lower center", frameon=True, facecolor=BG, edgecolor=GRID)
+style_axes(ax_anim)
+
+def _update(i):
+    xs = sweep_lam[: i + 1]
+    ys = sweep_ll[: i + 1]
+    marker.set_data([sweep_lam[i]], [sweep_ll[i]])
+    trail.set_data(xs, ys)
+    candidate_text.set_text(f"λ = {sweep_lam[i]:.3f}\nℓ(λ) = {sweep_ll[i]:.1f}")
+    return marker, trail, candidate_text
+
+anim = manim.FuncAnimation(fig_anim, _update, frames=len(sweep_lam),
+                           interval=110, blit=True)
+plt.close(fig_anim)
+display(HTML(anim.to_jshtml(default_mode="loop")))
+```
+
 ## Poisson Regression
 
 The simple model forces every firm to share one patent rate. **Poisson regression** lets each firm's expected count depend on covariates:
@@ -509,16 +559,8 @@ glm_start = sm.GLM(Y, X, family=sm.families.Poisson()).fit().params
 opt_reg = optimize.minimize(neg_ll_reg, glm_start, method="BFGS")
 beta_hat = opt_reg.x
 
-# Standard errors from the inverse Hessian of the *negative* log-likelihood
-from scipy.stats import norm
-
-opt_reg_hess = optimize.minimize(
-    neg_ll_reg,
-    beta_hat,
-    method="BFGS",
-    options={"disp": False},
-)
-cov_mle = opt_reg_hess.hess_inv
+# Standard errors from the inverse Hessian of the negative log-likelihood
+cov_mle = opt_reg.hess_inv
 if hasattr(cov_mle, "A"):
     cov_mle = cov_mle.A
 se_mle = np.sqrt(np.diag(cov_mle))
@@ -572,8 +614,8 @@ Coefficient estimates from **BFGS maximization of the log-likelihood** match **`
 |----------|-----------|---------|
 | **intercept** | — | Baseline log-rate for a Midwest firm at age 0 (not literally meaningful; anchors the scale). |
 | **age** | + | Patent rate rises with age at younger ages (positive linear term). |
-| **age_sq** | − | Concave age profile — growth slows as firms mature. |
-| **region dummies** | mixed | Modest shifts vs. Midwest; none are precisely estimated at conventional levels except possibly Northeast (+). |
+| **age_sq** | − | Concave age profile — combined with the linear term, the implied peak sits near $0.149 / (2 \cdot 0.003) \approx 25$ years, almost exactly the sample's average firm age. |
+| **region dummies** | mixed | All four region coefficients are small and statistically indistinguishable from zero ($p \geq 0.28$). After controlling for age and customer status, regional differences in patent counts essentially disappear. |
 | **iscustomer** | **+** | **+0.208** on the log scale → $\exp(0.208) \approx 1.23$: customers have about **23% higher** expected patent counts than otherwise similar non-customers, holding age and region fixed. Highly significant ($p < 0.001$). |
 
 The customer sign is **positive and plausible in magnitude** for marketing analytics — not a 10× spike, but a meaningful lift on a multiplicative scale. It is also exactly the kind of coefficient that could reflect **selection**: firms that patent more may be more likely to buy specialized patent software.
@@ -600,24 +642,50 @@ ate = (y1_hat - y0_hat).mean()
 
 ```{python}
 #| echo: false
-#| fig-cap: "Counterfactual expected patents per firm under customer vs. non-customer status."
+#| fig-cap: "Interactive: each point is one firm. Hover for predicted gain; toggle regions in the legend."
 
-fig, ax = plt.subplots(figsize=(6.5, 4))
-ax.hist(
-    y1_hat - y0_hat,
-    bins=28,
-    color=PALETTE["Customer"],
-    edgecolor=BG,
-    alpha=0.9,
+cf_df = pd.DataFrame({
+    "Firm age": df["age"].values,
+    "Region": df["region"].values,
+    "Predicted patents (non-customer)": y0_hat,
+    "Predicted patents (customer)": y1_hat,
+    "Gain from adoption": y1_hat - y0_hat,
+})
+
+fig_ate = px.scatter(
+    cf_df,
+    x="Firm age",
+    y="Gain from adoption",
+    color="Region",
+    hover_data={
+        "Firm age": ":.0f",
+        "Predicted patents (non-customer)": ":.2f",
+        "Predicted patents (customer)": ":.2f",
+        "Gain from adoption": ":.2f",
+        "Region": True,
+    },
+    color_discrete_sequence=["#7a3b35", "#8a8278", "#c9a09b", "#5b6e6e", "#b08a52"],
+    opacity=0.75,
 )
-ax.axvline(ate, color=ACCENT, linestyle="--", linewidth=1.5, label=f"Mean effect = {ate:.2f} patents")
-ax.set_xlabel("Predicted gain in expected patents (customer − non-customer)")
-ax.set_ylabel("Number of firms")
-ax.set_title("Firm-level counterfactual gains vary; the average is the ATE estimate")
-ax.legend(frameon=True, facecolor=BG, edgecolor=GRID)
-style_axes(ax)
-plt.tight_layout()
-plt.show()
+fig_ate.add_hline(
+    y=ate, line_dash="dash", line_color=ACCENT,
+    annotation_text=f"Average gain = {ate:.2f} patents",
+    annotation_position="top right",
+    annotation_font_color=ACCENT,
+)
+fig_ate.update_traces(marker=dict(size=7, line=dict(width=0.6, color=BG)))
+fig_ate.update_layout(
+    plot_bgcolor=PANEL, paper_bgcolor=BG,
+    font=dict(family="DM Sans, sans-serif", color=ACCENT, size=12),
+    title=dict(text="Firm-level counterfactual gain from Blueprinty adoption",
+               font=dict(color=ACCENT, size=14)),
+    xaxis=dict(title="Firm age (years)", gridcolor=GRID, zerolinecolor=GRID),
+    yaxis=dict(title="ŷ₁ − ŷ₀  (predicted extra patents)", gridcolor=GRID, zerolinecolor=GRID),
+    legend=dict(bgcolor=BG, bordercolor=GRID, borderwidth=1),
+    margin=dict(l=60, r=30, t=60, b=50),
+    height=460,
+)
+display(HTML(pio.to_html(fig_ate, full_html=False, include_plotlyjs="cdn")))
 
 display(
     Markdown(
@@ -636,7 +704,83 @@ display(
 )
 ```
 
-Holding each firm's age and region at its observed values, switching `iscustomer` from 0 to 1 raises predicted expected patents by about **0.79 patents per firm** on average over the five-year window — roughly a **21%** increase relative to the counterfactual mean of 3.73 patents.
+Holding each firm's age and region at its observed values, switching `iscustomer` from 0 to 1 raises predicted expected patents by about **0.79 patents per firm** on average over the five-year window — roughly a **23%** increase relative to the counterfactual non-customer mean of **3.44** patents.
+
+### How precise is that estimate? A bootstrap
+
+The ATE is a point estimate; without uncertainty it is hard to know whether 0.79 patents is meaningfully distinguishable from zero. A **non-parametric bootstrap** resamples the 1,500 firms with replacement, re-fits the Poisson regression on each draw, and recomputes the ATE. The animation builds that distribution one draw at a time and overlays the 95% percentile interval once the full sample of bootstrap ATEs has accumulated.
+
+```{python}
+#| echo: false
+#| fig-cap: "Bootstrap distribution of the ATE, built draw-by-draw. The dashed lines show the 95% percentile interval."
+
+rng = np.random.default_rng(42)
+B = 300
+n = len(Y)
+boot_ate = np.empty(B)
+for b in range(B):
+    idx = rng.integers(0, n, size=n)
+    Xb, Yb = X[idx], Y[idx]
+    try:
+        bres = sm.GLM(Yb, Xb, family=sm.families.Poisson()).fit(disp=False)
+        X0b, X1b = Xb.copy(), Xb.copy()
+        X0b[:, cust_idx] = 0
+        X1b[:, cust_idx] = 1
+        boot_ate[b] = (np.exp(X1b @ bres.params) - np.exp(X0b @ bres.params)).mean()
+    except Exception:
+        boot_ate[b] = np.nan
+boot_ate = boot_ate[~np.isnan(boot_ate)]
+
+ci_lo, ci_hi = np.percentile(boot_ate, [2.5, 97.5])
+bins_b = np.linspace(boot_ate.min() - 0.02, boot_ate.max() + 0.02, 30)
+
+fig_b, ax_b = plt.subplots(figsize=(7.5, 4))
+ax_b.set_xlim(bins_b[0], bins_b[-1])
+ax_b.set_ylim(0, np.histogram(boot_ate, bins=bins_b)[0].max() * 1.15 + 1)
+ax_b.set_xlabel("Bootstrap ATE (predicted extra patents per firm)")
+ax_b.set_ylabel("Number of bootstrap samples")
+ax_b.set_title("Bootstrap distribution of the customer ATE")
+style_axes(ax_b)
+
+bars = ax_b.hist([], bins=bins_b, color=PALETTE["Customer"], edgecolor=BG, alpha=0.9)[2]
+mean_line = ax_b.axvline(boot_ate.mean(), color=ACCENT, linestyle="--", linewidth=1.4, alpha=0)
+lo_line = ax_b.axvline(ci_lo, color=PALETTE["Non-customer"], linestyle=":", linewidth=1.4, alpha=0)
+hi_line = ax_b.axvline(ci_hi, color=PALETTE["Non-customer"], linestyle=":", linewidth=1.4, alpha=0)
+counter_text = ax_b.text(
+    0.97, 0.95, "", transform=ax_b.transAxes, ha="right", va="top",
+    fontsize=10, color=ACCENT,
+    bbox=dict(facecolor=BG, edgecolor=GRID, boxstyle="round,pad=0.4"),
+)
+
+frame_steps = np.unique(np.linspace(1, len(boot_ate), 60, dtype=int))
+
+def _update_boot(i):
+    k = frame_steps[i]
+    counts, _ = np.histogram(boot_ate[:k], bins=bins_b)
+    for bar, c in zip(bars, counts):
+        bar.set_height(c)
+    if k == len(boot_ate):
+        mean_line.set_alpha(1.0); lo_line.set_alpha(1.0); hi_line.set_alpha(1.0)
+        counter_text.set_text(
+            f"B = {k}\nMean ATE = {boot_ate.mean():.3f}\n95% CI = [{ci_lo:.3f}, {ci_hi:.3f}]"
+        )
+    else:
+        counter_text.set_text(f"B = {k}\nRunning mean = {boot_ate[:k].mean():.3f}")
+    return (*bars, mean_line, lo_line, hi_line, counter_text)
+
+anim_b = manim.FuncAnimation(fig_b, _update_boot, frames=len(frame_steps),
+                             interval=120, blit=False)
+plt.close(fig_b)
+display(HTML(anim_b.to_jshtml(default_mode="once")))
+
+display(Markdown(
+    f"The **95% bootstrap percentile interval** for the ATE is "
+    f"**[{ci_lo:.2f}, {ci_hi:.2f}] patents per firm** (B = {len(boot_ate)} draws). "
+    f"The lower bound sits comfortably above zero, so the customer effect is statistically "
+    f"distinguishable from no effect at conventional levels — though, as discussed next, "
+    f"statistical significance is not the same as a causal claim."
+))
+```
 
 ### What this does — and does not — establish
 
