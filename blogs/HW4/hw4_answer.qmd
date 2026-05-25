@@ -98,9 +98,9 @@ Ask someone to *rate* ten MBA classes on a 1–10 scale and you get polite noise
 
 Our “products” are the ten core MSBA classes at Rady. Each survey screen shows four; every pick is a miniature conjoint experiment. I take the class survey data and estimate preferences three ways — from a quick scoreboard to a full choice model — and see whether the story holds up:
 
-1. **Counts** — how often a class is picked best vs. worst when it appears on screen  
-2. **Multinomial logit (MLE)** — a proper model of *how* people choose best and worst, with standard errors  
-3. **Bayesian MNL** — the same model, but with a prior and MCMC so uncertainty is honest about *shares*, not just coefficients  
+1. **Counts** — how often a class is picked best vs. worst when it appears on screen
+2. **Multinomial logit (MLE)** — a proper model of *how* people choose best and worst, with standard errors
+3. **Bayesian MNL** — the same model, but with a prior and MCMC so uncertainty is honest about *shares*, not just coefficients
 
 The methods mostly agree on who’s on top and who’s at the bottom. The fun is in the middle — and in the **interactive charts** (hover, zoom, toggle) plus a few **animations** where the statistics literally move.
 
@@ -459,9 +459,9 @@ plt.close(fig_boot)
 
 Counts are honest; they’re also wasteful. They ignore every time you *didn’t* pick a class. The multinomial logit (MNL) turns each MaxDiff screen into **two** statistical choices:
 
-1. **Best choice** from all $J=4$ items on the screen, with utility $\beta_j$ and probability  
+1. **Best choice** from all $J=4$ items on the screen, with utility $\beta_j$ and probability
    $P(\text{best}=b) = \exp(\beta_b) / \sum_{j \in \text{shown}} \exp(\beta_j)$.
-2. **Worst choice** from the three remaining items, with utilities **negated**:  
+2. **Worst choice** from the three remaining items, with utilities **negated**:
    $P(\text{worst}=c \mid \text{best}=b) = \exp(-\beta_c) / \sum_{j \neq b} \exp(-\beta_j)$.
 
 One catch: utilities are only defined up to a constant. I pin **$\beta_1 = 0$** (MGTA 403 as the reference class) and estimate the other nine — standard move, same as setting the outside option to zero in class.
@@ -992,15 +992,14 @@ fig_p.update_xaxes(gridcolor=GRID, zerolinecolor=GRID)
 fig_p.update_yaxes(gridcolor=GRID, zerolinecolor=GRID)
 show_plotly(fig_p, height=420)
 ```
-
 <p class="fig-note"><em>Interactive comparison — use the <strong>Counts / MLE / Bayesian</strong> buttons under the chart; hover for exact values.</em></p>
 
 **495 Marketing Analytics** is the story every method tells. **444 Consulting** and **451 MFO** bring up the rear. The interesting fights are in the mushy middle — **SQL**, **Capstone**, **BI Systems** — where a point or two of share shuffles the rank but not the vibe.
 
 When would I use each tool in real life?
 
-- **Counts** — executive snapshot, no software drama.  
-- **MLE** — one number to put in a slide, with classical SEs.  
+- **Counts** — executive snapshot, no software drama.
+- **MLE** — one number to put in a slide, with classical SEs.
 - **Bayes** — “what if we add a new elective?” or any question where uncertainty on **shares** matters more than uncertainty on β.
 
 ## Discussion
