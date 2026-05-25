@@ -1,0 +1,229 @@
+---
+title: "MaxDiff Analysis of MSBA Class Preferences"
+subtitle: "Counts, MLE, and Bayesian estimation of the MNL model"
+author: "Your Name"
+date: today
+---
+
+
+## Introduction
+
+::: {.callout-note}
+Write a short introduction for the reader that sets the scene. Cover the following points in your own words:
+
+- [**MaxDiff**]{.text-magenta} (also called *Best-Worst Scaling*) is a survey methodology for measuring how strongly people prefer one item over another. On each screen of the survey, the respondent sees a small subset of items (here, 4) and selects the *most-preferred* and *least-preferred* item from that subset. They repeat this over many screens.
+
+- Why MaxDiff (and not, e.g., a 1–10 rating scale)? Humans are good at *trade-offs* — picking a best and a worst — but unreliable at calibrating numeric scales. MaxDiff forces real differentiation between items and avoids scale-use bias. *(See the week-4 "MaxDiff" deck for more.)*
+
+- In this assignment, the 10 items are the 10 core MSBA classes at UCSD Rady. The goal is to estimate students' relative preference for each class using three different methods, and to compare what each tells us:
+
+    1. A simple [**counts analysis**]{.text-magenta} — % times each class was picked best, minus % times picked worst
+    2. The [**multinomial logit (MNL)**]{.text-magenta} model fit by [**maximum likelihood**]{.text-magenta} *(see week-5 conjoint/MNL deck for derivation and `optim()` recipe)*
+    3. The same MNL model fit by [**Bayesian methods**]{.text-magenta} via Metropolis-Hastings *(see the week-7 deck on Bayesian inference and MCMC)*
+
+- Briefly preview what you expect: the three methods should agree on the broad ranking of classes; they will differ in how they quantify the strength of preference and in how they communicate uncertainty.
+:::
+
+
+## The Data
+
+::: {.callout-note}
+- Read in `maxdiff_design_and_choices.csv`. The columns are:
+
+    - `Record ID` — anonymized respondent identifier
+    - `Task` — screen number for that respondent
+    - `Position` — slot (1–4) on the screen
+    - `Item` — which of the 10 classes is in that slot
+    - `Response` — `1` if this item was picked *best*, `-1` if picked *worst*, `0` otherwise
+
+- Read in `maxdiff_item_labels.csv` to map item numbers to class names.
+
+- Report basic descriptives: number of respondents ($N$), tasks per respondent ($T$), items per task ($J$ — should be 4), and total items in the study (should be 10).
+
+- Verify the data structure with a sanity check: every task should have exactly one row with `Response = 1` (the "best" pick), exactly one row with `Response = -1` (the "worst" pick), and the remaining rows with `Response = 0`. Code this check.
+
+- Also report how many times each of the 10 items was *shown* across the entire study. Because MaxDiff designs balance exposure, these counts should all be roughly equal.
+:::
+
+
+## Counts Analysis
+
+::: {.callout-note}
+- Write a short paragraph explaining the *counts analysis* to the reader. The idea: for each item $j$, compute the percentage of times it was picked as *best* (out of the number of times it was shown), and the percentage of times it was picked as *worst*. The difference is a simple score:
+
+$$
+\text{score}_j \;=\; \%\text{best}_j \;-\; \%\text{worst}_j
+$$
+
+A score near +1 means an item is almost always picked as best when shown; near -1 means it's almost always picked as worst; near 0 means it's polarizing or middle-of-the-pack.
+
+- Compute the counts score for each of the 10 items. Display a [**ranked table**]{.text-blue} with columns: item, item label, times shown, times best, times worst, % best, % worst, score.
+
+- Plot the scores in a horizontal bar chart, sorted from highest to lowest. Label each bar with the class name (or its abbreviated form).
+
+- Optional but recommended: add 95% bootstrap confidence intervals to the scores. Resample respondents (with replacement), recompute the score for each item, repeat ~1,000 times, and take the 2.5th and 97.5th percentiles. Overlay these CIs on your bar chart.
+
+- After the plot, write a few sentences describing what you observe. Which classes are most preferred? Which are least? Any surprises?
+:::
+
+
+## From MaxDiff Data to MNL Choices
+
+::: {.callout-note}
+- Before fitting an MNL, explain to the reader how the MaxDiff survey data converts into [**MNL choice observations**]{.text-magenta}. Reference the conjoint/MNL slides from week 5.
+
+- The MNL model assigns each item $j$ a utility coefficient $\beta_j$. On a task showing items $\{a, b, c, d\}$, the probability that item $b$ is picked *best* is the soft-max:
+
+$$
+P(\text{best} = b) \;=\; \frac{\exp(\beta_b)}{\exp(\beta_a) + \exp(\beta_b) + \exp(\beta_c) + \exp(\beta_d)}
+$$
+
+- The probability that item $c$ is then picked *worst* — from the remaining 3 items, with utilities *flipped* — is:
+
+$$
+P(\text{worst} = c \mid \text{best} = b) \;=\; \frac{\exp(-\beta_c)}{\exp(-\beta_a) + \exp(-\beta_c) + \exp(-\beta_d)}
+$$
+
+So each task gives [*two*]{.text-blue} MNL observations: the best-pick from the full set, and the worst-pick from the remaining set.
+
+- [**Identifiability**]{.text-magenta}: the soft-max is invariant to adding a constant to every $\beta$, so only $J - 1 = 9$ of the 10 coefficients are identified. Fix one as the reference — for example, set $\beta_1 = 0$ and estimate $\beta_2, \ldots, \beta_{10}$. Mention this normalization to the reader.
+
+- Reshape the data into a form convenient for the likelihood. One workable structure: for each task, store the 4 item numbers, which one was picked best, and which one was picked worst. You'll iterate over tasks in the likelihood function.
+:::
+
+
+## MNL via Maximum Likelihood
+
+::: {.callout-note}
+- Write down the log-likelihood. Summing over $N \cdot T$ tasks:
+
+$$
+\ell(\boldsymbol{\beta}) \;=\; \sum_{\text{tasks}} \Big[\, \beta_{j^*_b} \;-\; \log \!\!\!\sum_{j \in \text{shown}}\!\!\! \exp(\beta_j) \;-\; \beta_{j^*_w} \;-\; \log \!\!\!\!\!\sum_{j \in \text{shown} \setminus \{j^*_b\}}\!\!\!\! \exp(-\beta_j) \,\Big]
+$$
+
+where $j^*_b$ is the item picked best in that task and $j^*_w$ is the item picked worst.
+
+- Code the log-likelihood as a function `ll(beta, ...)` where `beta` is a vector of length 9 (or 10, with $\beta_1$ pinned to 0 inside the function). Use log-sum-exp form (`v - log(rowSums(exp(v)))`) for numerical stability — see the week-5 slides on fitting MNL by hand.
+
+- Maximize the log-likelihood. In R:
+
+```r
+out <- optim(par = rep(0, 9), fn = ll, ...,
+             method = "BFGS", hessian = TRUE,
+             control = list(fnscale = -1))
+```
+
+- Report the estimated $\hat{\boldsymbol{\beta}}$ and standard errors. SEs come from the inverse of the negative Hessian:
+
+```r
+se <- sqrt(diag(solve(-out$hessian)))
+```
+
+- Convert the $\hat\beta$'s into [**shares of preference**]{.text-blue} for interpretability:
+
+$$
+\hat s_j \;=\; \frac{\exp(\hat\beta_j)}{\sum_{k=1}^{10} \exp(\hat\beta_k)}
+$$
+
+These shares are easier to read than raw $\beta$'s — they sum to 1 across items and answer the question, *"if all 10 classes were on a single screen, what fraction of choices would each one get?"*
+
+- Display a table of items with $\hat\beta_j$, $SE(\hat\beta_j)$, and $\hat s_j$. Plot the shares in a horizontal bar chart, sorted from highest to lowest.
+
+- Compare the MLE ranking to the counts ranking from the previous section. Are they identical? Where do they differ? Write a few sentences explaining.
+:::
+
+
+## MNL via Bayesian Estimation
+
+::: {.callout-note}
+- Now fit the same MNL model by [**Bayesian methods**]{.text-magenta}. Reference the week-7 slides on Bayes' rule and the random-walk Metropolis-Hastings sampler.
+
+- The posterior over $\boldsymbol{\beta}$ is
+
+$$
+\pi(\boldsymbol{\beta} \mid \boldsymbol{y}) \;\propto\; L(\boldsymbol{\beta}) \cdot \pi(\boldsymbol{\beta})
+$$
+
+Use a weakly informative multivariate normal prior: $\boldsymbol{\beta} \sim N(\boldsymbol{0},\; 10 \cdot I)$. (SD $\approx 3.2$ on each $\beta$ is plenty diffuse without being absurd.)
+
+- Code a random-walk Metropolis sampler. The skeleton is:
+
+```r
+log_post <- function(beta) ll(beta, ...) + sum(dnorm(beta, 0, sqrt(10), log = TRUE))
+
+mh <- function(beta0, n_iter, step) {
+  K <- length(beta0)
+  draws <- matrix(NA, n_iter, K)
+  beta  <- beta0
+  lp    <- log_post(beta)
+  accept <- 0
+  for (t in 1:n_iter) {
+    beta_star <- beta + rnorm(K, 0, step)
+    lp_star   <- log_post(beta_star)
+    if (log(runif(1)) < lp_star - lp) {
+      beta <- beta_star; lp <- lp_star; accept <- accept + 1
+    }
+    draws[t, ] <- beta
+  }
+  list(draws = draws, accept_rate = accept / n_iter)
+}
+```
+
+- Run the sampler for ~20,000 iterations (or more if you have patience). Discard the first 25% as burn-in.
+
+- [**Tune the step size**]{.text-blue} to land at an acceptance rate of roughly 25–40%. If acceptance is too low, halve the step; too high, double it. *(See week-7 "Tuning the Step Size" slide.)*
+
+- Run diagnostics: report the final acceptance rate, plot the trace for at least 2–3 of the $\beta$ parameters (you should see a "fuzzy caterpillar," not a slow drift), and confirm that the chain has stabilized after burn-in.
+
+- Compute and report:
+
+    - Posterior **mean** $\hat\beta_j$ for each item
+    - 95% **credible interval** $[2.5\%,\, 97.5\%]$ percentiles of the post-burn-in draws
+    - Posterior shares of preference: for each MCMC draw, compute $\hat s_j^{(s)} = \exp(\hat\beta_j^{(s)}) / \sum_k \exp(\hat\beta_k^{(s)})$, then take the posterior mean of the $\hat s_j^{(s)}$ across draws.
+
+- Display a table with item, posterior mean $\beta$, 95% CI, posterior mean share. Plot the shares with the credible interval as error bars.
+
+- Compare to the MLE results: posterior means should be close to the MLE point estimates; posterior SDs should be close to the MLE standard errors. Where do they differ noticeably? Why?
+:::
+
+
+## Comparing the Three Methods
+
+::: {.callout-note}
+- Create a single side-by-side comparison of all three analyses. Suggested format: a table with columns
+
+    - Item / class label
+    - Counts score (% best − % worst)
+    - Counts rank
+    - MLE share of preference, MLE rank
+    - Bayes posterior-mean share, Bayes rank
+
+  Sorted by one of the rankings (e.g., MLE rank).
+
+- Also create a visual comparison: three horizontal bar charts side-by-side, one per method, each showing items sorted by that method's score/share. Color-code consistently so the reader can trace a single class across all three panels.
+
+- Write a paragraph discussing the comparison:
+
+    - Where do the three methods *agree*? Almost always at the top and bottom of the ranking.
+    - Where do they *disagree* — and why? Often in the middle, where items have similar utility and small noise can flip rankings.
+    - What does the MNL add over the counts analysis? *(Hint: it models the choice process explicitly — every "shown" item contributes information about *not* being picked, not just the picks themselves.)*
+    - What does Bayes add over MLE? *(Hint: credible intervals on derived quantities like shares of preference are easy — just push every MCMC draw through the soft-max and take quantiles. Doing this from an MLE requires the delta method.)*
+:::
+
+
+## Discussion
+
+::: {.callout-note}
+- Close with a short discussion section that synthesizes the analysis for a non-technical reader (think: an academic advisor or a student deciding which classes to take). Cover:
+
+    - The substantive finding — which MSBA classes do students prefer most? Are there any surprises?
+    - The methodological finding — for what kind of question would you reach for each of the three methods?
+
+        - *Counts*: quick descriptive summary, useful for an executive dashboard
+        - *MLE MNL*: rigorous point estimates with classical standard errors; good when you need a single number to report
+        - *Bayesian MNL*: when you want uncertainty on derived quantities (shares, market simulations, "what if we added a new class?" scenarios), or when you want to extend the model hierarchically to estimate individual-level preferences
+
+    - Caveats: the survey was on a self-selected sample of MSBA students; preferences may not generalize beyond this group. Item presentation order, prior coursework, and current standing in the program may all affect responses.
+
+- End with one or two sentences on what you would do differently or explore next if you had more time.
+:::
