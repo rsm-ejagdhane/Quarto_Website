@@ -55,15 +55,8 @@ execute:
   th { text-align: left; padding: 0.6rem 1rem; font-weight: 500; color: #2e2825; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; }
   td { padding: 0.6rem 1rem; color: #6b6560; border-bottom: 1px solid #e8e3da; }
   .footer-bar { margin: 0 4rem; padding: 2rem 0; border-top: 1px solid #c9c2b6; display: flex; justify-content: space-between; font-size: 0.7rem; color: #8a8278; }
-  .post-body .cell-output, .post-body .animation { max-width: 100%; box-sizing: border-box; }
-  .post-body .animation { display: block; }
-  .post-body .animation img, .post-body .animation canvas {
-    display: block; max-width: 100% !important; width: auto !important; height: auto !important; margin: 0 auto;
-  }
-  .post-body input[type="range"].anim-slider {
-    width: 100% !important; max-width: 100%; box-sizing: border-box; margin-left: auto; margin-right: auto; display: block;
-  }
-  .post-body .anim-controls { max-width: 100%; box-sizing: border-box; padding: 0 2px; }
+  .post-body .cell-output { max-width: 100%; box-sizing: border-box; }
+  .post-body .plotly-graph-div { max-width: 100% !important; margin: 0 auto 1.25rem; }
   @media (max-width: 800px) { .nav, .post-header, .post-body { padding-left: 1.5rem; padding-right: 1.5rem; } }
   body details:has(pre.sourceCode) { margin: 0 0 1.25rem; border: 1px solid #c9c2b6; border-radius: 2px; background: #e8e3da; }
   body details:has(pre.sourceCode) > summary { cursor: pointer; list-style: none; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: #f0ece4; background: #2e2825; padding: 0.55rem 1rem; }
@@ -100,7 +93,7 @@ Our “products” are the ten core MSBA classes at Rady. Each survey screen sho
 2. **Multinomial logit (MLE)** — a proper model of *how* people choose best and worst, with standard errors  
 3. **Bayesian MNL** — the same model, but with a prior and MCMC so uncertainty is honest about *shares*, not just coefficients  
 
-The methods mostly agree on who’s on top and who’s at the bottom. The fun is in the middle — and in watching the statistics *move* (yes, there are animations).
+The methods mostly agree on who’s on top and who’s at the bottom. The fun is in the middle — and in the **interactive charts** below (hover, zoom, and toggle where it helps).
 
 ## The Data
 
@@ -109,9 +102,6 @@ The methods mostly agree on who’s on top and who’s at the bottom. The fun is
 
 from pathlib import Path
 
-import matplotlib.animation as manim
-import matplotlib.colors as mcolors
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
@@ -146,28 +136,68 @@ def markdown_table(headers: list[str], rows: list[list[str]]) -> str:
     return "\n".join(lines)
 
 
-def style_axes(ax):
-    ax.set_facecolor(PANEL)
-    ax.figure.set_facecolor(BG)
-    ax.grid(True, axis="x", color=GRID, linewidth=0.7)
-    for spine in ("top", "right"):
-        ax.spines[spine].set_visible(False)
-    ax.tick_params(colors="#8a8278")
-    ax.xaxis.label.set_color(ACCENT)
-    ax.yaxis.label.set_color(ACCENT)
-    ax.title.set_color(ACCENT)
-
-
-plt.rcParams.update({
-    "figure.facecolor": BG,
-    "axes.facecolor": PANEL,
-    "font.family": "sans-serif",
-    "text.color": ACCENT,
-})
-
 pio.templates.default = "simple_white"
-pio.defaults.width = 780
-pio.defaults.height = 480
+_plotly_js_done = False
+
+
+def show_plotly(fig: go.Figure, height: int = 500) -> None:
+    """Embed Plotly in Quarto HTML (display(fig) alone often shows nothing)."""
+    global _plotly_js_done
+    fig.update_layout(
+        height=height,
+        paper_bgcolor=BG,
+        plot_bgcolor=PANEL,
+        font=dict(color=ACCENT, family="DM Sans, sans-serif"),
+        margin=dict(l=10, r=10, t=50, b=10),
+    )
+    fig.update_xaxes(gridcolor=GRID, zerolinecolor=GRID)
+    fig.update_yaxes(gridcolor=GRID, zerolinecolor=GRID)
+    js = "cdn" if not _plotly_js_done else False
+    _plotly_js_done = True
+    display(
+        HTML(
+            pio.to_html(
+                fig,
+                full_html=False,
+                include_plotlyjs=js,
+                config={"displayModeBar": True, "responsive": True},
+            )
+        )
+    )
+
+
+def hbar_with_ci(
+    df: pd.DataFrame,
+    y_col: str,
+    x_col: str,
+    lo_col: str,
+    hi_col: str,
+    title: str,
+    x_label: str,
+    color: str = HIGHLIGHT,
+) -> None:
+    d = df.sort_values(x_col)
+    x = d[x_col].to_numpy()
+    fig = go.Figure(
+        go.Bar(
+            y=d[y_col],
+            x=x,
+            orientation="h",
+            marker_color=color,
+            error_x=dict(
+                type="data",
+                symmetric=False,
+                array=np.maximum(0, d[hi_col].to_numpy() - x),
+                arrayminus=np.maximum(0, x - d[lo_col].to_numpy()),
+                color=ACCENT,
+                thickness=1.5,
+            ),
+            hovertemplate=f"<b>%{{y}}</b><br>{x_label}: %{{x:.3f}}<extra></extra>",
+        )
+    )
+    fig.add_vline(x=0, line_dash="dash", line_color="#8a8278", line_width=1)
+    fig.update_layout(title=title, xaxis_title=x_label, yaxis=dict(categoryorder="total ascending"))
+    show_plotly(fig)
 
 raw = pd.read_csv(DATA_DIR / "maxdiff_design_and_choices.csv")
 raw = raw.rename(columns={"Record ID": "record_id"})
@@ -341,81 +371,45 @@ def bootstrap_counts(
 boot_mat, boot_ci = bootstrap_counts(raw4)
 counts = counts.merge(boot_ci, on="Item", how="left")
 
-order = counts.sort_values("score")
-y = np.arange(len(order))
-x = order["score"].to_numpy()
-lo = np.maximum(0, x - order["ci_lo"].to_numpy())
-hi = np.maximum(0, order["ci_hi"].to_numpy() - x)
-
-fig, ax = plt.subplots(figsize=(8, 5.5))
-ax.barh(y, x, color=HIGHLIGHT, height=0.7)
-ax.errorbar(
-    x,
-    y,
-    xerr=np.vstack([lo, hi]),
-    fmt="none",
-    ecolor=ACCENT,
-    capsize=3,
-    linewidth=0.8,
+hbar_with_ci(
+    counts,
+    y_col="short",
+    x_col="score",
+    lo_col="ci_lo",
+    hi_col="ci_hi",
+    title="Class preferences: counts analysis",
+    x_label="Counts score (% best − % worst)",
 )
-ax.axvline(0, color="#8a8278", linestyle="--", linewidth=0.9)
-ax.set_yticks(y, labels=order["short"])
-ax.set_xlabel("Counts score (% best − % worst)")
-ax.set_title("Class preferences: counts analysis")
-style_axes(ax)
-plt.tight_layout()
-plt.show()
 ```
 
-The static chart is the headline; the animation asks a subtler question: *if we resampled students, how shaky is the lead?* Each frame adds another bootstrap draw of the counts score for **MGTA 495** (our runaway #1). Watch the histogram settle and the 95% interval lock in.
+Hover on any bar for the score; zoom if you want detail on the middle of the pack. The chart below zooms in on **MGTA 495**: each bar is one bootstrap resample of the counts score (1,000 redraws of the student sample). Drag to select a region or hover to see where the bulk of the distribution sits.
 
 ```{python}
 #| echo: false
-#| fig-cap: "Bootstrap distribution of the counts score for MGTA 495 — resampling students, B = 1,000."
+#| fig-cap: "Interactive bootstrap distribution for MGTA 495 counts score (B = 1,000 resamples)."
 
 boot_495 = boot_mat[:, 8]
-bins_boot = np.linspace(boot_495.min() - 0.05, boot_495.max() + 0.05, 28)
-frame_steps = np.unique(np.linspace(20, len(boot_495), 50, dtype=int))
-
-fig_boot, ax_boot = plt.subplots(figsize=(5.8, 2.95), dpi=88)
-ax_boot.set_xlim(bins_boot[0], bins_boot[-1])
-ax_boot.set_xlabel("Counts score (% best − % worst)")
-ax_boot.set_ylabel("Bootstrap samples")
-ax_boot.set_title("How stable is the #1 class?\nMGTA 495 counts score")
-style_axes(ax_boot)
-
-bars_boot = ax_boot.hist([], bins=bins_boot, color=HIGHLIGHT, edgecolor=BG, alpha=0.9)[2]
 ci_lo_495, ci_hi_495 = np.quantile(boot_495, [0.025, 0.975])
-mean_line = ax_boot.axvline(boot_495.mean(), color=ACCENT, linestyle="--", linewidth=1.3, alpha=0)
-lo_line = ax_boot.axvline(ci_lo_495, color="#8a8278", linestyle=":", linewidth=1.3, alpha=0)
-hi_line = ax_boot.axvline(ci_hi_495, color="#8a8278", linestyle=":", linewidth=1.3, alpha=0)
-counter = ax_boot.text(
-    0.97, 0.95, "", transform=ax_boot.transAxes, ha="right", va="top", fontsize=9, color=ACCENT,
-    bbox=dict(facecolor=BG, edgecolor=GRID, boxstyle="round,pad=0.35"),
+
+fig_boot = go.Figure(
+    go.Histogram(
+        x=boot_495,
+        nbinsx=24,
+        marker_color=HIGHLIGHT,
+        opacity=0.85,
+        hovertemplate="Score: %{x:.3f}<br>Count: %{y}<extra></extra>",
+    )
 )
-
-
-def _update_boot495(i):
-    k = frame_steps[i]
-    counts_h, _ = np.histogram(boot_495[:k], bins=bins_boot)
-    ymax = max(counts_h.max() * 1.15, 1)
-    ax_boot.set_ylim(0, ymax)
-    for bar, h in zip(bars_boot, counts_h):
-        bar.set_height(h)
-    if k >= len(boot_495):
-        mean_line.set_alpha(1.0)
-        lo_line.set_alpha(1.0)
-        hi_line.set_alpha(1.0)
-        counter.set_text(f"B = {k}\nMean = {boot_495.mean():.3f}\n95% CI = [{ci_lo_495:.3f}, {ci_hi_495:.3f}]")
-    else:
-        counter.set_text(f"B = {k}\nRunning mean = {boot_495[:k].mean():.3f}")
-    return (*bars_boot, mean_line, lo_line, hi_line, counter)
-
-
-fig_boot.tight_layout(pad=0.85)
-anim_boot = manim.FuncAnimation(fig_boot, _update_boot495, frames=len(frame_steps), interval=120, blit=False)
-display(HTML(anim_boot.to_jshtml(default_mode="once")))
-plt.close(fig_boot)
+fig_boot.add_vline(x=boot_495.mean(), line_dash="dash", line_color=ACCENT, annotation_text="Mean")
+fig_boot.add_vline(x=ci_lo_495, line_dash="dot", line_color="#8a8278")
+fig_boot.add_vline(x=ci_hi_495, line_dash="dot", line_color="#8a8278")
+fig_boot.update_layout(
+    title="How stable is the #1 class? (MGTA 495 bootstrap)",
+    xaxis_title="Counts score",
+    yaxis_title="Bootstrap samples",
+    bargap=0.05,
+)
+show_plotly(fig_boot, height=380)
 ```
 
 **MGTA 495 Marketing Analytics** is the runaway winner — best on **54%** of screens, worst on **4%**, for a score of **0.49**. **453** and **455** trail but still feel like “first-round picks.” At the bottom, **444 Consulting** is the class people love to hate (worst **42%** of the time). **464 SQL** is the Switzerland of the portfolio: nearly zero net score, which usually means the fancier models will argue over its rank.
@@ -484,7 +478,7 @@ $$
 \Big].
 $$
 
-I code the log-likelihood with **`logsumexp`** (so `exp` never explodes), then let `scipy.optimize.minimize` hunt for the peak. The animation below is the “aha” moment from week 5: slide one coefficient (495’s utility) and watch the log-likelihood curve bend toward the MLE.
+I code the log-likelihood with **`logsumexp`** (so `exp` never explodes), then let `scipy.optimize.minimize` hunt for the peak. The interactive curve below is the week-5 “aha”: hold all other β’s at the MLE and slide **β₉** (495) — hover along the curve to see the log-likelihood climb to its peak.
 
 ```{python}
 #| echo: true
@@ -546,57 +540,61 @@ display(
 
 ```{python}
 #| echo: false
-#| fig-cap: "Animated sweep: moving β₉ (495) toward the MLE while other coefficients stay fixed."
+#| fig-cap: "Interactive log-likelihood slice: vary β₉ (495) while other coefficients stay at the MLE."
 
 idx_495 = 8
-grid_b9 = np.linspace(mle_res.x[idx_495] - 1.2, mle_res.x[idx_495] + 0.6, 55)
+grid_b9 = np.linspace(mle_res.x[idx_495] - 1.2, mle_res.x[idx_495] + 0.6, 80)
 grid_ll = np.array([
     log_likelihood(np.concatenate([mle_res.x[:idx_495], [g], mle_res.x[idx_495 + 1 :]]))
     for g in grid_b9
 ])
 
-fig_mle, ax_mle = plt.subplots(figsize=(5.8, 2.95), dpi=88)
-ax_mle.plot(grid_b9, grid_ll, color="#8a8278", linewidth=1.5, alpha=0.55)
-ax_mle.axvline(mle_res.x[idx_495], color=ACCENT, linestyle="--", linewidth=1.1,
-               label=f"MLE  β₉ = {mle_res.x[idx_495]:.3f}")
-marker, = ax_mle.plot([], [], "o", color=HIGHLIGHT, markersize=10, markeredgecolor=BG, markeredgewidth=1.4, zorder=5)
-trail, = ax_mle.plot([], [], color=HIGHLIGHT, linewidth=2.4, alpha=0.85)
-note = ax_mle.text(
-    0.03, 0.97, "", transform=ax_mle.transAxes, va="top", fontsize=9, color=ACCENT,
-    bbox=dict(facecolor=BG, edgecolor=GRID, boxstyle="round,pad=0.35"),
+fig_mle = go.Figure()
+fig_mle.add_trace(
+    go.Scatter(
+        x=grid_b9,
+        y=grid_ll,
+        mode="lines+markers",
+        marker=dict(size=6, color=HIGHLIGHT),
+        line=dict(color="#8a8278", width=2),
+        name="ℓ(β)",
+        hovertemplate="β₉ = %{x:.3f}<br>ℓ = %{y:.1f}<extra></extra>",
+    )
 )
-ax_mle.set_xlabel("Candidate β₉ (495 Marketing Analytics)")
-ax_mle.set_ylabel("Log-likelihood ℓ(β)")
-ax_mle.set_title("Climbing the likelihood surface\n(other β’s held at MLE)")
-ax_mle.legend(loc="lower right", frameon=True, facecolor=BG, edgecolor=GRID)
-style_axes(ax_mle)
-fig_mle.tight_layout(pad=0.85)
-
-
-def _update_mle(i):
-    marker.set_data([grid_b9[i]], [grid_ll[i]])
-    trail.set_data(grid_b9[: i + 1], grid_ll[: i + 1])
-    note.set_text(f"β₉ = {grid_b9[i]:.3f}\nℓ = {grid_ll[i]:.1f}")
-    return marker, trail, note
-
-
-anim_mle = manim.FuncAnimation(fig_mle, _update_mle, frames=len(grid_b9), interval=100, blit=False)
-display(HTML(anim_mle.to_jshtml(default_mode="loop")))
-plt.close(fig_mle)
+fig_mle.add_vline(
+    x=mle_res.x[idx_495],
+    line_dash="dash",
+    line_color=ACCENT,
+    annotation_text=f"MLE β₉ = {mle_res.x[idx_495]:.2f}",
+)
+fig_mle.update_layout(
+    title="Climbing the likelihood (other β’s fixed at MLE)",
+    xaxis_title="Candidate β₉ — MGTA 495",
+    yaxis_title="Log-likelihood ℓ(β)",
+)
+show_plotly(fig_mle, height=400)
 ```
 
 ```{python}
-#| echo: true
-#| fig-cap: "MLE shares of preference (all ten classes on one hypothetical screen)."
+#| echo: false
+#| fig-cap: "MLE shares of preference — hover for share on a hypothetical all-class screen."
 
-order = mle_tbl.sort_values("share")
-fig, ax = plt.subplots(figsize=(8, 5.5))
-ax.barh(order["short"], order["share"], color=HIGHLIGHT, height=0.7)
-ax.set_xlabel("Share of preference")
-ax.set_title("MNL maximum likelihood")
-style_axes(ax)
-plt.tight_layout()
-plt.show()
+fig_share = go.Figure(
+    go.Bar(
+        y=mle_tbl.sort_values("share")["short"],
+        x=mle_tbl.sort_values("share")["share"],
+        orientation="h",
+        marker_color=HIGHLIGHT,
+        hovertemplate="<b>%{y}</b><br>Share: %{x:.1%}<extra></extra>",
+    )
+)
+fig_share.update_layout(
+    title="MNL maximum likelihood — shares of preference",
+    xaxis_title="Share of preference",
+    xaxis_tickformat=".0%",
+    yaxis=dict(categoryorder="total ascending"),
+)
+show_plotly(fig_share)
 ```
 
 Every class keeps the **same rank** as the counts table — reassuring. The MNL just translates utilities into something marketers understand: **share of preference** if all ten classes appeared on one mega-screen. **495** grabs about **28%** of that imaginary demand; **444 Consulting** about **4%**.
@@ -705,94 +703,65 @@ display(
 )
 ```
 
-A healthy MCMC trace looks like a **fuzzy caterpillar** — not a trend, not a stuck needle. The animation draws the chain for **β₉ (495)** one iteration at a time; by the end you should see stationary fuzz, not a slow march.
+A healthy MCMC trace looks like a **fuzzy caterpillar** — not a trend, not a stuck needle. Use the dropdown to switch traces; zoom into any panel to check mixing.
 
 ```{python}
 #| echo: false
-#| fig-cap: "MCMC trace for β₉ (495) building up after burn-in — look for the fuzzy caterpillar."
-
-trace_col = 8
-sub = post_draws[:: max(1, len(post_draws) // 400)]
-frame_t = np.linspace(50, len(sub), 55, dtype=int)
-
-fig_trace, ax_trace = plt.subplots(figsize=(5.8, 2.95), dpi=88)
-ax_trace.set_xlabel("Iteration (after burn-in)")
-ax_trace.set_ylabel("β₉")
-ax_trace.set_title("Metropolis–Hastings draws for 495\n(acceptance ≈ {:.0%})".format(accept_rate))
-style_axes(ax_trace)
-(line,) = ax_trace.plot([], [], color=HIGHLIGHT, linewidth=0.5, alpha=0.9)
-dot, = ax_trace.plot([], [], "o", color=ACCENT, markersize=5)
-
-
-def _update_trace(i):
-    k = frame_t[i]
-    xs = np.arange(k)
-    ys = sub[:k, trace_col]
-    line.set_data(xs, ys)
-    dot.set_data([xs[-1]], [ys[-1]])
-    ax_trace.set_xlim(0, len(sub))
-    ymin, ymax = sub[:k, trace_col].min(), sub[:k, trace_col].max()
-    pad = max(0.15, (ymax - ymin) * 0.1)
-    ax_trace.set_ylim(ymin - pad, ymax + pad)
-    return line, dot
-
-
-fig_trace.tight_layout(pad=0.85)
-anim_trace = manim.FuncAnimation(fig_trace, _update_trace, frames=len(frame_t), interval=90, blit=False)
-display(HTML(anim_trace.to_jshtml(default_mode="once")))
-plt.close(fig_trace)
-```
-
-```{python}
-#| echo: true
-#| fig-cap: "Static trace plots for three utility parameters (post burn-in)."
+#| fig-cap: "Interactive MCMC traces (post burn-in) — pick a parameter from the dropdown."
 
 trace_specs = [
-    (8, "β₉ (495 Mkt Analytics)"),
-    (4, "β₅ (453 Biz Analytics)"),
-    (5, "β₆ (444 Consulting)"),
+    (8, "β₉ — 495 Mkt Analytics"),
+    (4, "β₅ — 453 Biz Analytics"),
+    (5, "β₆ — 444 Consulting"),
 ]
-fig, axes = plt.subplots(3, 1, figsize=(8, 6), sharex=True)
-colors = [HIGHLIGHT, "#8a8278", ACCENT]
-for ax, (col, title), color in zip(axes, trace_specs, colors):
-    ax.plot(post_draws[:, col], color=color, linewidth=0.35, alpha=0.85)
-    ax.set_ylabel("β")
-    ax.set_title(title, fontsize=10)
-    style_axes(ax)
-axes[-1].set_xlabel("Iteration (after burn-in)")
-fig.suptitle("MCMC traces", fontsize=12, y=1.01)
-plt.tight_layout()
-plt.show()
+xs = np.arange(post_draws.shape[0])
+
+fig_trace = go.Figure()
+for i, (col, label) in enumerate(trace_specs):
+    fig_trace.add_trace(
+        go.Scatter(
+            x=xs,
+            y=post_draws[:, col],
+            mode="lines",
+            line=dict(width=0.6, color=[HIGHLIGHT, "#8a8278", ACCENT][i]),
+            name=label,
+            visible=(i == 0),
+            hovertemplate="Iter %{x}<br>β = %{y:.3f}<extra></extra>",
+        )
+    )
+
+buttons = []
+for i, (_, label) in enumerate(trace_specs):
+    vis = [j == i for j in range(len(trace_specs))]
+    buttons.append(
+        dict(label=label.split("—")[-1].strip(), method="update", args=[{"visible": vis}])
+    )
+
+fig_trace.update_layout(
+    title=f"Metropolis–Hastings traces (acceptance ≈ {accept_rate:.0%})",
+    xaxis_title="Iteration after burn-in",
+    yaxis_title="β",
+    updatemenus=[dict(type="dropdown", direction="down", x=0.0, y=1.12, buttons=buttons)],
+    showlegend=False,
+)
+show_plotly(fig_trace, height=420)
 ```
 
 ```{python}
-#| echo: true
-#| fig-cap: "Posterior mean shares with 95% credible intervals."
+#| echo: false
+#| fig-cap: "Bayesian posterior mean shares with 95% credible intervals (hover + zoom)."
 
-order_b = bayes_tbl.sort_values("share_mean")
-y = np.arange(len(order_b))
-fig, ax = plt.subplots(figsize=(8, 5.5))
-ax.barh(y, order_b["share_mean"], color=HIGHLIGHT, height=0.7)
-xb = order_b["share_mean"].to_numpy()
-ax.errorbar(
-    xb,
-    y,
-    xerr=np.vstack([
-        np.maximum(0, xb - order_b["share_lo"].to_numpy()),
-        np.maximum(0, order_b["share_hi"].to_numpy() - xb),
-    ]),
-    fmt="none",
-    ecolor=ACCENT,
-    capsize=3,
-    linewidth=0.8,
+hbar_with_ci(
+    bayes_tbl,
+    y_col="short",
+    x_col="share_mean",
+    lo_col="share_lo",
+    hi_col="share_hi",
+    title="Bayesian MNL — posterior shares",
+    x_label="Posterior mean share",
 )
-ax.set_yticks(y, labels=order_b["short"])
-ax.set_xlabel("Posterior mean share")
-ax.set_title("Bayesian MNL")
-style_axes(ax)
-plt.tight_layout()
-plt.show()
 ```
+
 
 Posterior means hug the MLE (β₉ ≈ **1.63** either way). The real win is on **shares**: every MCMC draw gets pushed through the softmax, so the error bars on the bar chart are *credible intervals*, not approximations from a formula you hope is right.
 
@@ -841,57 +810,60 @@ display(
 
 ```{python}
 #| echo: false
-#| fig-cap: "Interactive comparison — toggle method and hover for class-level detail."
+#| fig-cap: "Interactive comparison — use the buttons to switch method; hover for exact values."
 
 plot_cmp = cmp.sort_values("mle_rank").copy()
-plot_cmp["counts_pct"] = (plot_cmp["counts_score"] * 100).round(1)
-plot_cmp["mle_pct"] = (plot_cmp["mle_share"] * 100).round(1)
-plot_cmp["bayes_pct"] = (plot_cmp["bayes_share"] * 100).round(1)
+plot_cmp["counts_pct"] = plot_cmp["counts_score"] * 100
+plot_cmp["mle_pct"] = plot_cmp["mle_share"] * 100
+plot_cmp["bayes_pct"] = plot_cmp["bayes_share"] * 100
+
+methods = [
+    ("Counts", "counts_pct", "Counts score (pp)", "#8a8278", "%{x:.1f} pp"),
+    ("MLE", "mle_pct", "MLE share (%)", "#7a3b35", "%{x:.1f}%"),
+    ("Bayesian", "bayes_pct", "Bayesian share (%)", "#2e2825", "%{x:.1f}%"),
+]
 
 fig_p = go.Figure()
-for name, col, color in [
-    ("Counts (% best − % worst)", "counts_pct", "#8a8278"),
-    ("MLE share (%)", "mle_pct", "#7a3b35"),
-    ("Bayesian share (%)", "bayes_pct", "#2e2825"),
-]:
-    fig_p.add_bar(
-        x=plot_cmp[col],
-        y=plot_cmp["short"],
-        orientation="h",
-        name=name,
-        marker_color=color,
-        visible=(name.startswith("MLE")),
-        hovertemplate="<b>%{y}</b><br>%{x:.1f}<extra></extra>",
+for i, (label, col, xlab, color, hov) in enumerate(methods):
+    fig_p.add_trace(
+        go.Bar(
+            x=plot_cmp[col],
+            y=plot_cmp["short"],
+            orientation="h",
+            name=label,
+            marker_color=color,
+            visible=(label == "MLE"),
+            hovertemplate=f"<b>%{{y}}</b><br>{xlab}: {hov}<extra></extra>",
+        )
     )
 
 fig_p.update_layout(
-    title="Same ranking story, three metrics — pick your lens",
-    xaxis_title="Value (scale depends on method)",
-    yaxis_title="",
+    title="Same classes, three metrics — pick your lens",
+    xaxis_title="Value (scale changes with method)",
     yaxis=dict(categoryorder="total ascending"),
-    paper_bgcolor=BG,
-    plot_bgcolor=PANEL,
-    font=dict(color=ACCENT, family="DM Sans, sans-serif"),
-    height=520,
-    margin=dict(l=20, r=20, t=50, b=40),
     updatemenus=[
         dict(
             type="buttons",
             direction="right",
             x=0.0,
-            y=1.12,
+            y=1.14,
+            xanchor="left",
             buttons=[
-                dict(label="Counts", method="update", args=[{"visible": [True, False, False]}]),
-                dict(label="MLE", method="update", args=[{"visible": [False, True, False]}]),
-                dict(label="Bayesian", method="update", args=[{"visible": [False, False, True]}]),
+                dict(
+                    label=m[0],
+                    method="update",
+                    args=[
+                        {"visible": [j == i for j in range(len(methods))]},
+                        {"xaxis.title.text": m[2]},
+                    ],
+                )
+                for i, m in enumerate(methods)
             ],
         )
     ],
     showlegend=False,
 )
-fig_p.update_xaxes(gridcolor=GRID, zerolinecolor=GRID)
-fig_p.update_yaxes(gridcolor=GRID)
-display(fig_p)
+show_plotly(fig_p)
 ```
 
 **495 Marketing Analytics** is the story every method tells. **444 Consulting** and **451 MFO** bring up the rear. The interesting fights are in the mushy middle — **SQL**, **Capstone**, **BI Systems** — where a point or two of share shuffles the rank but not the vibe.
@@ -910,7 +882,7 @@ Statistically, this homework is really about **three ways to listen to the same 
 
 Caveats worth saying out loud: these are **MSBA students who took a survey**, not a random draw of all business students. Who’s already suffered through 403, who’s targeting marketing vs. finance, and which classes they’ve heard horror stories about — all unobserved. Tasks 9–15 in the raw file still look like a different survey mode (item 11 placeholder), so I stuck to the clean eight-task MaxDiff core.
 
-If I had another afternoon: **hierarchical MNL** (who loves 495 *too much*?), covariates like concentration and work experience, and a story for those two-item screens. For now, the caterpillar crawled, the likelihood peaked, and Marketing Analytics won — which, in a Marketing Analytics class, feels fitting.
+If I had another afternoon: **hierarchical MNL** (who loves 495 *too much*?), covariates like concentration and work experience, and a story for those two-item screens. For now, the traces look like caterpillars, the likelihood has a clear peak, and Marketing Analytics won — which, in a Marketing Analytics class, feels fitting.
 
 ```{=html}
 </div>
