@@ -58,16 +58,8 @@ execute:
   .post-body .cell-output { max-width: 100%; box-sizing: border-box; }
   .post-body .plotly-graph-div { max-width: 100% !important; margin: 0 auto; }
   .post-body .comparison-block { margin: 0 0 1.25rem; }
-  .post-body .comparison-block table { margin: 0 0 1rem; }
+  .post-body .comparison-block table { margin: 0 0 0.75rem; }
   .post-body .comparison-block .plotly-graph-div { margin: 0 !important; }
-  .post-body .comparison-block .chart-caption {
-    margin: 0.35rem 0 0;
-    font-size: 0.88rem;
-    color: #8a8278;
-    line-height: 1.6;
-  }
-  .post-body .cell-output-display:has(.comparison-block),
-  .post-body div.cell:has(.comparison-block) { margin-bottom: 0; padding-bottom: 0; }
   .post-body .cell-output-display:has(.plotly-graph-div) > div { margin: 0; }
   .post-body .animation { display: block; max-width: 100%; margin: 0 auto 1.25rem; }
   .post-body .animation img, .post-body .animation canvas {
@@ -255,15 +247,15 @@ def show_three_way_comparison(cmp: pd.DataFrame) -> None:
         title=dict(text="Same classes, three metrics — pick your lens", x=0.5, xanchor="center"),
         xaxis_title="MLE share (%)",
         yaxis=dict(categoryorder="total ascending"),
-        height=28 * n_bars + 88,
-        margin=dict(l=10, r=10, t=68, b=28),
+        height=max(320, 26 * n_bars),
+        margin=dict(l=10, r=10, t=70, b=55),
         updatemenus=[
             dict(
                 type="buttons",
                 direction="right",
                 x=0.5,
                 xanchor="center",
-                y=1.02,
+                y=1.08,
                 yanchor="bottom",
                 buttons=[
                     dict(
@@ -290,14 +282,9 @@ def show_three_way_comparison(cmp: pd.DataFrame) -> None:
         fig,
         full_html=False,
         include_plotlyjs=False,
-        config={"displayModeBar": True, "responsive": False},
+        config={"displayModeBar": True, "responsive": True},
     )
-    caption = (
-        '<p class="chart-caption"><em>Interactive comparison — use the '
-        "<strong>Counts / MLE / Bayesian</strong> buttons above the chart; "
-        "hover for exact values.</em></p>"
-    )
-    display(HTML(f'<div class="comparison-block">{table_html}{plot_html}{caption}</div>'))
+    display(HTML(f'<div class="comparison-block">{table_html}{plot_html}</div>'))
 
 
 def show_animation(anim: manim.FuncAnimation, mode: str = "once") -> None:
@@ -1028,6 +1015,8 @@ cmp["bayes_rank"] = cmp["bayes_share"].rank(ascending=False, method="min").astyp
 
 show_three_way_comparison(cmp)
 ```
+
+*Interactive comparison — use the **Counts / MLE / Bayesian** buttons above the chart; hover for exact values.*
 
 **495 Marketing Analytics** is the story every method tells. **444 Consulting** and **451 MFO** bring up the rear. The interesting fights are in the mushy middle — **SQL**, **Capstone**, **BI Systems** — where a point or two of share shuffles the rank but not the vibe.
 
