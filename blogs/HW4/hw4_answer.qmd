@@ -56,8 +56,14 @@ execute:
   td { padding: 0.6rem 1rem; color: #6b6560; border-bottom: 1px solid #e8e3da; }
   .footer-bar { margin: 0 4rem; padding: 2rem 0; border-top: 1px solid #c9c2b6; display: flex; justify-content: space-between; font-size: 0.7rem; color: #8a8278; }
   .post-body .cell-output { max-width: 100%; box-sizing: border-box; }
-  .post-body .plotly-graph-div { max-width: 100% !important; margin: 0 auto 0.35rem; }
-  .post-body p.fig-note { margin: 0.35rem 0 1.25rem; font-size: 0.88rem; color: #8a8278; line-height: 1.6; }
+  .post-body .plotly-graph-div { max-width: 100% !important; margin: 0 auto; }
+  .post-body .cell-output-display:has(.plotly-graph-div) > p {
+    margin: 0.4rem 0 1.25rem;
+    font-size: 0.88rem;
+    color: #8a8278;
+    line-height: 1.6;
+  }
+  .post-body .cell-output-display:has(.plotly-graph-div) > div { margin: 0; }
   .post-body .animation { display: block; max-width: 100%; margin: 0 auto 1.25rem; }
   .post-body .animation img, .post-body .animation canvas {
     display: block; max-width: 100% !important; width: auto !important; height: auto !important; margin: 0 auto;
@@ -162,14 +168,18 @@ def style_axes(ax):
     ax.title.set_color(ACCENT)
 
 
-def show_plotly(fig: go.Figure, height: int = 500) -> None:
+def show_plotly(fig: go.Figure, height=None) -> None:
     """Embed Plotly in Quarto HTML (Plotly.js loaded once via mathjax.html)."""
-    fig.update_layout(
-        height=height,
+    layout = dict(
         paper_bgcolor=BG,
         plot_bgcolor=PANEL,
         font=dict(color=ACCENT, family="DM Sans, sans-serif"),
     )
+    if height is not None:
+        layout["height"] = height
+    elif fig.layout.height is None:
+        layout["height"] = 500
+    fig.update_layout(**layout)
     fig.update_xaxes(gridcolor=GRID, zerolinecolor=GRID)
     fig.update_yaxes(gridcolor=GRID, zerolinecolor=GRID)
     display(
@@ -899,6 +909,7 @@ Same ten classes, three lenses. The table is the reference; use the **interactiv
 
 ```{python}
 #| echo: true
+#| fig-cap: "Interactive comparison — use the **Counts / MLE / Bayesian** buttons under the chart; hover for exact values."
 
 cmp = counts[["Item", "short", "score"]].rename(columns={"score": "counts_score"})
 cmp = cmp.merge(mle_tbl[["Item", "share"]].rename(columns={"share": "mle_share"}), on="Item")
@@ -960,18 +971,20 @@ for label, col, xlab, color, hov in methods:
         )
     )
 
+n_bars = len(plot_cmp)
 fig_p.update_layout(
     title=dict(text="Same classes, three metrics — pick your lens", x=0.5, xanchor="center"),
     xaxis_title="MLE share (%)",
     yaxis=dict(categoryorder="total ascending"),
-    margin=dict(l=10, r=10, t=50, b=95),
+    height=32 * n_bars + 78,
+    margin=dict(l=10, r=10, t=46, b=42),
     updatemenus=[
         dict(
             type="buttons",
             direction="right",
             x=0.5,
             xanchor="center",
-            y=-0.2,
+            y=-0.06,
             yanchor="top",
             buttons=[
                 dict(
@@ -990,9 +1003,8 @@ fig_p.update_layout(
 )
 fig_p.update_xaxes(gridcolor=GRID, zerolinecolor=GRID)
 fig_p.update_yaxes(gridcolor=GRID, zerolinecolor=GRID)
-show_plotly(fig_p, height=420)
+show_plotly(fig_p, height=None)
 ```
-<p class="fig-note"><em>Interactive comparison — use the <strong>Counts / MLE / Bayesian</strong> buttons under the chart; hover for exact values.</em></p>
 
 **495 Marketing Analytics** is the story every method tells. **444 Consulting** and **451 MFO** bring up the rear. The interesting fights are in the mushy middle — **SQL**, **Capstone**, **BI Systems** — where a point or two of share shuffles the rank but not the vibe.
 
