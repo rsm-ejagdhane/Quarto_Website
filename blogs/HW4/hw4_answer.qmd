@@ -57,8 +57,8 @@ execute:
   .footer-bar { margin: 0 4rem; padding: 2rem 0; border-top: 1px solid #c9c2b6; display: flex; justify-content: space-between; font-size: 0.7rem; color: #8a8278; }
   .post-body .cell-output { max-width: 100%; box-sizing: border-box; }
   .post-body .plotly-graph-div { max-width: 100% !important; margin: 0 auto; }
-  .post-body .cell-output-display:has(.plotly-graph-div) > p {
-    margin: 0.4rem 0 1.25rem;
+  .post-body .plotly-graph-div + .chart-caption {
+    margin: 0.35rem 0 1.25rem;
     font-size: 0.88rem;
     color: #8a8278;
     line-height: 1.6;
@@ -168,7 +168,7 @@ def style_axes(ax):
     ax.title.set_color(ACCENT)
 
 
-def show_plotly(fig: go.Figure, height=None) -> None:
+def show_plotly(fig: go.Figure, height=None, caption: str | None = None) -> None:
     """Embed Plotly in Quarto HTML (Plotly.js loaded once via mathjax.html)."""
     layout = dict(
         paper_bgcolor=BG,
@@ -182,16 +182,15 @@ def show_plotly(fig: go.Figure, height=None) -> None:
     fig.update_layout(**layout)
     fig.update_xaxes(gridcolor=GRID, zerolinecolor=GRID)
     fig.update_yaxes(gridcolor=GRID, zerolinecolor=GRID)
-    display(
-        HTML(
-            pio.to_html(
-                fig,
-                full_html=False,
-                include_plotlyjs=False,
-                config={"displayModeBar": True, "responsive": True},
-            )
-        )
+    html = pio.to_html(
+        fig,
+        full_html=False,
+        include_plotlyjs=False,
+        config={"displayModeBar": True, "responsive": False},
     )
+    if caption:
+        html += f'<p class="chart-caption"><em>{caption}</em></p>'
+    display(HTML(html))
 
 
 def show_animation(anim: manim.FuncAnimation, mode: str = "once") -> None:
@@ -909,7 +908,6 @@ Same ten classes, three lenses. The table is the reference; use the **interactiv
 
 ```{python}
 #| echo: true
-#| fig-cap: "Interactive comparison — use the **Counts / MLE / Bayesian** buttons under the chart; hover for exact values."
 
 cmp = counts[["Item", "short", "score"]].rename(columns={"score": "counts_score"})
 cmp = cmp.merge(mle_tbl[["Item", "share"]].rename(columns={"share": "mle_share"}), on="Item")
@@ -976,8 +974,8 @@ fig_p.update_layout(
     title=dict(text="Same classes, three metrics — pick your lens", x=0.5, xanchor="center"),
     xaxis_title="MLE share (%)",
     yaxis=dict(categoryorder="total ascending"),
-    height=32 * n_bars + 78,
-    margin=dict(l=10, r=10, t=46, b=42),
+    height=30 * n_bars + 72,
+    margin=dict(l=10, r=10, t=44, b=36),
     updatemenus=[
         dict(
             type="buttons",
@@ -1003,7 +1001,14 @@ fig_p.update_layout(
 )
 fig_p.update_xaxes(gridcolor=GRID, zerolinecolor=GRID)
 fig_p.update_yaxes(gridcolor=GRID, zerolinecolor=GRID)
-show_plotly(fig_p, height=None)
+show_plotly(
+    fig_p,
+    height=None,
+    caption=(
+        "Interactive comparison — use the <strong>Counts / MLE / Bayesian</strong> "
+        "buttons under the chart; hover for exact values."
+    ),
+)
 ```
 
 **495 Marketing Analytics** is the story every method tells. **444 Consulting** and **451 MFO** bring up the rear. The interesting fights are in the mushy middle — **SQL**, **Capstone**, **BI Systems** — where a point or two of share shuffles the rank but not the vibe.
