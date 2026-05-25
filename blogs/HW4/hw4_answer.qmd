@@ -55,6 +55,15 @@ execute:
   th { text-align: left; padding: 0.6rem 1rem; font-weight: 500; color: #2e2825; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; }
   td { padding: 0.6rem 1rem; color: #6b6560; border-bottom: 1px solid #e8e3da; }
   .footer-bar { margin: 0 4rem; padding: 2rem 0; border-top: 1px solid #c9c2b6; display: flex; justify-content: space-between; font-size: 0.7rem; color: #8a8278; }
+  .post-body .cell-output, .post-body .animation { max-width: 100%; box-sizing: border-box; }
+  .post-body .animation { display: block; }
+  .post-body .animation img, .post-body .animation canvas {
+    display: block; max-width: 100% !important; width: auto !important; height: auto !important; margin: 0 auto;
+  }
+  .post-body input[type="range"].anim-slider {
+    width: 100% !important; max-width: 100%; box-sizing: border-box; margin-left: auto; margin-right: auto; display: block;
+  }
+  .post-body .anim-controls { max-width: 100%; box-sizing: border-box; padding: 0 2px; }
   @media (max-width: 800px) { .nav, .post-header, .post-body { padding-left: 1.5rem; padding-right: 1.5rem; } }
   body details:has(pre.sourceCode) { margin: 0 0 1.25rem; border: 1px solid #c9c2b6; border-radius: 2px; background: #e8e3da; }
   body details:has(pre.sourceCode) > summary { cursor: pointer; list-style: none; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: #f0ece4; background: #2e2825; padding: 0.55rem 1rem; }
@@ -72,7 +81,7 @@ execute:
 <div class="post-header">
   <div class="post-tag">Assignment 4 — Marketing Analytics</div>
   <div class="post-title">MaxDiff &amp; Multinomial Logit</div>
-  <div class="post-subtitle">Counts, MLE, and Bayesian estimation of MSBA class preferences</div>
+  <div class="post-subtitle">Which MSBA classes would students actually choose — if they had to?</div>
   <div class="post-meta">Eesha Jagdhane &nbsp;·&nbsp; May 25, 2026</div>
 </div>
 
@@ -83,17 +92,15 @@ execute:
 
 ## Introduction
 
-**MaxDiff** (best–worst scaling) asks respondents to make *trade-offs*: on each screen they see a small subset of items (here, four MSBA core classes) and pick the **most** and **least** preferred. Repeating this over many screens reveals a stable ranking without asking anyone to calibrate a 1–10 scale.
+Ask someone to *rate* ten MBA classes on a 1–10 scale and you get polite noise. Ask them to pick the **one they want** and the **one they’d skip** from a lineup of four — now you’re measuring something real. That’s **MaxDiff** (best–worst scaling): repeated forced choices instead of pretend precision.
 
-That design matters because people are good at comparisons but weak at absolute ratings. MaxDiff forces differentiation and reduces scale-use bias (everyone using only the top of the scale, for example).
+Our “products” are the ten core MSBA classes at Rady. Each survey screen shows four; every pick is a miniature conjoint experiment. I take the class survey data and estimate preferences three ways — from a quick scoreboard to a full choice model — and see whether the story holds up:
 
-In this analysis the ten items are the core MSBA classes at UCSD Rady. I estimate relative preference three ways and compare them:
+1. **Counts** — how often a class is picked best vs. worst when it appears on screen  
+2. **Multinomial logit (MLE)** — a proper model of *how* people choose best and worst, with standard errors  
+3. **Bayesian MNL** — the same model, but with a prior and MCMC so uncertainty is honest about *shares*, not just coefficients  
 
-1. A **counts** score — % best minus % worst when an item appears  
-2. **MNL** fit by **maximum likelihood** — explicit choice probabilities for best and worst  
-3. The same MNL fit **Bayesianly** via random-walk Metropolis–Hastings  
-
-I expect all three to agree on the broad ordering (which classes sit at the top and bottom) while differing in how sharply they separate the middle and how they report uncertainty.
+The methods mostly agree on who’s on top and who’s at the bottom. The fun is in the middle — and in watching the statistics *move* (yes, there are animations).
 
 ## The Data
 
@@ -102,11 +109,14 @@ I expect all three to agree on the broad ordering (which classes sit at the top 
 
 from pathlib import Path
 
+import matplotlib.animation as manim
 import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from IPython.display import Markdown, display
+import plotly.graph_objects as go
+import plotly.io as pio
+from IPython.display import HTML, Markdown, display
 from scipy import optimize
 from scipy.special import logsumexp
 from scipy.stats import norm
@@ -155,6 +165,10 @@ plt.rcParams.update({
     "text.color": ACCENT,
 })
 
+pio.templates.default = "simple_white"
+pio.defaults.width = 780
+pio.defaults.height = 480
+
 raw = pd.read_csv(DATA_DIR / "maxdiff_design_and_choices.csv")
 raw = raw.rename(columns={"Record ID": "record_id"})
 
@@ -190,9 +204,9 @@ display(
 )
 ```
 
-The file `maxdiff_design_and_choices.csv` has one row per item slot on each task screen. After restricting to the **ten MSBA classes** and **four-item tasks**, the dimensions above apply.
+Think of the CSV as a stack of tiny choice menus: one row per class slot on each screen. After keeping only the **ten real MSBA classes** and **four-class screens**, the table above summarizes the study.
 
-The raw export lists 15 task numbers per person. **Tasks 9–15** are two-item screens that include a placeholder coded as item 11 (not one of the ten classes). I analyze **tasks 1–8**, which follow the standard MaxDiff design with four classes per screen.
+One wrinkle: the export lists 15 “tasks” per person, but **tasks 9–15** are odd two-item screens with a placeholder (item 11). They’re not standard MaxDiff. I use **tasks 1–8** — four classes, one best, one worst — which is what the MNL math in class assumes.
 
 ```{python}
 #| echo: true
@@ -235,17 +249,17 @@ display(
 )
 ```
 
-Every class appears roughly **267–276** times, as expected from a balanced MaxDiff design.
+Exposure is beautifully balanced — each class shows up about **270** times. No class was accidentally hidden from the debate.
 
 ## Counts Analysis
 
-The **counts analysis** is the simplest summary: for each class $j$, compute the share of appearances where it was picked **best** and **worst**, then take the difference
+Start with the scoreboard even your advisor could read in ten seconds. For each class $j$, track how often it was picked **best** and **worst** when it appeared, then subtract:
 
 $$
 \text{score}_j = \%\text{best}_j - \%\text{worst}_j.
 $$
 
-Scores near $+1$ mean “almost always best when shown”; near $-1$ mean “almost always worst”; near $0$ mean mixed or middle-of-the-pack.
+A score near **+1** means “crowd favorite whenever it’s on the menu.” Near **-1** means “please get this off my schedule.” Near **0** means fight night — the class is loved and hated in equal measure.
 
 ```{python}
 #| echo: true
@@ -296,8 +310,10 @@ display(
 #| fig-cap: "Counts scores with 95% bootstrap CIs (resampling respondents, B = 1,000)."
 
 
-def bootstrap_counts(data: pd.DataFrame, B: int = 1000, seed: int = 495) -> pd.DataFrame:
-    """Return bootstrap quantiles indexed by Item (1..10)."""
+def bootstrap_counts(
+    data: pd.DataFrame, B: int = 1000, seed: int = 495
+) -> tuple[np.ndarray, pd.DataFrame]:
+    """Return bootstrap draw matrix (B × 10) and CI table by Item."""
     rng = np.random.default_rng(seed)
     ids = data["record_id"].unique()
     items = np.arange(1, 11)
@@ -312,16 +328,17 @@ def bootstrap_counts(data: pd.DataFrame, B: int = 1000, seed: int = 495) -> pd.D
         )
         sc["score"] = sc["best"] / sc["shown"] - sc["worst"] / sc["shown"]
         mat[b, :] = sc.reindex(items)["score"].to_numpy()
-    return pd.DataFrame(
+    ci = pd.DataFrame(
         {
             "Item": items,
             "ci_lo": np.quantile(mat, 0.025, axis=0),
             "ci_hi": np.quantile(mat, 0.975, axis=0),
         }
     )
+    return mat, ci
 
 
-boot_ci = bootstrap_counts(raw4)
+boot_mat, boot_ci = bootstrap_counts(raw4)
 counts = counts.merge(boot_ci, on="Item", how="left")
 
 order = counts.sort_values("score")
@@ -350,18 +367,69 @@ plt.tight_layout()
 plt.show()
 ```
 
-**MGTA 495 Marketing Analytics** dominates: picked best on **54%** of appearances and worst on only **4%**, for a counts score of **0.49**. **453 Business Analytics** and **455 Customer Analytics** follow. At the bottom, **444 Analytics Consulting** is chosen worst **42%** of the time when shown. **464 SQL** sits near zero — students split almost evenly on best vs. worst — which is exactly the kind of middle item where rankings can shuffle across methods.
+The static chart is the headline; the animation asks a subtler question: *if we resampled students, how shaky is the lead?* Each frame adds another bootstrap draw of the counts score for **MGTA 495** (our runaway #1). Watch the histogram settle and the 95% interval lock in.
+
+```{python}
+#| echo: false
+#| fig-cap: "Bootstrap distribution of the counts score for MGTA 495 — resampling students, B = 1,000."
+
+boot_495 = boot_mat[:, 8]
+bins_boot = np.linspace(boot_495.min() - 0.05, boot_495.max() + 0.05, 28)
+frame_steps = np.unique(np.linspace(20, len(boot_495), 50, dtype=int))
+
+fig_boot, ax_boot = plt.subplots(figsize=(5.8, 2.95), dpi=88)
+ax_boot.set_xlim(bins_boot[0], bins_boot[-1])
+ax_boot.set_xlabel("Counts score (% best − % worst)")
+ax_boot.set_ylabel("Bootstrap samples")
+ax_boot.set_title("How stable is the #1 class?\nMGTA 495 counts score")
+style_axes(ax_boot)
+
+bars_boot = ax_boot.hist([], bins=bins_boot, color=HIGHLIGHT, edgecolor=BG, alpha=0.9)[2]
+ci_lo_495, ci_hi_495 = np.quantile(boot_495, [0.025, 0.975])
+mean_line = ax_boot.axvline(boot_495.mean(), color=ACCENT, linestyle="--", linewidth=1.3, alpha=0)
+lo_line = ax_boot.axvline(ci_lo_495, color="#8a8278", linestyle=":", linewidth=1.3, alpha=0)
+hi_line = ax_boot.axvline(ci_hi_495, color="#8a8278", linestyle=":", linewidth=1.3, alpha=0)
+counter = ax_boot.text(
+    0.97, 0.95, "", transform=ax_boot.transAxes, ha="right", va="top", fontsize=9, color=ACCENT,
+    bbox=dict(facecolor=BG, edgecolor=GRID, boxstyle="round,pad=0.35"),
+)
+
+
+def _update_boot495(i):
+    k = frame_steps[i]
+    counts_h, _ = np.histogram(boot_495[:k], bins=bins_boot)
+    ymax = max(counts_h.max() * 1.15, 1)
+    ax_boot.set_ylim(0, ymax)
+    for bar, h in zip(bars_boot, counts_h):
+        bar.set_height(h)
+    if k >= len(boot_495):
+        mean_line.set_alpha(1.0)
+        lo_line.set_alpha(1.0)
+        hi_line.set_alpha(1.0)
+        counter.set_text(f"B = {k}\nMean = {boot_495.mean():.3f}\n95% CI = [{ci_lo_495:.3f}, {ci_hi_495:.3f}]")
+    else:
+        counter.set_text(f"B = {k}\nRunning mean = {boot_495[:k].mean():.3f}")
+    return (*bars_boot, mean_line, lo_line, hi_line, counter)
+
+
+fig_boot.tight_layout(pad=0.85)
+anim_boot = manim.FuncAnimation(fig_boot, _update_boot495, frames=len(frame_steps), interval=120, blit=False)
+display(HTML(anim_boot.to_jshtml(default_mode="once")))
+plt.close(fig_boot)
+```
+
+**MGTA 495 Marketing Analytics** is the runaway winner — best on **54%** of screens, worst on **4%**, for a score of **0.49**. **453** and **455** trail but still feel like “first-round picks.” At the bottom, **444 Consulting** is the class people love to hate (worst **42%** of the time). **464 SQL** is the Switzerland of the portfolio: nearly zero net score, which usually means the fancier models will argue over its rank.
 
 ## From MaxDiff Data to MNL Choices
 
-Each MaxDiff task becomes **two multinomial logit observations**:
+Counts are honest; they’re also wasteful. They ignore every time you *didn’t* pick a class. The multinomial logit (MNL) turns each MaxDiff screen into **two** statistical choices:
 
 1. **Best choice** from all $J=4$ items on the screen, with utility $\beta_j$ and probability  
    $P(\text{best}=b) = \exp(\beta_b) / \sum_{j \in \text{shown}} \exp(\beta_j)$.
 2. **Worst choice** from the three remaining items, with utilities **negated**:  
    $P(\text{worst}=c \mid \text{best}=b) = \exp(-\beta_c) / \sum_{j \neq b} \exp(-\beta_j)$.
 
-**Identifiability:** the softmax is unchanged if we add a constant to every $\beta_j$, so only $J-1 = 9$ coefficients are identified. I set **$\beta_1 = 0$** (MGTA 403 as reference) and estimate $\beta_2,\ldots,\beta_{10}$.
+One catch: utilities are only defined up to a constant. I pin **$\beta_1 = 0$** (MGTA 403 as the reference class) and estimate the other nine — standard move, same as setting the outside option to zero in class.
 
 ```{python}
 #| echo: true
@@ -416,7 +484,7 @@ $$
 \Big].
 $$
 
-I implement this with **`logsumexp`** for numerical stability and maximize with `scipy.optimize.minimize` (BFGS, with the Hessian inverse for standard errors).
+I code the log-likelihood with **`logsumexp`** (so `exp` never explodes), then let `scipy.optimize.minimize` hunt for the peak. The animation below is the “aha” moment from week 5: slide one coefficient (495’s utility) and watch the log-likelihood curve bend toward the MLE.
 
 ```{python}
 #| echo: true
@@ -477,6 +545,47 @@ display(
 ```
 
 ```{python}
+#| echo: false
+#| fig-cap: "Animated sweep: moving β₉ (495) toward the MLE while other coefficients stay fixed."
+
+idx_495 = 8
+grid_b9 = np.linspace(mle_res.x[idx_495] - 1.2, mle_res.x[idx_495] + 0.6, 55)
+grid_ll = np.array([
+    log_likelihood(np.concatenate([mle_res.x[:idx_495], [g], mle_res.x[idx_495 + 1 :]]))
+    for g in grid_b9
+])
+
+fig_mle, ax_mle = plt.subplots(figsize=(5.8, 2.95), dpi=88)
+ax_mle.plot(grid_b9, grid_ll, color="#8a8278", linewidth=1.5, alpha=0.55)
+ax_mle.axvline(mle_res.x[idx_495], color=ACCENT, linestyle="--", linewidth=1.1,
+               label=f"MLE  β₉ = {mle_res.x[idx_495]:.3f}")
+marker, = ax_mle.plot([], [], "o", color=HIGHLIGHT, markersize=10, markeredgecolor=BG, markeredgewidth=1.4, zorder=5)
+trail, = ax_mle.plot([], [], color=HIGHLIGHT, linewidth=2.4, alpha=0.85)
+note = ax_mle.text(
+    0.03, 0.97, "", transform=ax_mle.transAxes, va="top", fontsize=9, color=ACCENT,
+    bbox=dict(facecolor=BG, edgecolor=GRID, boxstyle="round,pad=0.35"),
+)
+ax_mle.set_xlabel("Candidate β₉ (495 Marketing Analytics)")
+ax_mle.set_ylabel("Log-likelihood ℓ(β)")
+ax_mle.set_title("Climbing the likelihood surface\n(other β’s held at MLE)")
+ax_mle.legend(loc="lower right", frameon=True, facecolor=BG, edgecolor=GRID)
+style_axes(ax_mle)
+fig_mle.tight_layout(pad=0.85)
+
+
+def _update_mle(i):
+    marker.set_data([grid_b9[i]], [grid_ll[i]])
+    trail.set_data(grid_b9[: i + 1], grid_ll[: i + 1])
+    note.set_text(f"β₉ = {grid_b9[i]:.3f}\nℓ = {grid_ll[i]:.1f}")
+    return marker, trail, note
+
+
+anim_mle = manim.FuncAnimation(fig_mle, _update_mle, frames=len(grid_b9), interval=100, blit=False)
+display(HTML(anim_mle.to_jshtml(default_mode="loop")))
+plt.close(fig_mle)
+```
+
+```{python}
 #| echo: true
 #| fig-cap: "MLE shares of preference (all ten classes on one hypothetical screen)."
 
@@ -490,11 +599,11 @@ plt.tight_layout()
 plt.show()
 ```
 
-The **MLE ranking matches the counts ranking** for all ten classes in this sample. That agreement is strongest at the top (**495** share ≈ **0.28**) and bottom (**444** ≈ **0.04**). The MNL still adds value: it uses every “not chosen” on each screen, not only the best/worst counts, and delivers standard errors for inference.
+Every class keeps the **same rank** as the counts table — reassuring. The MNL just translates utilities into something marketers understand: **share of preference** if all ten classes appeared on one mega-screen. **495** grabs about **28%** of that imaginary demand; **444 Consulting** about **4%**.
 
 ## MNL via Bayesian Estimation
 
-The posterior is $\pi(\boldsymbol{\beta} \mid \mathbf{y}) \propto L(\boldsymbol{\beta})\,\pi(\boldsymbol{\beta})$ with a weakly informative prior $\boldsymbol{\beta} \sim N(\mathbf{0}, 10\mathbf{I})$ on the nine free parameters.
+MLE gives a point. Bayes gives a *cloud*. The posterior is $\pi(\boldsymbol{\beta} \mid \mathbf{y}) \propto L(\boldsymbol{\beta})\,\pi(\boldsymbol{\beta})$ with a gentle prior $\boldsymbol{\beta} \sim N(\mathbf{0}, 10\mathbf{I})$ — wide enough to stay out of the way, tight enough to keep the sampler sane.
 
 ```{python}
 #| echo: true
@@ -596,9 +705,47 @@ display(
 )
 ```
 
+A healthy MCMC trace looks like a **fuzzy caterpillar** — not a trend, not a stuck needle. The animation draws the chain for **β₉ (495)** one iteration at a time; by the end you should see stationary fuzz, not a slow march.
+
+```{python}
+#| echo: false
+#| fig-cap: "MCMC trace for β₉ (495) building up after burn-in — look for the fuzzy caterpillar."
+
+trace_col = 8
+sub = post_draws[:: max(1, len(post_draws) // 400)]
+frame_t = np.linspace(50, len(sub), 55, dtype=int)
+
+fig_trace, ax_trace = plt.subplots(figsize=(5.8, 2.95), dpi=88)
+ax_trace.set_xlabel("Iteration (after burn-in)")
+ax_trace.set_ylabel("β₉")
+ax_trace.set_title("Metropolis–Hastings draws for 495\n(acceptance ≈ {:.0%})".format(accept_rate))
+style_axes(ax_trace)
+(line,) = ax_trace.plot([], [], color=HIGHLIGHT, linewidth=0.5, alpha=0.9)
+dot, = ax_trace.plot([], [], "o", color=ACCENT, markersize=5)
+
+
+def _update_trace(i):
+    k = frame_t[i]
+    xs = np.arange(k)
+    ys = sub[:k, trace_col]
+    line.set_data(xs, ys)
+    dot.set_data([xs[-1]], [ys[-1]])
+    ax_trace.set_xlim(0, len(sub))
+    ymin, ymax = sub[:k, trace_col].min(), sub[:k, trace_col].max()
+    pad = max(0.15, (ymax - ymin) * 0.1)
+    ax_trace.set_ylim(ymin - pad, ymax + pad)
+    return line, dot
+
+
+fig_trace.tight_layout(pad=0.85)
+anim_trace = manim.FuncAnimation(fig_trace, _update_trace, frames=len(frame_t), interval=90, blit=False)
+display(HTML(anim_trace.to_jshtml(default_mode="once")))
+plt.close(fig_trace)
+```
+
 ```{python}
 #| echo: true
-#| fig-cap: "Trace plots for three utility parameters (post burn-in should look like a fuzzy caterpillar)."
+#| fig-cap: "Static trace plots for three utility parameters (post burn-in)."
 
 trace_specs = [
     (8, "β₉ (495 Mkt Analytics)"),
@@ -626,13 +773,14 @@ order_b = bayes_tbl.sort_values("share_mean")
 y = np.arange(len(order_b))
 fig, ax = plt.subplots(figsize=(8, 5.5))
 ax.barh(y, order_b["share_mean"], color=HIGHLIGHT, height=0.7)
+xb = order_b["share_mean"].to_numpy()
 ax.errorbar(
-    order_b["share_mean"],
+    xb,
     y,
-    xerr=[
-        order_b["share_mean"] - order_b["share_lo"],
-        order_b["share_hi"] - order_b["share_mean"],
-    ],
+    xerr=np.vstack([
+        np.maximum(0, xb - order_b["share_lo"].to_numpy()),
+        np.maximum(0, order_b["share_hi"].to_numpy() - xb),
+    ]),
     fmt="none",
     ecolor=ACCENT,
     capsize=3,
@@ -646,9 +794,11 @@ plt.tight_layout()
 plt.show()
 ```
 
-Posterior means are **very close to the MLE** (e.g. $\hat\beta_9 \approx 1.63$ under both). Posterior SDs on free parameters align with MLE standard errors. The Bayesian route shines for **shares**: credible intervals come from pushing every MCMC draw through the softmax — no delta method required.
+Posterior means hug the MLE (β₉ ≈ **1.63** either way). The real win is on **shares**: every MCMC draw gets pushed through the softmax, so the error bars on the bar chart are *credible intervals*, not approximations from a formula you hope is right.
 
 ## Comparing the Three Methods
+
+Same ten classes, three lenses. The table is the reference; the **interactive chart** lets you flip between counts, MLE shares, and Bayesian shares and hover for exact numbers — useful when two classes are separated by a hair.
 
 ```{python}
 #| echo: true
@@ -690,47 +840,77 @@ display(
 ```
 
 ```{python}
-#| echo: true
-#| fig-cap: "Three methods, same color key by item."
-#| fig-width: 9
-#| fig-height: 10
+#| echo: false
+#| fig-cap: "Interactive comparison — toggle method and hover for class-level detail."
 
-item_cmap = mcolors.LinearSegmentedColormap.from_list("items", ["#8a8278", "#7a3b35"])
-item_colors = item_cmap(np.linspace(0, 1, 10))
+plot_cmp = cmp.sort_values("mle_rank").copy()
+plot_cmp["counts_pct"] = (plot_cmp["counts_score"] * 100).round(1)
+plot_cmp["mle_pct"] = (plot_cmp["mle_share"] * 100).round(1)
+plot_cmp["bayes_pct"] = (plot_cmp["bayes_share"] * 100).round(1)
 
-panels = [
-    (counts.sort_values("score"), "score", "Counts", "Score"),
-    (mle_tbl.sort_values("share"), "share", "MLE MNL", "Share"),
-    (bayes_tbl.sort_values("share_mean"), "share_mean", "Bayesian MNL", "Share"),
-]
+fig_p = go.Figure()
+for name, col, color in [
+    ("Counts (% best − % worst)", "counts_pct", "#8a8278"),
+    ("MLE share (%)", "mle_pct", "#7a3b35"),
+    ("Bayesian share (%)", "bayes_pct", "#2e2825"),
+]:
+    fig_p.add_bar(
+        x=plot_cmp[col],
+        y=plot_cmp["short"],
+        orientation="h",
+        name=name,
+        marker_color=color,
+        visible=(name.startswith("MLE")),
+        hovertemplate="<b>%{y}</b><br>%{x:.1f}<extra></extra>",
+    )
 
-fig, axes = plt.subplots(3, 1, figsize=(9, 10))
-for ax, (dat, col, title, xlab) in zip(axes, panels):
-    dat = dat.sort_values(col)
-    colors = [item_colors[int(i) - 1] for i in dat["Item"]]
-    ax.barh(dat["short"], dat[col], color=colors, height=0.7)
-    ax.set_xlabel(xlab)
-    ax.set_title(title)
-    style_axes(ax)
-plt.tight_layout()
-plt.show()
+fig_p.update_layout(
+    title="Same ranking story, three metrics — pick your lens",
+    xaxis_title="Value (scale depends on method)",
+    yaxis_title="",
+    yaxis=dict(categoryorder="total ascending"),
+    paper_bgcolor=BG,
+    plot_bgcolor=PANEL,
+    font=dict(color=ACCENT, family="DM Sans, sans-serif"),
+    height=520,
+    margin=dict(l=20, r=20, t=50, b=40),
+    updatemenus=[
+        dict(
+            type="buttons",
+            direction="right",
+            x=0.0,
+            y=1.12,
+            buttons=[
+                dict(label="Counts", method="update", args=[{"visible": [True, False, False]}]),
+                dict(label="MLE", method="update", args=[{"visible": [False, True, False]}]),
+                dict(label="Bayesian", method="update", args=[{"visible": [False, False, True]}]),
+            ],
+        )
+    ],
+    showlegend=False,
+)
+fig_p.update_xaxes(gridcolor=GRID, zerolinecolor=GRID)
+fig_p.update_yaxes(gridcolor=GRID)
+display(fig_p)
 ```
 
-All three methods **agree** on the headline story: **495 Marketing Analytics** is the clear favorite; **444 Consulting** and **451 MFO** are least liked. **Disagreements** are minor here — mostly in the compressed middle (SQL vs. Capstone vs. BI Systems), where scores are close and sampling noise can swap ranks by one place.
+**495 Marketing Analytics** is the story every method tells. **444 Consulting** and **451 MFO** bring up the rear. The interesting fights are in the mushy middle — **SQL**, **Capstone**, **BI Systems** — where a point or two of share shuffles the rank but not the vibe.
 
-- **Counts** are fast and transparent for dashboards.  
-- **MLE MNL** gives a principled generative model and classical SEs for $\beta$.  
-- **Bayesian MNL** delivers credible intervals on *functions* of $\beta$ (shares, counterfactual menus) and extends naturally to hierarchical individual-level models.
+When would I use each tool in real life?
+
+- **Counts** — executive snapshot, no software drama.  
+- **MLE** — one number to put in a slide, with classical SEs.  
+- **Bayes** — “what if we add a new elective?” or any question where uncertainty on **shares** matters more than uncertainty on β.
 
 ## Discussion
 
-**Substantive takeaway:** MSBA students in this sample most want **Marketing Analytics (495)** and quantitative application courses (**453**, **455**, **452**). **Analytics Consulting (444)** and the summer **451 MFO** block sit at the bottom — plausibly reflecting workload, timing, or less perceived fit with analytics career goals. The strength of 495 is not surprising in a Marketing Analytics cohort, but the size of the gap (roughly **28%** MNL share vs. **4%** for consulting) is still striking.
+If you’re choosing classes in this cohort, the market has spoken: **take 495**, load up on **453 / 455 / 452**, and treat **444** as the option of last resort unless you love client-facing grind. The gap isn’t subtle — roughly **28%** MNL share vs. **4%** for consulting.
 
-**Methods:** use counts for a quick read, MLE when you need a single published estimate with standard errors, and Bayes when uncertainty on market shares or “what if we added a class?” matters.
+Statistically, this homework is really about **three ways to listen to the same choices**. Counts are the podcast summary; MLE is the transcript with footnotes; Bayes is the transcript plus a honest “we’re not 100% sure” margin on the quotes that matter (market shares).
 
-**Caveats:** respondents are a **self-selected** MSBA sample; preferences need not generalize to other programs. Order effects, prior coursework, and cohort timing (who has already taken which class) were not modeled. Tasks 9–15 in the export use a different screen format and were set aside so the MNL matches the standard four-item MaxDiff theory from class.
+Caveats worth saying out loud: these are **MSBA students who took a survey**, not a random draw of all business students. Who’s already suffered through 403, who’s targeting marketing vs. finance, and which classes they’ve heard horror stories about — all unobserved. Tasks 9–15 in the raw file still look like a different survey mode (item 11 placeholder), so I stuck to the clean eight-task MaxDiff core.
 
-**Next steps:** fit a **hierarchical MNL** with random coefficients by respondent to see heterogeneity; merge covariates (concentration, work experience); and model the two-item follow-up tasks if the survey documentation defines how item 11 should enter the likelihood.
+If I had another afternoon: **hierarchical MNL** (who loves 495 *too much*?), covariates like concentration and work experience, and a story for those two-item screens. For now, the caterpillar crawled, the likelihood peaked, and Marketing Analytics won — which, in a Marketing Analytics class, feels fitting.
 
 ```{=html}
 </div>
