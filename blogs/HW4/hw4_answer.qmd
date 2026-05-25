@@ -112,7 +112,9 @@ The methods mostly agree on who’s on top and who’s at the bottom. The fun is
 ```{python}
 #| echo: true
 
+import json
 from pathlib import Path
+import uuid
 
 import matplotlib.animation as manim
 import matplotlib.pyplot as plt
@@ -165,26 +167,57 @@ def style_axes(ax):
     ax.title.set_color(ACCENT)
 
 
-def show_plotly(fig: go.Figure, height=None, caption=None) -> None:
-    """Embed Plotly in Quarto HTML (Plotly.js loaded once via mathjax.html)."""
-    layout = dict(
+def embed_plotly(fig: go.Figure, div_id: str, height: int) -> str:
+    """Embed Plotly via JSON (avoids binary bdata + script timing issues on GitHub Pages)."""
+    fig.update_layout(
+        height=height,
         paper_bgcolor=BG,
         plot_bgcolor=PANEL,
         font=dict(color=ACCENT, family="DM Sans, sans-serif"),
     )
-    if height is not None:
-        layout["height"] = height
-    elif fig.layout.height is None:
-        layout["height"] = 500
-    fig.update_layout(**layout)
     fig.update_xaxes(gridcolor=GRID, zerolinecolor=GRID)
     fig.update_yaxes(gridcolor=GRID, zerolinecolor=GRID)
-    html = pio.to_html(
-        fig,
-        full_html=False,
-        include_plotlyjs=False,
-        config={"displayModeBar": True, "responsive": False},
+    spec = fig.to_plotly_json()
+    payload = json.dumps(
+        {
+            "data": spec.get("data", []),
+            "layout": spec.get("layout", {}),
+            "config": {"displayModeBar": True, "responsive": False},
+        },
+        default=lambda o: o.tolist() if hasattr(o, "tolist") else o,
     )
+    return f"""<div id="{div_id}" class="plotly-graph-div" style="width:100%;height:{height}px;"></div>
+<script>
+(function() {{
+  var spec = {payload};
+  function drawPlot() {{
+    if (typeof Plotly === "undefined") {{
+      setTimeout(drawPlot, 50);
+      return;
+    }}
+    var el = document.getElementById("{div_id}");
+    if (!el || el.dataset.plotlyDrawn === "1") return;
+    Plotly.newPlot(el, spec.data, spec.layout, spec.config).then(function() {{
+      el.dataset.plotlyDrawn = "1";
+    }}).catch(function(err) {{
+      console.error("Plotly failed ({div_id}):", err);
+      el.innerHTML = "<p style='color:#7a3b35;font-size:0.9rem'>Chart could not load — try a hard refresh.</p>";
+    }});
+  }}
+  if (document.readyState === "loading") {{
+    document.addEventListener("DOMContentLoaded", drawPlot);
+  }} else {{
+    drawPlot();
+  }}
+}})();
+</script>"""
+
+
+def show_plotly(fig: go.Figure, height=None, caption=None) -> None:
+    """Embed Plotly in Quarto HTML (Plotly.js loaded once via mathjax.html)."""
+    plot_h = int(height if height is not None else (fig.layout.height or 500))
+    div_id = "plot-" + uuid.uuid4().hex[:10]
+    html = embed_plotly(fig, div_id, plot_h)
     if caption:
         html += f'<p class="chart-caption"><em>{caption}</em></p>'
     display(HTML(html))
@@ -278,12 +311,8 @@ def show_three_way_comparison(cmp: pd.DataFrame) -> None:
     fig.update_xaxes(gridcolor=GRID, zerolinecolor=GRID)
     fig.update_yaxes(gridcolor=GRID, zerolinecolor=GRID)
 
-    plot_html = pio.to_html(
-        fig,
-        full_html=False,
-        include_plotlyjs=False,
-        config={"displayModeBar": True, "responsive": True},
-    )
+    chart_h = max(340, 26 * n_bars)
+    plot_html = embed_plotly(fig, "hw4-three-way-chart", chart_h)
     display(HTML(f'<div class="comparison-block">{table_html}{plot_html}</div>'))
 
 
