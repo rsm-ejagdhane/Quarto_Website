@@ -57,12 +57,17 @@ execute:
   .footer-bar { margin: 0 4rem; padding: 2rem 0; border-top: 1px solid #c9c2b6; display: flex; justify-content: space-between; font-size: 0.7rem; color: #8a8278; }
   .post-body .cell-output { max-width: 100%; box-sizing: border-box; }
   .post-body .plotly-graph-div { max-width: 100% !important; margin: 0 auto; }
-  .post-body .plotly-graph-div + .chart-caption {
-    margin: 0.35rem 0 1.25rem;
+  .post-body .comparison-block { margin: 0 0 1.25rem; }
+  .post-body .comparison-block table { margin: 0 0 1rem; }
+  .post-body .comparison-block .plotly-graph-div { margin: 0 !important; }
+  .post-body .comparison-block .chart-caption {
+    margin: 0.35rem 0 0;
     font-size: 0.88rem;
     color: #8a8278;
     line-height: 1.6;
   }
+  .post-body .cell-output-display:has(.comparison-block),
+  .post-body div.cell:has(.comparison-block) { margin-bottom: 0; padding-bottom: 0; }
   .post-body .cell-output-display:has(.plotly-graph-div) > div { margin: 0; }
   .post-body .animation { display: block; max-width: 100%; margin: 0 auto 1.25rem; }
   .post-body .animation img, .post-body .animation canvas {
@@ -168,7 +173,7 @@ def style_axes(ax):
     ax.title.set_color(ACCENT)
 
 
-def show_plotly(fig: go.Figure, height=None, caption: str | None = None) -> None:
+def show_plotly(fig: go.Figure, height=None, caption=None) -> None:
     """Embed Plotly in Quarto HTML (Plotly.js loaded once via mathjax.html)."""
     layout = dict(
         paper_bgcolor=BG,
@@ -191,6 +196,108 @@ def show_plotly(fig: go.Figure, height=None, caption: str | None = None) -> None
     if caption:
         html += f'<p class="chart-caption"><em>{caption}</em></p>'
     display(HTML(html))
+
+
+def show_three_way_comparison(cmp: pd.DataFrame) -> None:
+    """Render comparison table + chart + caption in one block (no Quarto output gaps)."""
+    d = cmp.sort_values("mle_rank").copy()
+    d["counts_pct"] = d["counts_score"] * 100
+    d["mle_pct"] = d["mle_share"] * 100
+    d["bayes_pct"] = d["bayes_share"] * 100
+
+    show = d[
+        [
+            "Item",
+            "short",
+            "counts_score",
+            "counts_rank",
+            "mle_share",
+            "mle_rank",
+            "bayes_share",
+            "bayes_rank",
+        ]
+    ].copy()
+    show.columns = [
+        "Item",
+        "Class",
+        "Counts score",
+        "Counts rank",
+        "MLE share",
+        "MLE rank",
+        "Bayes share",
+        "Bayes rank",
+    ]
+    for col in ("Counts rank", "MLE rank", "Bayes rank"):
+        show[col] = show[col].astype(int)
+    table_html = show.to_html(index=False, border=0, classes="caption-top", float_format="%.3f")
+
+    methods = [
+        ("Counts", "counts_pct", "Counts score (percentage points)", "#8a8278", "%{x:.1f} pp"),
+        ("MLE", "mle_pct", "MLE share (%)", "#7a3b35", "%{x:.1f}%"),
+        ("Bayesian", "bayes_pct", "Bayesian share (%)", "#2e2825", "%{x:.1f}%"),
+    ]
+    fig = go.Figure()
+    for label, col, xlab, color, hov in methods:
+        fig.add_trace(
+            go.Bar(
+                x=d[col],
+                y=d["short"],
+                orientation="h",
+                name=label,
+                marker_color=color,
+                visible=(label == "MLE"),
+                hovertemplate=f"<b>%{{y}}</b><br>{xlab}: {hov}<extra></extra>",
+            )
+        )
+
+    n_bars = len(d)
+    fig.update_layout(
+        title=dict(text="Same classes, three metrics — pick your lens", x=0.5, xanchor="center"),
+        xaxis_title="MLE share (%)",
+        yaxis=dict(categoryorder="total ascending"),
+        height=28 * n_bars + 88,
+        margin=dict(l=10, r=10, t=68, b=28),
+        updatemenus=[
+            dict(
+                type="buttons",
+                direction="right",
+                x=0.5,
+                xanchor="center",
+                y=1.02,
+                yanchor="bottom",
+                buttons=[
+                    dict(
+                        label=m[0],
+                        method="update",
+                        args=[
+                            {"visible": [j == i for j in range(len(methods))]},
+                            {"xaxis.title.text": m[2]},
+                        ],
+                    )
+                    for i, m in enumerate(methods)
+                ],
+            )
+        ],
+        showlegend=False,
+        paper_bgcolor=BG,
+        plot_bgcolor=PANEL,
+        font=dict(color=ACCENT, family="DM Sans, sans-serif"),
+    )
+    fig.update_xaxes(gridcolor=GRID, zerolinecolor=GRID)
+    fig.update_yaxes(gridcolor=GRID, zerolinecolor=GRID)
+
+    plot_html = pio.to_html(
+        fig,
+        full_html=False,
+        include_plotlyjs=False,
+        config={"displayModeBar": True, "responsive": False},
+    )
+    caption = (
+        '<p class="chart-caption"><em>Interactive comparison — use the '
+        "<strong>Counts / MLE / Bayesian</strong> buttons above the chart; "
+        "hover for exact values.</em></p>"
+    )
+    display(HTML(f'<div class="comparison-block">{table_html}{plot_html}{caption}</div>'))
 
 
 def show_animation(anim: manim.FuncAnimation, mode: str = "once") -> None:
@@ -904,10 +1011,10 @@ Posterior means hug the MLE (β₉ ≈ **1.63** either way). The real win is on 
 
 ## Comparing the Three Methods
 
-Same ten classes, three lenses. The table is the reference; use the **interactive chart** (buttons below the plot) to flip between counts, MLE shares, and Bayesian shares.
+Same ten classes, three lenses. The table is the scoreboard; the chart lets you flip between **Counts**, **MLE**, and **Bayesian** shares with one click.
 
 ```{python}
-#| echo: true
+#| echo: false
 
 cmp = counts[["Item", "short", "score"]].rename(columns={"score": "counts_score"})
 cmp = cmp.merge(mle_tbl[["Item", "share"]].rename(columns={"share": "mle_share"}), on="Item")
@@ -918,97 +1025,8 @@ cmp = cmp.merge(
 cmp["counts_rank"] = cmp["counts_score"].rank(ascending=False, method="min").astype(int)
 cmp["mle_rank"] = cmp["mle_share"].rank(ascending=False, method="min").astype(int)
 cmp["bayes_rank"] = cmp["bayes_share"].rank(ascending=False, method="min").astype(int)
-cmp = cmp.sort_values("mle_rank")
 
-display(
-    Markdown(
-        markdown_table(
-            [
-                "Item", "Class", "Counts score", "Rank",
-                "MLE share", "Rank", "Bayes share", "Rank",
-            ],
-            [
-                [
-                    str(int(r.Item)),
-                    r.short,
-                    f"{r.counts_score:.3f}",
-                    str(int(r.counts_rank)),
-                    f"{r.mle_share:.3f}",
-                    str(int(r.mle_rank)),
-                    f"{r.bayes_share:.3f}",
-                    str(int(r.bayes_rank)),
-                ]
-                for r in cmp.itertuples()
-            ],
-        )
-    )
-)
-
-plot_cmp = cmp.sort_values("mle_rank").copy()
-plot_cmp["counts_pct"] = plot_cmp["counts_score"] * 100
-plot_cmp["mle_pct"] = plot_cmp["mle_share"] * 100
-plot_cmp["bayes_pct"] = plot_cmp["bayes_share"] * 100
-
-methods = [
-    ("Counts", "counts_pct", "Counts score (percentage points)", "#8a8278", "%{x:.1f} pp"),
-    ("MLE", "mle_pct", "MLE share (%)", "#7a3b35", "%{x:.1f}%"),
-    ("Bayesian", "bayes_pct", "Bayesian share (%)", "#2e2825", "%{x:.1f}%"),
-]
-
-fig_p = go.Figure()
-for label, col, xlab, color, hov in methods:
-    fig_p.add_trace(
-        go.Bar(
-            x=plot_cmp[col],
-            y=plot_cmp["short"],
-            orientation="h",
-            name=label,
-            marker_color=color,
-            visible=(label == "MLE"),
-            hovertemplate=f"<b>%{{y}}</b><br>{xlab}: {hov}<extra></extra>",
-        )
-    )
-
-n_bars = len(plot_cmp)
-fig_p.update_layout(
-    title=dict(text="Same classes, three metrics — pick your lens", x=0.5, xanchor="center"),
-    xaxis_title="MLE share (%)",
-    yaxis=dict(categoryorder="total ascending"),
-    height=30 * n_bars + 72,
-    margin=dict(l=10, r=10, t=44, b=36),
-    updatemenus=[
-        dict(
-            type="buttons",
-            direction="right",
-            x=0.5,
-            xanchor="center",
-            y=-0.06,
-            yanchor="top",
-            buttons=[
-                dict(
-                    label=m[0],
-                    method="update",
-                    args=[
-                        {"visible": [j == i for j in range(len(methods))]},
-                        {"xaxis.title.text": m[2]},
-                    ],
-                )
-                for i, m in enumerate(methods)
-            ],
-        )
-    ],
-    showlegend=False,
-)
-fig_p.update_xaxes(gridcolor=GRID, zerolinecolor=GRID)
-fig_p.update_yaxes(gridcolor=GRID, zerolinecolor=GRID)
-show_plotly(
-    fig_p,
-    height=None,
-    caption=(
-        "Interactive comparison — use the <strong>Counts / MLE / Bayesian</strong> "
-        "buttons under the chart; hover for exact values."
-    ),
-)
+show_three_way_comparison(cmp)
 ```
 
 **495 Marketing Analytics** is the story every method tells. **444 Consulting** and **451 MFO** bring up the rear. The interesting fights are in the mushy middle — **SQL**, **Capstone**, **BI Systems** — where a point or two of share shuffles the rank but not the vibe.
@@ -1023,7 +1041,7 @@ When would I use each tool in real life?
 
 If you’re choosing classes in this cohort, the market has spoken: **take 495**, load up on **453 / 455 / 452**, and treat **444** as the option of last resort unless you love client-facing grind. The gap isn’t subtle — roughly **28%** MNL share vs. **4%** for consulting.
 
-Statistically, this homework is really about **three ways to listen to the same choices**. Counts are the podcast summary; MLE is the transcript with footnotes; Bayes is the transcript plus a honest “we’re not 100% sure” margin on the quotes that matter (market shares).
+Statistically, this homework is really about **three ways to listen to the same choices**. Counts are the podcast summary; MLE is the transcript with footnotes; Bayes is the transcript plus an honest “we’re not 100% sure” margin on the quotes that matter (market shares).
 
 Caveats worth saying out loud: these are **MSBA students who took a survey**, not a random draw of all business students. Who’s already suffered through 403, who’s targeting marketing vs. finance, and which classes they’ve heard horror stories about — all unobserved. Tasks 9–15 in the raw file still look like a different survey mode (item 11 placeholder), so I stuck to the clean eight-task MaxDiff core.
 
