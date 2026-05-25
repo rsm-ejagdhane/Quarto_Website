@@ -176,7 +176,7 @@ def show_plotly(fig: go.Figure, height: int = 500) -> None:
             pio.to_html(
                 fig,
                 full_html=False,
-                include_plotlyjs="cdn",
+                include_plotlyjs=False,
                 config={"displayModeBar": True, "responsive": True},
             )
         )
@@ -933,12 +933,6 @@ display(
         )
     )
 )
-```
-
-```{python}
-#| echo: false
-#| results: asis
-#| fig-cap: "Interactive comparison — buttons below the chart switch method; hover for values."
 
 plot_cmp = cmp.sort_values("mle_rank").copy()
 plot_cmp["counts_pct"] = plot_cmp["counts_score"] * 100
@@ -969,15 +963,15 @@ fig_p.update_layout(
     title=dict(text="Same classes, three metrics — pick your lens", x=0.5, xanchor="center"),
     xaxis_title="MLE share (%)",
     yaxis=dict(categoryorder="total ascending"),
-    margin=dict(l=10, r=10, t=55, b=100),
+    margin=dict(l=10, r=10, t=55, b=90),
     updatemenus=[
         dict(
             type="buttons",
             direction="right",
             x=0.5,
             xanchor="center",
-            y=-0.2,
-            yanchor="top",
+            y=1.02,
+            yanchor="bottom",
             buttons=[
                 dict(
                     label=m[0],
@@ -992,23 +986,13 @@ fig_p.update_layout(
         )
     ],
     showlegend=False,
-    height=520,
-    paper_bgcolor=BG,
-    plot_bgcolor=PANEL,
-    font=dict(color=ACCENT, family="DM Sans, sans-serif"),
 )
 fig_p.update_xaxes(gridcolor=GRID, zerolinecolor=GRID)
 fig_p.update_yaxes(gridcolor=GRID, zerolinecolor=GRID)
-
-HTML(
-    pio.to_html(
-        fig_p,
-        full_html=False,
-        include_plotlyjs="cdn",
-        config={"displayModeBar": True, "responsive": True},
-    )
-)
+show_plotly(fig_p, height=480)
 ```
+
+*Interactive comparison — use the **Counts / MLE / Bayesian** buttons under the chart; hover for exact values.*
 
 **495 Marketing Analytics** is the story every method tells. **444 Consulting** and **451 MFO** bring up the rear. The interesting fights are in the mushy middle — **SQL**, **Capstone**, **BI Systems** — where a point or two of share shuffles the rank but not the vibe.
 
