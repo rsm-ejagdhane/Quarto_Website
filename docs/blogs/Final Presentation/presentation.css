@@ -634,52 +634,29 @@
   text-align: center;
 }
 
-/* Slide 2 — text left; pipeline visual right, vertically centered below intro */
-.reveal .problem-layout {
+/* Slide 2 — callout left; pipeline visual right (below hero, beside callout), larger */
+.reveal .problem-callout-row {
   display: grid;
-  grid-template-columns: 1fr minmax(0, 34%);
-  grid-template-rows: auto 1fr;
-  gap: 0.65rem 0.85rem;
-  flex: 1 1 auto;
-  min-height: 0;
-  align-items: stretch;
+  grid-template-columns: 1fr minmax(0, 38%);
+  gap: 0.85rem;
+  align-items: center;
+  margin: 0.35em 0 0.45em;
 }
 
-.reveal .problem-intro {
-  grid-column: 1 / -1;
-  margin-bottom: 0.15em;
-}
-
-.reveal .problem-main {
-  grid-column: 1;
-  grid-row: 2;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  padding-right: 0.35rem;
-}
-
-.reveal .problem-main .hero-stat {
-  font-size: 2.5em;
-}
-
-.reveal .problem-main ul {
-  margin-top: 0.45em;
+.reveal .problem-callout {
+  margin: 0;
 }
 
 .reveal .problem-visual {
-  grid-column: 2;
-  grid-row: 2;
-  align-self: center;
-  justify-self: stretch;
   width: 100%;
   max-height: none;
-  padding: 0.5rem;
+  padding: 0.55rem;
+  align-self: center;
 }
 
 .reveal .problem-visual .viz-svg {
-  max-height: 15rem;
-  min-height: 13rem;
+  max-height: 16rem;
+  min-height: 14rem;
   width: 100%;
 }
 

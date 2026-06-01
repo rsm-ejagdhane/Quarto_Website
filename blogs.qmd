@@ -249,7 +249,7 @@ execute:
       <div class="blog-title">From Startup Chaos to Smart Deal Flow</div>
       <div class="blog-desc">Using AI, segmentation, and relevance scoring to help VCs prioritize better companies from messy deal flow.</div>
       <div class="blog-footer">
-        <span class="blog-date">May 31, 2026</span>
+        <span class="blog-date">June 5, 2026</span>
         <a href="blogs/Final%20Presentation/final_presentation.html" class="blog-link">Read more →</a>
       </div>
     </div>
