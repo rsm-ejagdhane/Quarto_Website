@@ -2,6 +2,7 @@
 title: "From Startup Chaos to Smart Deal Flow"
 subtitle: "Using AI to Help VCs Pick Better Companies"
 author: "Eesha Jagdhane"
+date: "May 31, 2026"
 format:
   revealjs:
     theme: simple
@@ -20,6 +21,7 @@ format:
     include-in-header:
       - text: |
           <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+          <a href="../../blogs.html" class="deck-back-link">← Blogs &amp; Insights</a>
 execute:
   echo: false
   warning: false
@@ -58,7 +60,7 @@ execute:
   background: radial-gradient(1100px 600px at 20% 10%, rgba(47, 129, 247, 0.09), rgba(47, 129, 247, 0) 60%),
               radial-gradient(900px 520px at 92% 22%, rgba(130, 80, 223, 0.10), rgba(130, 80, 223, 0) 58%),
               linear-gradient(180deg, #f6f2ec 0%, var(--paper) 40%, #efe9e0 100%);
-  padding: 1.5rem 2.4rem 1.35rem !important;
+  padding: 1.15rem 2rem 1rem !important;
   box-sizing: border-box;
   overflow: hidden !important;
   height: 100% !important;
@@ -68,8 +70,194 @@ execute:
 .reveal .slide-body {
   max-width: 100%;
   overflow: hidden;
+  font-size: 0.78em;
+  line-height: 1.42;
+}
+
+.reveal .deck-back-link {
+  position: fixed;
+  top: 14px;
+  left: 18px;
+  z-index: 50;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #7a3b35;
+  text-decoration: none;
+  font-family: 'DM Sans', sans-serif;
+  background: rgba(240, 236, 228, 0.92);
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: 1px solid rgba(46, 40, 37, 0.12);
+}
+.reveal .deck-back-link:hover {
+  color: #2e2825;
+  border-color: #7a3b35;
+}
+
+.reveal .slides section.slide-opener > h2 {
+  display: none;
+}
+.reveal .slides section.slide-opener {
+  padding-top: 1.4rem !important;
+}
+.reveal .opener-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  font-size: 0.82em;
+  color: var(--muted);
+  margin-bottom: 0.85em;
+  letter-spacing: 0.04em;
+}
+.reveal .opener-meta span {
+  border-right: 1px solid var(--border);
+  padding-right: 1.25rem;
+}
+.reveal .opener-meta span:last-child {
+  border-right: none;
+  padding-right: 0;
+}
+
+.reveal .fill-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  align-items: start;
+  margin-top: 0.35em;
+}
+.reveal .fill-row-tight {
+  gap: 0.75rem;
+}
+
+/* Segment map visualization */
+.reveal .viz-panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.65rem 0.75rem;
+  box-shadow: 0 4px 14px var(--shadow);
+}
+.reveal .viz-title {
   font-size: 0.72em;
-  line-height: 1.45;
+  font-weight: 600;
+  color: var(--rose);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.45em;
+}
+.reveal .opener-points {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.reveal .opener-points li {
+  position: relative;
+  padding-left: 1em;
+  margin-bottom: 0.35em;
+  font-size: 0.95em;
+  color: var(--ink-soft);
+  line-height: 1.35;
+}
+.reveal .opener-points li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.45em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--blue);
+}
+
+.reveal .segment-map {
+  position: relative;
+  height: 215px;
+  background: linear-gradient(180deg, rgba(47,129,247,0.04) 0%, rgba(130,80,223,0.05) 100%);
+  border-radius: 8px;
+  border: 1px dashed rgba(46, 40, 37, 0.15);
+}
+.reveal .segment-map .axis-x,
+.reveal .segment-map .axis-y {
+  position: absolute;
+  font-size: 0.62em;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.reveal .segment-map .axis-x {
+  bottom: 6px;
+  right: 10px;
+}
+.reveal .segment-map .axis-y {
+  top: 8px;
+  left: 10px;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+.reveal .seg-bubble {
+  position: absolute;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 0.58em;
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--ink);
+  border: 2px solid rgba(46, 40, 37, 0.2);
+  background: rgba(255, 255, 255, 0.85);
+  padding: 0.25rem;
+  box-sizing: border-box;
+}
+.reveal .seg-bubble.b1 { width: 72px; height: 72px; top: 18%; left: 58%; border-color: var(--blue); background: rgba(47,129,247,0.12); }
+.reveal .seg-bubble.b2 { width: 64px; height: 64px; top: 52%; left: 68%; border-color: var(--purple); background: rgba(130,80,223,0.12); }
+.reveal .seg-bubble.b3 { width: 68px; height: 68px; top: 12%; left: 32%; border-color: var(--rose); }
+.reveal .seg-bubble.b4 { width: 76px; height: 76px; top: 42%; left: 38%; border-color: var(--green); background: rgba(45,164,78,0.14); box-shadow: 0 0 0 3px rgba(45,164,78,0.15); }
+.reveal .seg-bubble.b5 { width: 56px; height: 56px; bottom: 14%; left: 12%; opacity: 0.55; font-size: 0.52em; }
+
+/* Driver chart visualization */
+.reveal .driver-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 0.38rem;
+  margin-top: 0.2em;
+}
+.reveal .driver-row {
+  display: grid;
+  grid-template-columns: 5.5rem 1fr 2rem;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.72em;
+}
+.reveal .driver-row .d-label {
+  color: var(--ink);
+  font-weight: 500;
+  text-align: right;
+}
+.reveal .driver-row .d-track {
+  height: 10px;
+  background: rgba(46, 40, 37, 0.1);
+  border-radius: 5px;
+  overflow: hidden;
+}
+.reveal .driver-row .d-fill {
+  height: 100%;
+  border-radius: 5px;
+  background: linear-gradient(90deg, var(--blue), var(--purple));
+}
+.reveal .driver-row .d-val {
+  font-size: 0.9em;
+  font-weight: 700;
+  color: var(--blue);
+  text-align: right;
+}
+.reveal .analytics-viz {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 0.85rem;
+  margin-top: 0.35em;
 }
 
 .reveal h1, .reveal h2, .reveal h3 {
@@ -83,9 +271,9 @@ execute:
 
 .reveal h1 { font-size: 2.5em; margin-bottom: 0.4em; }
 .reveal h2 {
-  font-size: 2em;
-  margin-bottom: 0.4em;
-  padding-bottom: 0.28em;
+  font-size: 1.85em;
+  margin-bottom: 0.32em;
+  padding-bottom: 0.22em;
   border-bottom: 2px solid rgba(122, 59, 53, 0.25);
   flex-shrink: 0;
 }
@@ -158,17 +346,24 @@ execute:
   max-width: 100%;
 }
 .reveal .intro-hero {
-  margin-top: 0.35em;
-  font-size: 0.78em;
+  margin-top: 0.15em;
+  font-size: 0.82em;
 }
 .reveal .intro-title {
   font-family: 'Playfair Display', serif;
-  font-size: 2.6em;
+  font-size: 2.35em;
   font-weight: 900;
   line-height: 1.05;
   color: var(--ink);
-  margin-bottom: 0.35em;
+  margin-bottom: 0.3em;
   max-width: 100%;
+}
+.reveal .intro-tagline {
+  font-size: 1.05em;
+  color: var(--ink-soft);
+  margin-bottom: 0.65em;
+  max-width: 88%;
+  line-height: 1.45;
 }
 
 .reveal .callout {
@@ -419,12 +614,27 @@ execute:
 .reveal .slide-number { color: rgba(46, 40, 37, 0.55); font-size: 0.55em; }
 </style>
 
-## Introduction
+## Introduction {.slide-opener}
 
 <div class="intro-hero">
   <div class="intro-title">From Startup Chaos to Smart Deal Flow</div>
   <div class="subtitle-line">Using AI to Help VCs Pick Better Companies</div>
-  <p class="slide-intro">Marketing analytics applied to venture capital — turning messy deal flow into smarter, prioritized investment decisions.</p>
+  <div class="opener-meta">
+    <span>Eesha Jagdhane</span>
+    <span>May 31, 2026</span>
+    <span>MGTA 495 · Marketing Analytics</span>
+  </div>
+  <p class="intro-tagline">Marketing analytics applied to venture capital — turning messy deal flow into smarter, prioritized investment decisions.</p>
+  <div class="fill-row fill-row-tight">
+    <div class="callout" style="margin:0;">
+      <strong class="metric-sm">Core idea:</strong> Use AI, segmentation, and relevance scoring to help VCs focus on the right companies faster.
+    </div>
+    <ul class="opener-points">
+      <li>Thousands of startups in the pipeline</li>
+      <li>Limited partner attention</li>
+      <li>Smarter prioritization — not replacing investor judgment</li>
+    </ul>
+  </div>
 </div>
 
 ## The Problem
@@ -433,17 +643,21 @@ execute:
 
 <p class="slide-intro">VCs review thousands of startups, but partner time and attention are limited.</p>
 
-<div class="hero-stat">20,000+</div>
-<div class="hero-stat-label">startups in the pipeline</div>
-
-<div class="callout">
-Imagine Shark Tank, but with <span class="metric-sm">20,000</span> startups in a spreadsheet.
+<div class="fill-row">
+  <div>
+    <div class="hero-stat">20,000+</div>
+    <div class="hero-stat-label">startups in the pipeline</div>
+    <div class="callout" style="margin-top:0.45em;">
+      Imagine Shark Tank, but with <span class="metric-sm">20,000</span> startups in a spreadsheet.
+    </div>
+  </div>
+  <ul>
+    <li>VCs review thousands of pitches every year</li>
+    <li>Partner time is the scarcest resource</li>
+    <li>Most deals never get a real look</li>
+    <li>Great companies get lost in the noise</li>
+  </ul>
 </div>
-
-- VCs review thousands of pitches every year
-- Partner time is the scarcest resource
-- Most deals never get a real look
-- Great companies get lost in the noise
 
 </div>
 
@@ -513,29 +727,57 @@ AI doesn't replace judgment — it front-loads intelligence so investors spend t
 
 <div class="slide-body">
 
-<p class="slide-intro">How course concepts map to venture deal selection.</p>
+<p class="slide-intro">Course concepts mapped to venture deal selection — <strong class="metric-sm">segment startups</strong> (unsupervised ML), then explain <strong class="metric-sm">what drives relevance</strong> (supervised ML).</p>
 
-<div class="two-col-slide">
-  <div>
-    <h3>Segmentation (Unsupervised ML)</h3>
-    <p class="slide-intro">Segment startups, not customers.</p>
-    <div class="segment-grid compact">
-      <div class="segment-card">High-Growth AI<span>Headcount & funding velocity</span></div>
-      <div class="segment-card">Recently Funded<span>Fresh capital, momentum</span></div>
-      <div class="segment-card">Investor-Backed<span>Top-tier syndicate signals</span></div>
-      <div class="segment-card gem">Hidden Gems<span>Strong signals, low visibility</span></div>
+<div class="analytics-viz">
+  <div class="viz-panel">
+    <div class="viz-title">Segmentation map · Unsupervised ML</div>
+    <div class="segment-map">
+      <span class="axis-y">Thesis fit ↑</span>
+      <span class="axis-x">Growth →</span>
+      <div class="seg-bubble b3">Investor-<br>Backed</div>
+      <div class="seg-bubble b1">High-Growth<br>AI</div>
+      <div class="seg-bubble b4">Hidden<br>Gems</div>
+      <div class="seg-bubble b2">Recently<br>Funded</div>
+      <div class="seg-bubble b5">Low-Fit</div>
     </div>
+    <p style="font-size:0.68em;color:var(--ink-soft);margin-top:0.4em;">Clusters reveal natural groups in the deal pipeline — not flat spreadsheet rows.</p>
   </div>
-  <div>
-    <h3>Key Drivers (Supervised ML)</h3>
-    <p class="slide-intro">What drives a high relevance score?</p>
-    <div class="driver-list compact">
-      <div class="driver-item">Thesis Fit <div class="driver-bar"><div class="driver-bar-fill" style="width:92%"></div></div></div>
-      <div class="driver-item">Headcount Growth <div class="driver-bar"><div class="driver-bar-fill" style="width:78%"></div></div></div>
-      <div class="driver-item">Recent Funding <div class="driver-bar"><div class="driver-bar-fill" style="width:71%"></div></div></div>
-      <div class="driver-item">Investor Quality <div class="driver-bar"><div class="driver-bar-fill" style="width:68%"></div></div></div>
-      <div class="driver-item">Founder / Team <div class="driver-bar"><div class="driver-bar-fill" style="width:65%"></div></div></div>
+  <div class="viz-panel">
+    <div class="viz-title">Key drivers · Supervised ML</div>
+    <div class="driver-chart">
+      <div class="driver-row">
+        <span class="d-label">Thesis Fit</span>
+        <div class="d-track"><div class="d-fill" style="width:92%"></div></div>
+        <span class="d-val">92</span>
+      </div>
+      <div class="driver-row">
+        <span class="d-label">Headcount</span>
+        <div class="d-track"><div class="d-fill" style="width:78%"></div></div>
+        <span class="d-val">78</span>
+      </div>
+      <div class="driver-row">
+        <span class="d-label">Funding</span>
+        <div class="d-track"><div class="d-fill" style="width:71%"></div></div>
+        <span class="d-val">71</span>
+      </div>
+      <div class="driver-row">
+        <span class="d-label">Investors</span>
+        <div class="d-track"><div class="d-fill" style="width:68%"></div></div>
+        <span class="d-val">68</span>
+      </div>
+      <div class="driver-row">
+        <span class="d-label">Team</span>
+        <div class="d-track"><div class="d-fill" style="width:65%"></div></div>
+        <span class="d-val">65</span>
+      </div>
+      <div class="driver-row">
+        <span class="d-label">Geography</span>
+        <div class="d-track"><div class="d-fill" style="width:48%"></div></div>
+        <span class="d-val">48</span>
+      </div>
     </div>
+    <p style="font-size:0.68em;color:var(--ink-soft);margin-top:0.4em;">Drivers make relevance scores explainable — partners trust what they can see.</p>
   </div>
 </div>
 
