@@ -634,51 +634,91 @@
   text-align: center;
 }
 
-/* Slide 2 — callout left; pipeline visual right (below hero, beside callout), larger */
-.reveal .problem-callout-row {
-  display: grid;
-  grid-template-columns: 1fr minmax(0, 38%);
-  gap: 0.85rem;
-  align-items: center;
-  margin: 0.35em 0 0.45em;
+/* Slide 2 — callout full width; bullets left + pipeline visual right (aligned) */
+.reveal .problem-callout {
+  margin: 0.35em 0 0.5em;
 }
 
-.reveal .problem-callout {
+.reveal .problem-lower-row {
+  display: grid;
+  grid-template-columns: 1fr minmax(0, 36%);
+  gap: 0.85rem;
+  align-items: start;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.reveal .problem-lower-row ul {
   margin: 0;
 }
 
 .reveal .problem-visual {
   width: 100%;
   max-height: none;
-  padding: 0.55rem;
-  align-self: center;
+  padding: 0.5rem;
+  align-self: start;
 }
 
-.reveal .problem-visual .viz-svg {
-  max-height: 16rem;
-  min-height: 14rem;
+.reveal .problem-visual.problem-photo {
+  max-height: none;
+  overflow: hidden;
+}
+
+.reveal .problem-photo img {
   width: 100%;
+  max-height: 14.5rem;
+  min-height: 12rem;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 6px;
+  display: block;
 }
 
-/* Slide 3 — data-silos visual directly under the callout */
-.reveal .before-ai-visual {
-  margin-top: 0.55em;
+/* Slide 3 — content left, desk photo right (reference layout) */
+.reveal .before-ai-slide {
+  display: grid !important;
+  grid-template-columns: 1fr minmax(0, 34%);
+  gap: 0.85rem;
+  align-items: stretch;
+  flex-direction: row !important;
+}
+
+.reveal .before-ai-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.reveal .before-ai-main .callout {
+  margin-top: auto;
+}
+
+.reveal .before-ai-photo {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.35rem;
+  box-shadow: 0 4px 14px var(--shadow);
+  overflow: hidden;
+  min-height: 0;
+}
+
+.reveal .before-ai-photo img {
   width: 100%;
-  max-width: 34rem;
-  flex-shrink: 0;
+  height: 100%;
+  max-height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  border-radius: 6px;
+  display: block;
 }
 
-.reveal .before-ai-visual .viz-svg {
-  max-height: 7rem;
-  width: 100%;
-}
-
-.reveal .before-ai-caption {
-  margin-top: 0.35em;
-  text-align: left;
-}
-
-/* Slide 4 — AI hub on the right, slightly larger */
+/* Slide 4 — funnel image on the right */
 .reveal .content-split {
   display: grid;
   grid-template-columns: 1fr minmax(0, 0.38fr);
@@ -718,15 +758,22 @@
   display: block;
 }
 
-.reveal .slide-visual-box.slide-ai-hub {
-  max-height: 15rem;
-  padding: 0.5rem;
-  align-self: center;
+.reveal .slide-visual-box.slide-ai-photo {
+  max-height: none;
+  padding: 0.4rem;
+  align-self: stretch;
+  min-height: 0;
 }
 
-.reveal .slide-visual-box.slide-ai-hub .viz-svg {
-  max-height: 14rem;
+.reveal .slide-ai-photo img {
   width: 100%;
+  max-height: 15rem;
+  min-height: 13rem;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 6px;
+  display: block;
+  background: #fff;
 }
 
 .reveal .flow-compact {
