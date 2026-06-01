@@ -31,10 +31,6 @@ format:
             tagline.textContent = 'Marketing analytics applied to venture capital — turning messy deal flow into smarter, prioritized investment decisions.';
             var date = slide.querySelector('.date');
             if (date) date.insertAdjacentElement('afterend', tagline);
-            var viz = document.createElement('div');
-            viz.className = 'title-slide-visual';
-            viz.innerHTML = '<svg viewBox="0 0 520 140" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="20" y="20" width="480" height="100" rx="10" fill="rgba(255,255,255,0.55)" stroke="#c9c2b6"/><text x="260" y="42" text-anchor="middle" fill="#8a8278" font-size="11" font-family="DM Sans,sans-serif">DEAL FLOW → PRIORITIZED INSIGHT</text><circle cx="80" cy="78" r="22" fill="rgba(47,129,247,0.15)" stroke="#2f81f7"/><text x="80" y="82" text-anchor="middle" fill="#2f81f7" font-size="10" font-family="DM Sans,sans-serif">Data</text><line x1="102" y1="78" x2="168" y2="78" stroke="#2f81f7" stroke-width="2"/><circle cx="190" cy="78" r="22" fill="rgba(130,80,223,0.14)" stroke="#8250df"/><text x="190" y="82" text-anchor="middle" fill="#8250df" font-size="10" font-family="DM Sans,sans-serif">AI</text><line x1="212" y1="78" x2="278" y2="78" stroke="#8250df" stroke-width="2"/><circle cx="300" cy="78" r="22" fill="rgba(45,164,78,0.16)" stroke="#2da44e"/><text x="300" y="82" text-anchor="middle" fill="#2da44e" font-size="9" font-family="DM Sans,sans-serif">Focus</text><line x1="322" y1="78" x2="388" y2="78" stroke="#2da44e" stroke-width="2"/><circle cx="410" cy="78" r="18" fill="rgba(122,59,53,0.12)" stroke="#7a3b35"/><text x="410" y="82" text-anchor="middle" fill="#7a3b35" font-size="12" font-family="DM Sans,sans-serif">✓</text></svg>';
-            if (tagline.parentNode) tagline.insertAdjacentElement('afterend', viz);
           });
           </script>
     include-in-footer:
@@ -52,10 +48,10 @@ execute:
 ## The Problem
 
 ```{=html}
-<div class="slide-body">
+<div class="slide-body slide-layout">
 <p class="slide-intro">VCs review thousands of startups, but partner time and attention are limited.</p>
-<div class="content-split">
-  <div class="content-main">
+<div class="problem-layout">
+  <div class="problem-main">
     <div class="hero-stat">20,000+</div>
     <div class="hero-stat-label">startups in the pipeline</div>
     <div class="callout">Imagine Shark Tank, but with <span class="metric-sm">20,000</span> startups in a spreadsheet.</div>
@@ -66,7 +62,7 @@ execute:
       <li>Great companies get lost in the noise</li>
     </ul>
   </div>
-  <div class="slide-visual-box">
+  <div class="slide-visual-box problem-visual">
     <svg class="viz-svg" viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <rect x="18" y="20" width="164" height="165" rx="6" fill="#fff" stroke="#c9c2b6" stroke-width="1.5"/>
       <text x="100" y="42" text-anchor="middle" fill="#8a8278" font-size="9" font-family="DM Sans,sans-serif">DEAL PIPELINE</text>
@@ -88,43 +84,39 @@ execute:
 ## Before AI
 
 ```{=html}
-<div class="slide-body">
+<div class="slide-body slide-layout">
 <p class="slide-intro">The traditional process is manual, inconsistent, and hard to scale.</p>
-<div class="content-split">
-  <div class="slide-visual-box">
-    <svg class="viz-svg" viewBox="0 0 240 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <rect x="10" y="15" width="70" height="42" rx="6" fill="rgba(255,255,255,0.85)" stroke="#c9c2b6"/>
-      <text x="45" y="40" text-anchor="middle" font-size="10" fill="#6b6560" font-family="DM Sans,sans-serif">CRM</text>
-      <rect x="88" y="5" width="70" height="42" rx="6" fill="rgba(255,255,255,0.85)" stroke="#c9c2b6"/>
-      <text x="123" y="30" text-anchor="middle" font-size="10" fill="#6b6560" font-family="DM Sans,sans-serif">Sheets</text>
-      <rect x="160" y="22" width="70" height="42" rx="6" fill="rgba(255,255,255,0.85)" stroke="#c9c2b6"/>
-      <text x="195" y="47" text-anchor="middle" font-size="9" fill="#6b6560" font-family="DM Sans,sans-serif">Research</text>
-      <path d="M45 57 L45 75 L123 75 L123 47" stroke="#c9c2b6" stroke-width="1.5" fill="none" stroke-dasharray="4 3"/>
-      <path d="M158 64 L175 88 L123 88" stroke="#c9c2b6" stroke-width="1.5" fill="none" stroke-dasharray="4 3"/>
-      <rect x="35" y="100" width="170" height="48" rx="6" fill="rgba(168,50,40,0.08)" stroke="rgba(168,50,40,0.35)" stroke-dasharray="5 4"/>
-      <text x="120" y="120" text-anchor="middle" font-size="10" fill="#a83228" font-family="DM Sans,sans-serif">Siloed tools</text>
-      <text x="120" y="134" text-anchor="middle" font-size="9" fill="#8a8278" font-family="DM Sans,sans-serif">Manual handoffs</text>
-      <circle cx="200" cy="145" r="16" fill="rgba(122,59,53,0.12)" stroke="#7a3b35"/>
-      <text x="200" y="149" text-anchor="middle" font-size="13" fill="#7a3b35">?</text>
-    </svg>
-  </div>
-  <div class="content-main">
-    <div class="flow flow-compact">
-      <div class="flow-step">CRM Data</div><div class="flow-arrow">→</div>
-      <div class="flow-step">Spreadsheets</div><div class="flow-arrow">→</div>
-      <div class="flow-step">Manual Research</div><div class="flow-arrow">→</div>
-      <div class="flow-step">PitchBook / Harmonic</div><div class="flow-arrow">→</div>
-      <div class="flow-step muted-step">Gut Feeling</div><div class="flow-arrow">→</div>
-      <div class="flow-step muted-step">Partner Review</div>
-    </div>
-    <div class="pain-tags">
-      <div class="pain-tag bad">Slow</div>
-      <div class="pain-tag bad">Inconsistent</div>
-      <div class="pain-tag bad">Hard to Scale</div>
-      <div class="pain-tag bad">Data Silos</div>
-    </div>
-    <div class="callout callout-accent callout-tight">Every analyst does it differently. High-potential startups slip through when there isn't enough time to research them all.</div>
-  </div>
+<div class="flow">
+  <div class="flow-step">CRM Data</div><div class="flow-arrow">→</div>
+  <div class="flow-step">Spreadsheets</div><div class="flow-arrow">→</div>
+  <div class="flow-step">Manual Research</div><div class="flow-arrow">→</div>
+  <div class="flow-step">PitchBook / Harmonic</div><div class="flow-arrow">→</div>
+  <div class="flow-step muted-step">Gut Feeling</div><div class="flow-arrow">→</div>
+  <div class="flow-step muted-step">Partner Review</div>
+</div>
+<div class="pain-tags">
+  <div class="pain-tag bad">Slow</div>
+  <div class="pain-tag bad">Inconsistent</div>
+  <div class="pain-tag bad">Hard to Scale</div>
+  <div class="pain-tag bad">Data Silos</div>
+</div>
+<div class="callout callout-accent">Every analyst does it differently. High-potential startups slip through when there isn't enough time to research them all.</div>
+<div class="slide-visual-box before-ai-visual">
+  <svg class="viz-svg" viewBox="0 0 560 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <rect x="8" y="12" width="72" height="38" rx="6" fill="rgba(255,255,255,0.85)" stroke="#c9c2b6"/>
+    <text x="44" y="36" text-anchor="middle" font-size="10" fill="#6b6560" font-family="DM Sans,sans-serif">CRM</text>
+    <rect x="100" y="12" width="72" height="38" rx="6" fill="rgba(255,255,255,0.85)" stroke="#c9c2b6"/>
+    <text x="136" y="36" text-anchor="middle" font-size="10" fill="#6b6560" font-family="DM Sans,sans-serif">Sheets</text>
+    <rect x="192" y="12" width="72" height="38" rx="6" fill="rgba(255,255,255,0.85)" stroke="#c9c2b6"/>
+    <text x="228" y="36" text-anchor="middle" font-size="9" fill="#6b6560" font-family="DM Sans,sans-serif">Research</text>
+    <line x1="80" y1="50" x2="80" y2="62" stroke="#c9c2b6" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <line x1="172" y1="50" x2="172" y2="62" stroke="#c9c2b6" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <rect x="280" y="22" width="200" height="44" rx="6" fill="rgba(168,50,40,0.08)" stroke="rgba(168,50,40,0.35)" stroke-dasharray="5 4"/>
+    <text x="380" y="42" text-anchor="middle" font-size="10" fill="#a83228" font-family="DM Sans,sans-serif">Siloed tools · manual handoffs</text>
+    <text x="380" y="56" text-anchor="middle" font-size="9" fill="#8a8278" font-family="DM Sans,sans-serif">No single source of truth</text>
+    <circle cx="520" cy="44" r="14" fill="rgba(122,59,53,0.12)" stroke="#7a3b35"/>
+    <text x="520" y="48" text-anchor="middle" font-size="12" fill="#7a3b35">?</text>
+  </svg>
 </div>
 </div>
 ```
@@ -132,48 +124,26 @@ execute:
 ## AI-Assisted Deal Flow
 
 ```{=html}
-<div class="slide-body">
+<div class="slide-body slide-layout">
 <p class="slide-intro">AI gives deal flow a brain — unified data, faster insight, and prioritized review.</p>
 <div class="content-split content-split-ai">
   <div class="content-main">
-<div class="slide-visual-box slide-visual-wide">
-  <svg class="viz-svg" viewBox="0 0 560 70" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <rect x="0" y="8" width="560" height="54" rx="8" fill="rgba(255,255,255,0.5)" stroke="#c9c2b6"/>
-    <circle cx="50" cy="35" r="18" fill="rgba(47,129,247,0.15)" stroke="#2f81f7"/>
-    <text x="50" y="39" text-anchor="middle" font-size="10" fill="#2f81f7" font-family="DM Sans,sans-serif">Unified</text>
-    <line x1="68" y1="35" x2="115" y2="35" stroke="#2f81f7" stroke-width="2"/>
-    <circle cx="140" cy="35" r="18" fill="rgba(47,129,247,0.2)" stroke="#2f81f7" stroke-width="2"/>
-    <text x="140" y="39" text-anchor="middle" font-size="10" fill="#2f81f7" font-family="DM Sans,sans-serif">AI</text>
-    <line x1="158" y1="35" x2="205" y2="35" stroke="#8250df" stroke-width="2"/>
-    <circle cx="230" cy="35" r="18" fill="rgba(130,80,223,0.14)" stroke="#8250df"/>
-    <text x="230" y="39" text-anchor="middle" font-size="9" fill="#2e2825" font-family="DM Sans,sans-serif">Signals</text>
-    <line x1="248" y1="35" x2="295" y2="35" stroke="#2da44e" stroke-width="2"/>
-    <circle cx="320" cy="35" r="18" fill="rgba(45,164,78,0.16)" stroke="#2da44e"/>
-    <text x="320" y="39" text-anchor="middle" font-size="8" fill="#2e2825" font-family="DM Sans,sans-serif">Scoring</text>
-    <line x1="338" y1="35" x2="385" y2="35" stroke="#2da44e" stroke-width="2"/>
-    <circle cx="410" cy="35" r="18" fill="rgba(45,164,78,0.22)" stroke="#2da44e"/>
-    <text x="410" y="39" text-anchor="middle" font-size="8" fill="#2da44e" font-family="DM Sans,sans-serif">Priority</text>
-    <line x1="428" y1="35" x2="475" y2="35" stroke="#7a3b35" stroke-width="1.5" stroke-dasharray="3 2"/>
-    <circle cx="500" cy="35" r="16" fill="rgba(122,59,53,0.12)" stroke="#7a3b35"/>
-    <text x="500" y="39" text-anchor="middle" font-size="11" fill="#7a3b35">★</text>
-  </svg>
-</div>
-<div class="flow flow-compact">
-  <div class="flow-step">CRM + Harmonic + PitchBook</div><div class="flow-arrow">→</div>
-  <div class="flow-step highlight">AI Summaries</div><div class="flow-arrow">→</div>
-  <div class="flow-step highlight">Investment Signals</div><div class="flow-arrow">→</div>
-  <div class="flow-step highlight-green">Relevance Scoring</div><div class="flow-arrow">→</div>
-  <div class="flow-step highlight-purple">Prioritized Deal Flow</div>
-</div>
-<ul>
-  <li>External data unified into one view</li>
-  <li>AI distills company narratives in seconds</li>
-  <li>Signals surface thesis-fit opportunities automatically</li>
-  <li>Partners review the <strong class="metric-sm">best</strong> deals first — not just the loudest</li>
-</ul>
-<div class="callout callout-purple callout-tight">AI doesn't replace judgment — it front-loads intelligence so investors spend time where it matters.</div>
+    <div class="flow">
+      <div class="flow-step">CRM + Harmonic + PitchBook</div><div class="flow-arrow">→</div>
+      <div class="flow-step highlight">AI Summaries</div><div class="flow-arrow">→</div>
+      <div class="flow-step highlight">Investment Signals</div><div class="flow-arrow">→</div>
+      <div class="flow-step highlight-green">Relevance Scoring</div><div class="flow-arrow">→</div>
+      <div class="flow-step highlight-purple">Prioritized Deal Flow</div>
+    </div>
+    <ul>
+      <li>External data unified into one view</li>
+      <li>AI distills company narratives in seconds</li>
+      <li>Signals surface thesis-fit opportunities automatically</li>
+      <li>Partners review the <strong class="metric-sm">best</strong> deals first — not just the loudest</li>
+    </ul>
+    <div class="callout callout-purple">AI doesn't replace judgment — it front-loads intelligence so investors spend time where it matters.</div>
   </div>
-  <div class="slide-visual-box">
+  <div class="slide-visual-box slide-ai-hub">
     <svg class="viz-svg" viewBox="0 0 180 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <circle cx="90" cy="95" r="55" fill="rgba(47,129,247,0.08)" stroke="#2f81f7" stroke-width="1.5"/>
       <circle cx="90" cy="95" r="35" fill="rgba(130,80,223,0.1)" stroke="#8250df"/>
@@ -191,7 +161,7 @@ execute:
 ## Marketing Analytics
 
 ```{=html}
-<div class="slide-body">
+<div class="slide-body slide-static">
 <p class="slide-intro">Segment startups with unsupervised ML, then explain relevance with supervised key drivers analysis.</p>
 <div class="analytics-viz">
   <div class="viz-panel">
@@ -249,7 +219,7 @@ execute:
 ## Impact
 
 ```{=html}
-<div class="slide-body">
+<div class="slide-body slide-static">
 <p class="slide-intro">The goal is not to replace investors — it's to help them focus.</p>
 <div class="impact-grid">
   <div class="impact-item"><strong>Less Manual Screening</strong>Automate the first pass across thousands of companies</div>
