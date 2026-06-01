@@ -21,80 +21,45 @@
     "text": "Caveats\n\n\nInjuries — Even one key injury can completely change a team’s chances.\n\n\n\n\nTournament draw — A difficult bracket path can make even the best team vulnerable.\n\n\n\n\nKnockout variance — One bad performance, one mistake, or one unlucky moment can end a run.\n\n\nThese are the biggest reasons predictions should be treated as probabilities, not guarantees."
   },
   {
-    "objectID": "blogs/Final Presentation/final_presentation.html#startup-overload",
-    "href": "blogs/Final Presentation/final_presentation.html#startup-overload",
-    "title": "From Startup Chaos to Smart Deal Flow",
-    "section": "Startup Overload",
-    "text": "Startup Overload\n\nThe Problem"
-  },
-  {
-    "objectID": "blogs/Final Presentation/final_presentation.html#the-old-workflow",
-    "href": "blogs/Final Presentation/final_presentation.html#the-old-workflow",
-    "title": "From Startup Chaos to Smart Deal Flow",
-    "section": "The Old Workflow",
-    "text": "The Old Workflow\n\nBefore AI"
-  },
-  {
-    "objectID": "blogs/Final Presentation/final_presentation.html#the-ai-assisted-workflow",
-    "href": "blogs/Final Presentation/final_presentation.html#the-ai-assisted-workflow",
-    "title": "From Startup Chaos to Smart Deal Flow",
-    "section": "The AI-Assisted Workflow",
-    "text": "The AI-Assisted Workflow\n\nThe Solution"
-  },
-  {
-    "objectID": "blogs/Final Presentation/final_presentation.html#segmentation",
-    "href": "blogs/Final Presentation/final_presentation.html#segmentation",
-    "title": "From Startup Chaos to Smart Deal Flow",
-    "section": "Segmentation",
-    "text": "Segmentation\n\nMarketing Analytics · Unsupervised ML"
-  },
-  {
-    "objectID": "blogs/Final Presentation/final_presentation.html#key-drivers-of-relevance",
-    "href": "blogs/Final Presentation/final_presentation.html#key-drivers-of-relevance",
-    "title": "From Startup Chaos to Smart Deal Flow",
-    "section": "Key Drivers of Relevance",
-    "text": "Key Drivers of Relevance\n\nMarketing Analytics · Supervised ML"
-  },
-  {
-    "objectID": "blogs/Final Presentation/final_presentation.html#impact",
-    "href": "blogs/Final Presentation/final_presentation.html#impact",
-    "title": "From Startup Chaos to Smart Deal Flow",
-    "section": "Impact",
-    "text": "Impact\n\n\nThe goal is not to replace investors — it’s to help them focus.\n\n\n\nLess Manual ScreeningAutomate the first pass across thousands of companies\n\n\nFaster ReviewAI summaries cut research time from hours to minutes\n\n\nConsistent ScoringEvery deal evaluated with the same framework\n\n\nBetter Data UseHarmonic, PitchBook, and CRM signals unified\n\n\nEasier PrioritizationRanked deal flow replaces gut-only triage\n\n\nHidden Gems FoundStrong startups surface before competitors notice\n\n\n\nThis project applies marketing analytics thinking to venture capital: using AI, segmentation, and relevance scoring to turn messy deal flow into smarter investment decisions."
-  },
-  {
     "objectID": "blogs/Final Presentation/final_presentation.html#introduction",
     "href": "blogs/Final Presentation/final_presentation.html#introduction",
     "title": "From Startup Chaos to Smart Deal Flow",
     "section": "Introduction",
-    "text": "Introduction\n\n\nFrom Startup Chaos to Smart Deal Flow\n\n\nUsing AI to Help VCs Pick Better Companies\n\n\n&lt;span&gt;Eesha Jagdhane&lt;/span&gt;\n&lt;span&gt;May 31, 2026&lt;/span&gt;\n&lt;span&gt;MGTA 495 · Marketing Analytics&lt;/span&gt;\n\n\nMarketing analytics applied to venture capital — turning messy deal flow into smarter, prioritized investment decisions.\n\n\n&lt;div class=\"callout\" style=\"margin:0;\"&gt;\n  &lt;strong class=\"metric-sm\"&gt;Core idea:&lt;/strong&gt; Use AI, segmentation, and relevance scoring to help VCs focus on the right companies faster.\n&lt;/div&gt;\n&lt;ul class=\"opener-points\"&gt;\n  &lt;li&gt;Thousands of startups in the pipeline&lt;/li&gt;\n  &lt;li&gt;Limited partner attention&lt;/li&gt;\n  &lt;li&gt;Smarter prioritization — not replacing investor judgment&lt;/li&gt;\n&lt;/ul&gt;"
+    "text": "Introduction\n\n  From Startup Chaos to Smart Deal Flow\n  Using AI to Help VCs Pick Better Companies\n  \n    Eesha Jagdhane\n    May 31, 2026\n    MGTA 495 · Marketing Analytics\n  \n  Marketing analytics applied to venture capital — turning messy deal flow into smarter, prioritized investment decisions."
   },
   {
     "objectID": "blogs/Final Presentation/final_presentation.html#the-problem",
     "href": "blogs/Final Presentation/final_presentation.html#the-problem",
     "title": "From Startup Chaos to Smart Deal Flow",
     "section": "The Problem",
-    "text": "The Problem\n\n\nVCs review thousands of startups, but partner time and attention are limited.\n\n\n\n&lt;div class=\"hero-stat\"&gt;20,000+&lt;/div&gt;\n&lt;div class=\"hero-stat-label\"&gt;startups in the pipeline&lt;/div&gt;\n&lt;div class=\"callout\" style=\"margin-top:0.45em;\"&gt;\n  Imagine Shark Tank, but with &lt;span class=\"metric-sm\"&gt;20,000&lt;/span&gt; startups in a spreadsheet.\n&lt;/div&gt;\n\n\n\nVCs review thousands of pitches every year\n\n\nPartner time is the scarcest resource\n\n\nMost deals never get a real look\n\n\nGreat companies get lost in the noise"
+    "text": "The Problem\n\nVCs review thousands of startups, but partner time and attention are limited.\n20,000+\nstartups in the pipeline\nImagine Shark Tank, but with 20,000 startups in a spreadsheet.\n\n  VCs review thousands of pitches every year\n  Partner time is the scarcest resource\n  Most deals never get a real look\n  Great companies get lost in the noise"
   },
   {
     "objectID": "blogs/Final Presentation/final_presentation.html#before-ai",
     "href": "blogs/Final Presentation/final_presentation.html#before-ai",
     "title": "From Startup Chaos to Smart Deal Flow",
     "section": "Before AI",
-    "text": "Before AI\n\n\nThe traditional process is manual, inconsistent, and hard to scale.\n\n\n\nCRM Data\n\n\n→\n\n\nSpreadsheets\n\n\n→\n\n\nManual Research\n\n\n→\n\n\nPitchBook / Harmonic\n\n\n→\n\n\nGut Feeling\n\n\n→\n\n\nPartner Review\n\n\n\n\nSlow\n\n\nInconsistent\n\n\nHard to Scale\n\n\nData Silos\n\n\n\n\n\nEvery analyst does it differently. High-potential startups slip through when there isn’t enough time to research them all."
+    "text": "Before AI\n\nThe traditional process is manual, inconsistent, and hard to scale.\n\n  CRM Data→\n  Spreadsheets→\n  Manual Research→\n  PitchBook / Harmonic→\n  Gut Feeling→\n  Partner Review\n\n\n  Slow\n  Inconsistent\n  Hard to Scale\n  Data Silos\n\nEvery analyst does it differently. High-potential startups slip through when there isn't enough time to research them all."
   },
   {
     "objectID": "blogs/Final Presentation/final_presentation.html#ai-assisted-deal-flow",
     "href": "blogs/Final Presentation/final_presentation.html#ai-assisted-deal-flow",
     "title": "From Startup Chaos to Smart Deal Flow",
     "section": "AI-Assisted Deal Flow",
-    "text": "AI-Assisted Deal Flow\n\n\nAI gives deal flow a brain — unified data, faster insight, and prioritized review.\n\n\n\nCRM + Harmonic + PitchBook\n\n\n→\n\n\nAI Summaries\n\n\n→\n\n\nInvestment Signals\n\n\n→\n\n\nRelevance Scoring\n\n\n→\n\n\nPrioritized Deal Flow\n\n\n\nExternal data unified into one view\nAI distills company narratives in seconds\nSignals surface thesis-fit opportunities automatically\nPartners review the best deals first — not just the loudest\n\n\n\n\nAI doesn’t replace judgment — it front-loads intelligence so investors spend time where it matters."
+    "text": "AI-Assisted Deal Flow\n\nAI gives deal flow a brain — unified data, faster insight, and prioritized review.\n\n  CRM + Harmonic + PitchBook→\n  AI Summaries→\n  Investment Signals→\n  Relevance Scoring→\n  Prioritized Deal Flow\n\n\n  External data unified into one view\n  AI distills company narratives in seconds\n  Signals surface thesis-fit opportunities automatically\n  Partners review the best deals first — not just the loudest\n\nAI doesn't replace judgment — it front-loads intelligence so investors spend time where it matters."
   },
   {
     "objectID": "blogs/Final Presentation/final_presentation.html#marketing-analytics",
     "href": "blogs/Final Presentation/final_presentation.html#marketing-analytics",
     "title": "From Startup Chaos to Smart Deal Flow",
     "section": "Marketing Analytics",
-    "text": "Marketing Analytics\n\n\nCourse concepts mapped to venture deal selection — segment startups (unsupervised ML), then explain what drives relevance (supervised ML).\n\n\n\n&lt;div class=\"viz-title\"&gt;Segmentation map · Unsupervised ML&lt;/div&gt;\n&lt;div class=\"segment-map\"&gt;\n  &lt;span class=\"axis-y\"&gt;Thesis fit ↑&lt;/span&gt;\n  &lt;span class=\"axis-x\"&gt;Growth →&lt;/span&gt;\n  &lt;div class=\"seg-bubble b3\"&gt;Investor-&lt;br&gt;Backed&lt;/div&gt;\n  &lt;div class=\"seg-bubble b1\"&gt;High-Growth&lt;br&gt;AI&lt;/div&gt;\n  &lt;div class=\"seg-bubble b4\"&gt;Hidden&lt;br&gt;Gems&lt;/div&gt;\n  &lt;div class=\"seg-bubble b2\"&gt;Recently&lt;br&gt;Funded&lt;/div&gt;\n  &lt;div class=\"seg-bubble b5\"&gt;Low-Fit&lt;/div&gt;\n&lt;/div&gt;\n&lt;p style=\"font-size:0.68em;color:var(--ink-soft);margin-top:0.4em;\"&gt;Clusters reveal natural groups in the deal pipeline — not flat spreadsheet rows.&lt;/p&gt;\n\n\n&lt;div class=\"viz-title\"&gt;Key drivers · Supervised ML&lt;/div&gt;\n&lt;div class=\"driver-chart\"&gt;\n  &lt;div class=\"driver-row\"&gt;\n    &lt;span class=\"d-label\"&gt;Thesis Fit&lt;/span&gt;\n    &lt;div class=\"d-track\"&gt;&lt;div class=\"d-fill\" style=\"width:92%\"&gt;&lt;/div&gt;&lt;/div&gt;\n    &lt;span class=\"d-val\"&gt;92&lt;/span&gt;\n  &lt;/div&gt;\n  &lt;div class=\"driver-row\"&gt;\n    &lt;span class=\"d-label\"&gt;Headcount&lt;/span&gt;\n    &lt;div class=\"d-track\"&gt;&lt;div class=\"d-fill\" style=\"width:78%\"&gt;&lt;/div&gt;&lt;/div&gt;\n    &lt;span class=\"d-val\"&gt;78&lt;/span&gt;\n  &lt;/div&gt;\n  &lt;div class=\"driver-row\"&gt;\n    &lt;span class=\"d-label\"&gt;Funding&lt;/span&gt;\n    &lt;div class=\"d-track\"&gt;&lt;div class=\"d-fill\" style=\"width:71%\"&gt;&lt;/div&gt;&lt;/div&gt;\n    &lt;span class=\"d-val\"&gt;71&lt;/span&gt;\n  &lt;/div&gt;\n  &lt;div class=\"driver-row\"&gt;\n    &lt;span class=\"d-label\"&gt;Investors&lt;/span&gt;\n    &lt;div class=\"d-track\"&gt;&lt;div class=\"d-fill\" style=\"width:68%\"&gt;&lt;/div&gt;&lt;/div&gt;\n    &lt;span class=\"d-val\"&gt;68&lt;/span&gt;\n  &lt;/div&gt;\n  &lt;div class=\"driver-row\"&gt;\n    &lt;span class=\"d-label\"&gt;Team&lt;/span&gt;\n    &lt;div class=\"d-track\"&gt;&lt;div class=\"d-fill\" style=\"width:65%\"&gt;&lt;/div&gt;&lt;/div&gt;\n    &lt;span class=\"d-val\"&gt;65&lt;/span&gt;\n  &lt;/div&gt;\n  &lt;div class=\"driver-row\"&gt;\n    &lt;span class=\"d-label\"&gt;Geography&lt;/span&gt;\n    &lt;div class=\"d-track\"&gt;&lt;div class=\"d-fill\" style=\"width:48%\"&gt;&lt;/div&gt;&lt;/div&gt;\n    &lt;span class=\"d-val\"&gt;48&lt;/span&gt;\n  &lt;/div&gt;\n&lt;/div&gt;\n&lt;p style=\"font-size:0.68em;color:var(--ink-soft);margin-top:0.4em;\"&gt;Drivers make relevance scores explainable — partners trust what they can see.&lt;/p&gt;"
+    "text": "Marketing Analytics\n\nSegment startups with unsupervised ML, then explain relevance with supervised key drivers analysis.\n\n  \n    Segmentation · Unsupervised ML\n    \n      \n      THESIS FIT ↑\n      GROWTH →\n      \n      \n      \n      Investor-\n      Backed\n      \n      High-Growth\n      AI\n      \n      Recently\n      Funded\n      \n      Hidden\n      Gems\n      \n      Low-Fit\n    \n    Natural clusters in deal flow — not flat spreadsheet rows.\n  \n  \n    Key Drivers · Supervised ML\n    \n      \n      RELATIVE IMPORTANCE\n      SCORE\n      \n        Thesis Fit92\n        Headcount78\n        Funding71\n        Investors68\n        Team65\n        Geography48\n      \n      \n        \n          \n          \n        \n      \n    \n    Explainable drivers build trust in the relevance score."
+  },
+  {
+    "objectID": "blogs/Final Presentation/final_presentation.html#impact",
+    "href": "blogs/Final Presentation/final_presentation.html#impact",
+    "title": "From Startup Chaos to Smart Deal Flow",
+    "section": "Impact",
+    "text": "Impact\n\nThe goal is not to replace investors — it's to help them focus.\n\n  Less Manual ScreeningAutomate the first pass across thousands of companies\n  Faster ReviewAI summaries cut research time from hours to minutes\n  Consistent ScoringEvery deal evaluated with the same framework\n  Better Data UseHarmonic, PitchBook, and CRM signals unified\n  Easier PrioritizationRanked deal flow replaces gut-only triage\n  Hidden Gems FoundStrong startups surface before competitors notice\n\nThis project applies marketing analytics thinking to venture capital: using AI, segmentation, and relevance scoring to turn messy deal flow into smarter investment decisions."
   }
 ]

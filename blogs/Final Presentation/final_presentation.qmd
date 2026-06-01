@@ -77,7 +77,8 @@ execute:
 .reveal .deck-back-link {
   position: fixed;
   top: 14px;
-  left: 18px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 50;
   font-size: 11px;
   letter-spacing: 0.08em;
@@ -93,6 +94,7 @@ execute:
 .reveal .deck-back-link:hover {
   color: #2e2825;
   border-color: #7a3b35;
+  transform: translateX(-50%);
 }
 
 .reveal .slides section.slide-opener > h2 {
@@ -258,6 +260,17 @@ execute:
   grid-template-columns: 1.05fr 0.95fr;
   gap: 0.85rem;
   margin-top: 0.35em;
+}
+.reveal .viz-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.reveal .viz-caption {
+  font-size: 0.68em;
+  color: var(--ink-soft);
+  margin-top: 0.4em;
+  line-height: 1.35;
 }
 
 .reveal h1, .reveal h2, .reveal h3 {
@@ -616,6 +629,7 @@ execute:
 
 ## Introduction {.slide-opener}
 
+```{=html}
 <div class="intro-hero">
   <div class="intro-title">From Startup Chaos to Smart Deal Flow</div>
   <div class="subtitle-line">Using AI to Help VCs Pick Better Companies</div>
@@ -625,170 +639,134 @@ execute:
     <span>MGTA 495 · Marketing Analytics</span>
   </div>
   <p class="intro-tagline">Marketing analytics applied to venture capital — turning messy deal flow into smarter, prioritized investment decisions.</p>
-  <div class="fill-row fill-row-tight">
-    <div class="callout" style="margin:0;">
-      <strong class="metric-sm">Core idea:</strong> Use AI, segmentation, and relevance scoring to help VCs focus on the right companies faster.
-    </div>
-    <ul class="opener-points">
-      <li>Thousands of startups in the pipeline</li>
-      <li>Limited partner attention</li>
-      <li>Smarter prioritization — not replacing investor judgment</li>
-    </ul>
-  </div>
 </div>
+```
 
 ## The Problem
 
+```{=html}
 <div class="slide-body">
-
 <p class="slide-intro">VCs review thousands of startups, but partner time and attention are limited.</p>
-
-<div class="fill-row">
-  <div>
-    <div class="hero-stat">20,000+</div>
-    <div class="hero-stat-label">startups in the pipeline</div>
-    <div class="callout" style="margin-top:0.45em;">
-      Imagine Shark Tank, but with <span class="metric-sm">20,000</span> startups in a spreadsheet.
-    </div>
-  </div>
-  <ul>
-    <li>VCs review thousands of pitches every year</li>
-    <li>Partner time is the scarcest resource</li>
-    <li>Most deals never get a real look</li>
-    <li>Great companies get lost in the noise</li>
-  </ul>
+<div class="hero-stat">20,000+</div>
+<div class="hero-stat-label">startups in the pipeline</div>
+<div class="callout">Imagine Shark Tank, but with <span class="metric-sm">20,000</span> startups in a spreadsheet.</div>
+<ul>
+  <li>VCs review thousands of pitches every year</li>
+  <li>Partner time is the scarcest resource</li>
+  <li>Most deals never get a real look</li>
+  <li>Great companies get lost in the noise</li>
+</ul>
 </div>
-
-</div>
+```
 
 ## Before AI
 
+```{=html}
 <div class="slide-body">
-
 <p class="slide-intro">The traditional process is manual, inconsistent, and hard to scale.</p>
-
 <div class="flow">
-  <div class="flow-step">CRM Data</div>
-  <div class="flow-arrow">→</div>
-  <div class="flow-step">Spreadsheets</div>
-  <div class="flow-arrow">→</div>
-  <div class="flow-step">Manual Research</div>
-  <div class="flow-arrow">→</div>
-  <div class="flow-step">PitchBook / Harmonic</div>
-  <div class="flow-arrow">→</div>
-  <div class="flow-step muted-step">Gut Feeling</div>
-  <div class="flow-arrow">→</div>
+  <div class="flow-step">CRM Data</div><div class="flow-arrow">→</div>
+  <div class="flow-step">Spreadsheets</div><div class="flow-arrow">→</div>
+  <div class="flow-step">Manual Research</div><div class="flow-arrow">→</div>
+  <div class="flow-step">PitchBook / Harmonic</div><div class="flow-arrow">→</div>
+  <div class="flow-step muted-step">Gut Feeling</div><div class="flow-arrow">→</div>
   <div class="flow-step muted-step">Partner Review</div>
 </div>
-
 <div class="pain-tags">
   <div class="pain-tag bad">Slow</div>
   <div class="pain-tag bad">Inconsistent</div>
   <div class="pain-tag bad">Hard to Scale</div>
   <div class="pain-tag bad">Data Silos</div>
 </div>
-
-<div class="callout callout-accent">
-Every analyst does it differently. High-potential startups slip through when there isn't enough time to research them all.
+<div class="callout callout-accent">Every analyst does it differently. High-potential startups slip through when there isn't enough time to research them all.</div>
 </div>
-
-</div>
+```
 
 ## AI-Assisted Deal Flow
 
+```{=html}
 <div class="slide-body">
-
 <p class="slide-intro">AI gives deal flow a brain — unified data, faster insight, and prioritized review.</p>
-
 <div class="flow">
-  <div class="flow-step">CRM + Harmonic + PitchBook</div>
-  <div class="flow-arrow">→</div>
-  <div class="flow-step highlight">AI Summaries</div>
-  <div class="flow-arrow">→</div>
-  <div class="flow-step highlight">Investment Signals</div>
-  <div class="flow-arrow">→</div>
-  <div class="flow-step highlight-green">Relevance Scoring</div>
-  <div class="flow-arrow">→</div>
+  <div class="flow-step">CRM + Harmonic + PitchBook</div><div class="flow-arrow">→</div>
+  <div class="flow-step highlight">AI Summaries</div><div class="flow-arrow">→</div>
+  <div class="flow-step highlight">Investment Signals</div><div class="flow-arrow">→</div>
+  <div class="flow-step highlight-green">Relevance Scoring</div><div class="flow-arrow">→</div>
   <div class="flow-step highlight-purple">Prioritized Deal Flow</div>
 </div>
-
-- External data unified into one view
-- AI distills company narratives in seconds
-- Signals surface thesis-fit opportunities automatically
-- Partners review the <strong class="metric-sm">best</strong> deals first — not just the loudest
-
-<div class="callout callout-purple">
-AI doesn't replace judgment — it front-loads intelligence so investors spend time where it matters.
+<ul>
+  <li>External data unified into one view</li>
+  <li>AI distills company narratives in seconds</li>
+  <li>Signals surface thesis-fit opportunities automatically</li>
+  <li>Partners review the <strong class="metric-sm">best</strong> deals first — not just the loudest</li>
+</ul>
+<div class="callout callout-purple">AI doesn't replace judgment — it front-loads intelligence so investors spend time where it matters.</div>
 </div>
-
-</div>
+```
 
 ## Marketing Analytics
 
+```{=html}
 <div class="slide-body">
-
-<p class="slide-intro">Course concepts mapped to venture deal selection — <strong class="metric-sm">segment startups</strong> (unsupervised ML), then explain <strong class="metric-sm">what drives relevance</strong> (supervised ML).</p>
-
+<p class="slide-intro">Segment startups with unsupervised ML, then explain relevance with supervised key drivers analysis.</p>
 <div class="analytics-viz">
   <div class="viz-panel">
-    <div class="viz-title">Segmentation map · Unsupervised ML</div>
-    <div class="segment-map">
-      <span class="axis-y">Thesis fit ↑</span>
-      <span class="axis-x">Growth →</span>
-      <div class="seg-bubble b3">Investor-<br>Backed</div>
-      <div class="seg-bubble b1">High-Growth<br>AI</div>
-      <div class="seg-bubble b4">Hidden<br>Gems</div>
-      <div class="seg-bubble b2">Recently<br>Funded</div>
-      <div class="seg-bubble b5">Low-Fit</div>
-    </div>
-    <p style="font-size:0.68em;color:var(--ink-soft);margin-top:0.4em;">Clusters reveal natural groups in the deal pipeline — not flat spreadsheet rows.</p>
+    <div class="viz-title">Segmentation · Unsupervised ML</div>
+    <svg class="viz-svg" viewBox="0 0 420 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Startup segmentation map by growth and thesis fit">
+      <rect x="0" y="0" width="420" height="240" fill="rgba(255,255,255,0.35)" rx="8"/>
+      <text x="52" y="28" fill="#8a8278" font-size="11" font-family="DM Sans, sans-serif">THESIS FIT ↑</text>
+      <text x="330" y="228" fill="#8a8278" font-size="11" font-family="DM Sans, sans-serif">GROWTH →</text>
+      <line x1="55" y1="205" x2="395" y2="205" stroke="#c9c2b6" stroke-width="1.5"/>
+      <line x1="55" y1="205" x2="55" y2="40" stroke="#c9c2b6" stroke-width="1.5"/>
+      <circle cx="145" cy="75" r="34" fill="rgba(122,59,53,0.12)" stroke="#7a3b35" stroke-width="2"/>
+      <text x="145" y="72" text-anchor="middle" fill="#2e2825" font-size="10" font-weight="600" font-family="DM Sans, sans-serif">Investor-</text>
+      <text x="145" y="84" text-anchor="middle" fill="#2e2825" font-size="10" font-weight="600" font-family="DM Sans, sans-serif">Backed</text>
+      <circle cx="310" cy="62" r="36" fill="rgba(47,129,247,0.15)" stroke="#2f81f7" stroke-width="2"/>
+      <text x="310" y="59" text-anchor="middle" fill="#2e2825" font-size="10" font-weight="600" font-family="DM Sans, sans-serif">High-Growth</text>
+      <text x="310" y="71" text-anchor="middle" fill="#2e2825" font-size="10" font-weight="600" font-family="DM Sans, sans-serif">AI</text>
+      <circle cx="335" cy="130" r="30" fill="rgba(130,80,223,0.14)" stroke="#8250df" stroke-width="2"/>
+      <text x="335" y="127" text-anchor="middle" fill="#2e2825" font-size="10" font-weight="600" font-family="DM Sans, sans-serif">Recently</text>
+      <text x="335" y="139" text-anchor="middle" fill="#2e2825" font-size="10" font-weight="600" font-family="DM Sans, sans-serif">Funded</text>
+      <circle cx="210" cy="118" r="38" fill="rgba(45,164,78,0.16)" stroke="#2da44e" stroke-width="2.5"/>
+      <text x="210" y="115" text-anchor="middle" fill="#2e2825" font-size="11" font-weight="700" font-family="DM Sans, sans-serif">Hidden</text>
+      <text x="210" y="127" text-anchor="middle" fill="#2e2825" font-size="11" font-weight="700" font-family="DM Sans, sans-serif">Gems</text>
+      <circle cx="95" cy="175" r="24" fill="rgba(46,40,37,0.06)" stroke="#8a8278" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <text x="95" y="178" text-anchor="middle" fill="#8a8278" font-size="9" font-family="DM Sans, sans-serif">Low-Fit</text>
+    </svg>
+    <p class="viz-caption">Natural clusters in deal flow — not flat spreadsheet rows.</p>
   </div>
   <div class="viz-panel">
-    <div class="viz-title">Key drivers · Supervised ML</div>
-    <div class="driver-chart">
-      <div class="driver-row">
-        <span class="d-label">Thesis Fit</span>
-        <div class="d-track"><div class="d-fill" style="width:92%"></div></div>
-        <span class="d-val">92</span>
-      </div>
-      <div class="driver-row">
-        <span class="d-label">Headcount</span>
-        <div class="d-track"><div class="d-fill" style="width:78%"></div></div>
-        <span class="d-val">78</span>
-      </div>
-      <div class="driver-row">
-        <span class="d-label">Funding</span>
-        <div class="d-track"><div class="d-fill" style="width:71%"></div></div>
-        <span class="d-val">71</span>
-      </div>
-      <div class="driver-row">
-        <span class="d-label">Investors</span>
-        <div class="d-track"><div class="d-fill" style="width:68%"></div></div>
-        <span class="d-val">68</span>
-      </div>
-      <div class="driver-row">
-        <span class="d-label">Team</span>
-        <div class="d-track"><div class="d-fill" style="width:65%"></div></div>
-        <span class="d-val">65</span>
-      </div>
-      <div class="driver-row">
-        <span class="d-label">Geography</span>
-        <div class="d-track"><div class="d-fill" style="width:48%"></div></div>
-        <span class="d-val">48</span>
-      </div>
-    </div>
-    <p style="font-size:0.68em;color:var(--ink-soft);margin-top:0.4em;">Drivers make relevance scores explainable — partners trust what they can see.</p>
+    <div class="viz-title">Key Drivers · Supervised ML</div>
+    <svg class="viz-svg" viewBox="0 0 420 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Key drivers of relevance score">
+      <rect x="0" y="0" width="420" height="240" fill="rgba(255,255,255,0.35)" rx="8"/>
+      <text x="12" y="22" fill="#8a8278" font-size="10" font-family="DM Sans, sans-serif">RELATIVE IMPORTANCE</text>
+      <text x="395" y="22" text-anchor="end" fill="#8a8278" font-size="10" font-family="DM Sans, sans-serif">SCORE</text>
+      <g font-family="DM Sans, sans-serif" font-size="11" fill="#2e2825">
+        <text x="8" y="48">Thesis Fit</text><rect x="115" y="36" width="255" height="12" rx="6" fill="rgba(46,40,37,0.1)"/><rect x="115" y="36" width="235" height="12" rx="6" fill="url(#barGrad)"/><text x="395" y="47" text-anchor="end" font-weight="700" fill="#2f81f7">92</text>
+        <text x="8" y="78">Headcount</text><rect x="115" y="66" width="255" height="12" rx="6" fill="rgba(46,40,37,0.1)"/><rect x="115" y="66" width="199" height="12" rx="6" fill="url(#barGrad)"/><text x="395" y="77" text-anchor="end" font-weight="700" fill="#2f81f7">78</text>
+        <text x="8" y="108">Funding</text><rect x="115" y="96" width="255" height="12" rx="6" fill="rgba(46,40,37,0.1)"/><rect x="115" y="96" width="181" height="12" rx="6" fill="url(#barGrad)"/><text x="395" y="107" text-anchor="end" font-weight="700" fill="#2f81f7">71</text>
+        <text x="8" y="138">Investors</text><rect x="115" y="126" width="255" height="12" rx="6" fill="rgba(46,40,37,0.1)"/><rect x="115" y="126" width="173" height="12" rx="6" fill="url(#barGrad)"/><text x="395" y="137" text-anchor="end" font-weight="700" fill="#2f81f7">68</text>
+        <text x="8" y="168">Team</text><rect x="115" y="156" width="255" height="12" rx="6" fill="rgba(46,40,37,0.1)"/><rect x="115" y="156" width="166" height="12" rx="6" fill="url(#barGrad)"/><text x="395" y="167" text-anchor="end" font-weight="700" fill="#2f81f7">65</text>
+        <text x="8" y="198">Geography</text><rect x="115" y="186" width="255" height="12" rx="6" fill="rgba(46,40,37,0.1)"/><rect x="115" y="186" width="122" height="12" rx="6" fill="url(#barGrad)"/><text x="395" y="197" text-anchor="end" font-weight="700" fill="#2f81f7">48</text>
+      </g>
+      <defs>
+        <linearGradient id="barGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#2f81f7"/>
+          <stop offset="100%" stop-color="#8250df"/>
+        </linearGradient>
+      </defs>
+    </svg>
+    <p class="viz-caption">Explainable drivers build trust in the relevance score.</p>
   </div>
 </div>
-
 </div>
+```
 
 ## Impact
 
+```{=html}
 <div class="slide-body">
-
 <p class="slide-intro">The goal is not to replace investors — it's to help them focus.</p>
-
 <div class="impact-grid">
   <div class="impact-item"><strong>Less Manual Screening</strong>Automate the first pass across thousands of companies</div>
   <div class="impact-item"><strong>Faster Review</strong>AI summaries cut research time from hours to minutes</div>
@@ -797,9 +775,6 @@ AI doesn't replace judgment — it front-loads intelligence so investors spend t
   <div class="impact-item"><strong>Easier Prioritization</strong>Ranked deal flow replaces gut-only triage</div>
   <div class="impact-item"><strong>Hidden Gems Found</strong>Strong startups surface before competitors notice</div>
 </div>
-
-<div class="closing">
-This project applies marketing analytics thinking to venture capital: using AI, segmentation, and relevance scoring to turn messy deal flow into smarter investment decisions.
+<div class="closing">This project applies marketing analytics thinking to venture capital: using AI, segmentation, and relevance scoring to turn messy deal flow into smarter investment decisions.</div>
 </div>
-
-</div>
+```

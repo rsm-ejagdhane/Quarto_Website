@@ -213,7 +213,7 @@ window.Quarto = {
 </ol>
 <p>The methods mostly agree on who’s on top and who’s at the bottom. The fun is in the middle — and in the <strong>interactive charts</strong> (hover, zoom, toggle) plus a few <strong>animations</strong> where the statistics literally move.</p>
 <h2 id="the-data" class="anchored">The Data</h2>
-<div id="708c7731" class="cell" data-execution_count="1">
+<div id="5f98ddf2" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Show Python code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> base64</span>
@@ -524,7 +524,7 @@ window.Quarto = {
 <span id="cb1-306"><a href="#cb1-306" aria-hidden="true" tabindex="-1"></a>n_items <span class="op">=</span> raw4[<span class="st">"Item"</span>].nunique()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
-<div id="63ff6646" class="cell" data-execution_count="2">
+<div id="17661c4c" class="cell" data-execution_count="2">
 <div class="cell-output cell-output-display cell-output-markdown">
 <table class="caption-top">
 <thead>
@@ -556,7 +556,7 @@ window.Quarto = {
 </div>
 <p>Think of the CSV as a stack of tiny choice menus: one row per class slot on each screen. After keeping only the <strong>ten real MSBA classes</strong> and <strong>four-class screens</strong>, the table above summarizes the study.</p>
 <p>One wrinkle: the export lists 15 “tasks” per person, but <strong>tasks 9–15</strong> are odd two-item screens with a placeholder (item 11). They’re not standard MaxDiff. I use <strong>tasks 1–8</strong> — four classes, one best, one worst — which is what the MNL math in class assumes.</p>
-<div id="acfad586" class="cell" data-execution_count="3">
+<div id="f16ef45d" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Show Python code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>sanity <span class="op">=</span> (</span>
@@ -671,7 +671,7 @@ window.Quarto = {
 \text{score}_j = \%\text{best}_j - \%\text{worst}_j.
 \]</span></p>
 <p>A score near <strong>+1</strong> means “crowd favorite whenever it’s on the menu.” Near <strong>-1</strong> means “please get this off my schedule.” Near <strong>0</strong> means fight night — the class is loved and hated in equal measure.</p>
-<div id="3429e879" class="cell" data-execution_count="4">
+<div id="bc1faa64" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Show Python code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>counts <span class="op">=</span> (</span>
@@ -833,7 +833,7 @@ window.Quarto = {
 </table>
 </div>
 </div>
-<div id="1fac3313" class="cell" data-execution_count="5">
+<div id="8f2c6878" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Show Python code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> bootstrap_counts(</span>
@@ -878,7 +878,7 @@ window.Quarto = {
 <span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="plot-9c9aee5cec" class="plotly-graph-div" style="width:100%;height:500px;"></div>
+<div id="plot-6e30674923" class="plotly-graph-div" style="width:100%;height:500px;"></div>
 <script>
 (function() {
   function decodeBdata(obj) {
@@ -906,13 +906,13 @@ window.Quarto = {
       setTimeout(drawPlot, 50);
       return;
     }
-    var el = document.getElementById("plot-9c9aee5cec");
+    var el = document.getElementById("plot-6e30674923");
     if (!el || el.dataset.plotlyDrawn === "1") return;
     Plotly.newPlot(el, spec.data, spec.layout, spec.config).then(function() {
       el.dataset.plotlyDrawn = "1";
       if (typeof Plotly.Plots !== "undefined") Plotly.Plots.resize(el);
     }).catch(function(err) {
-      console.error("Plotly failed (plot-9c9aee5cec):", err);
+      console.error("Plotly failed (plot-6e30674923):", err);
       el.innerHTML = "<p style='color:#7a3b35;font-size:0.9rem'>Chart could not load — try a hard refresh.</p>";
     });
   }
@@ -927,7 +927,7 @@ window.Quarto = {
 </div>
 </div>
 <p>Hover on any bar for the score; zoom if you want detail on the middle of the pack. The animation below resamples students 1,000 times and rebuilds the bootstrap distribution for <strong>MGTA 495</strong> — watch the histogram settle and the 95% interval appear.</p>
-<div id="75d20202" class="cell" data-execution_count="6">
+<div id="40f49059" class="cell" data-execution_count="6">
 <div class="cell-output cell-output-display">
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
@@ -1113,36 +1113,36 @@ input[type=range].anim-slider {
 </style>
 
 <div class="animation">
-  <img id="_anim_imgf4de2ff9b6d74ed58fed53e2e0f1592a">
+  <img id="_anim_imga2aef4484eba417bbdf9bd80f88502b9">
   <div class="anim-controls">
-    <input id="_anim_sliderf4de2ff9b6d74ed58fed53e2e0f1592a" type="range" class="anim-slider" name="points" min="0" max="1" step="1" value="0" oninput="animf4de2ff9b6d74ed58fed53e2e0f1592a.set_frame(parseInt(this.value));">
+    <input id="_anim_slidera2aef4484eba417bbdf9bd80f88502b9" type="range" class="anim-slider" name="points" min="0" max="1" step="1" value="0" oninput="anima2aef4484eba417bbdf9bd80f88502b9.set_frame(parseInt(this.value));">
     <div class="anim-buttons">
-      <button title="Decrease speed" aria-label="Decrease speed" onclick="animf4de2ff9b6d74ed58fed53e2e0f1592a.slower()">
+      <button title="Decrease speed" aria-label="Decrease speed" onclick="anima2aef4484eba417bbdf9bd80f88502b9.slower()">
           <i class="fa fa-minus"></i></button>
-      <button title="First frame" aria-label="First frame" onclick="animf4de2ff9b6d74ed58fed53e2e0f1592a.first_frame()">
+      <button title="First frame" aria-label="First frame" onclick="anima2aef4484eba417bbdf9bd80f88502b9.first_frame()">
         <i class="fa fa-fast-backward"></i></button>
-      <button title="Previous frame" aria-label="Previous frame" onclick="animf4de2ff9b6d74ed58fed53e2e0f1592a.previous_frame()">
+      <button title="Previous frame" aria-label="Previous frame" onclick="anima2aef4484eba417bbdf9bd80f88502b9.previous_frame()">
           <i class="fa fa-step-backward"></i></button>
-      <button title="Play backwards" aria-label="Play backwards" onclick="animf4de2ff9b6d74ed58fed53e2e0f1592a.reverse_animation()">
+      <button title="Play backwards" aria-label="Play backwards" onclick="anima2aef4484eba417bbdf9bd80f88502b9.reverse_animation()">
           <i class="fa fa-play fa-flip-horizontal"></i></button>
-      <button title="Pause" aria-label="Pause" onclick="animf4de2ff9b6d74ed58fed53e2e0f1592a.pause_animation()">
+      <button title="Pause" aria-label="Pause" onclick="anima2aef4484eba417bbdf9bd80f88502b9.pause_animation()">
           <i class="fa fa-pause"></i></button>
-      <button title="Play" aria-label="Play" onclick="animf4de2ff9b6d74ed58fed53e2e0f1592a.play_animation()">
+      <button title="Play" aria-label="Play" onclick="anima2aef4484eba417bbdf9bd80f88502b9.play_animation()">
           <i class="fa fa-play"></i></button>
-      <button title="Next frame" aria-label="Next frame" onclick="animf4de2ff9b6d74ed58fed53e2e0f1592a.next_frame()">
+      <button title="Next frame" aria-label="Next frame" onclick="anima2aef4484eba417bbdf9bd80f88502b9.next_frame()">
           <i class="fa fa-step-forward"></i></button>
-      <button title="Last frame" aria-label="Last frame" onclick="animf4de2ff9b6d74ed58fed53e2e0f1592a.last_frame()">
+      <button title="Last frame" aria-label="Last frame" onclick="anima2aef4484eba417bbdf9bd80f88502b9.last_frame()">
           <i class="fa fa-fast-forward"></i></button>
-      <button title="Increase speed" aria-label="Increase speed" onclick="animf4de2ff9b6d74ed58fed53e2e0f1592a.faster()">
+      <button title="Increase speed" aria-label="Increase speed" onclick="anima2aef4484eba417bbdf9bd80f88502b9.faster()">
           <i class="fa fa-plus"></i></button>
     </div>
-    <form title="Repetition mode" aria-label="Repetition mode" action="#n" name="_anim_loop_selectf4de2ff9b6d74ed58fed53e2e0f1592a" class="anim-state">
-      <input type="radio" name="state" value="once" id="_anim_radio1_f4de2ff9b6d74ed58fed53e2e0f1592a" checked="">
-      <label for="_anim_radio1_f4de2ff9b6d74ed58fed53e2e0f1592a">Once</label>
-      <input type="radio" name="state" value="loop" id="_anim_radio2_f4de2ff9b6d74ed58fed53e2e0f1592a">
-      <label for="_anim_radio2_f4de2ff9b6d74ed58fed53e2e0f1592a">Loop</label>
-      <input type="radio" name="state" value="reflect" id="_anim_radio3_f4de2ff9b6d74ed58fed53e2e0f1592a">
-      <label for="_anim_radio3_f4de2ff9b6d74ed58fed53e2e0f1592a">Reflect</label>
+    <form title="Repetition mode" aria-label="Repetition mode" action="#n" name="_anim_loop_selecta2aef4484eba417bbdf9bd80f88502b9" class="anim-state">
+      <input type="radio" name="state" value="once" id="_anim_radio1_a2aef4484eba417bbdf9bd80f88502b9" checked="">
+      <label for="_anim_radio1_a2aef4484eba417bbdf9bd80f88502b9">Once</label>
+      <input type="radio" name="state" value="loop" id="_anim_radio2_a2aef4484eba417bbdf9bd80f88502b9">
+      <label for="_anim_radio2_a2aef4484eba417bbdf9bd80f88502b9">Loop</label>
+      <input type="radio" name="state" value="reflect" id="_anim_radio3_a2aef4484eba417bbdf9bd80f88502b9">
+      <label for="_anim_radio3_a2aef4484eba417bbdf9bd80f88502b9">Reflect</label>
     </form>
   </div>
 </div>
@@ -1152,9 +1152,9 @@ input[type=range].anim-slider {
   /* Instantiate the Animation class. */
   /* The IDs given should match those used in the template above. */
   (function() {
-    var img_id = "_anim_imgf4de2ff9b6d74ed58fed53e2e0f1592a";
-    var slider_id = "_anim_sliderf4de2ff9b6d74ed58fed53e2e0f1592a";
-    var loop_select_id = "_anim_loop_selectf4de2ff9b6d74ed58fed53e2e0f1592a";
+    var img_id = "_anim_imga2aef4484eba417bbdf9bd80f88502b9";
+    var slider_id = "_anim_slidera2aef4484eba417bbdf9bd80f88502b9";
+    var loop_select_id = "_anim_loop_selecta2aef4484eba417bbdf9bd80f88502b9";
     var frames = new Array(50);
     
   frames[0] = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAf4AAAECCAYAAAAfP7VHAAAAOnRFWHRTb2Z0d2FyZQBNYXRwbG90\
@@ -20134,7 +20134,7 @@ AY3ExKmMhmauAAAAAElFTkSuQmCC\
     /* set a timeout to make sure all the above elements are created before
        the object is initialized. */
     setTimeout(function() {
-        animf4de2ff9b6d74ed58fed53e2e0f1592a = new Animation(frames, img_id, slider_id, 119.0,
+        anima2aef4484eba417bbdf9bd80f88502b9 = new Animation(frames, img_id, slider_id, 119.0,
                                  loop_select_id);
     }, 0);
   })()
@@ -20150,7 +20150,7 @@ AY3ExKmMhmauAAAAAElFTkSuQmCC\
 <li><strong>Worst choice</strong> from the three remaining items, with utilities <strong>negated</strong>: <span class="math inline">\(P(\text{worst}=c \mid \text{best}=b) = \exp(-\beta_c) / \sum_{j \neq b} \exp(-\beta_j)\)</span>.</li>
 </ol>
 <p>One catch: utilities are only defined up to a constant. I pin <strong><span class="math inline">\(\beta_1 = 0\)</span></strong> (MGTA 403 as the reference class) and estimate the other nine — standard move, same as setting the outside option to zero in class.</p>
-<div id="e8144f0e" class="cell" data-execution_count="7">
+<div id="e5773ed8" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Show Python code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> build_tasks(df: pd.DataFrame) <span class="op">-&gt;</span> <span class="bu">list</span>[<span class="bu">dict</span>]:</span>
@@ -20264,7 +20264,7 @@ AY3ExKmMhmauAAAAAElFTkSuQmCC\
 \Big].
 \]</span></p>
 <p>I code the log-likelihood with <strong><code>logsumexp</code></strong> (so <code>exp</code> never explodes), then let <code>scipy.optimize.minimize</code> hunt for the peak. Below: an <strong>interactive</strong> log-likelihood slice (hover along the curve) and an <strong>animation</strong> that walks <strong>β₉</strong> toward the MLE while other coefficients stay fixed.</p>
-<div id="e66d5093" class="cell" data-execution_count="8">
+<div id="1fbd6f39" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Show Python code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> beta_full(b9: np.ndarray) <span class="op">-&gt;</span> np.ndarray:</span>
@@ -20406,9 +20406,9 @@ AY3ExKmMhmauAAAAAElFTkSuQmCC\
 </table>
 </div>
 </div>
-<div id="21a41579" class="cell" data-execution_count="9">
+<div id="b08eb986" class="cell" data-execution_count="9">
 <div class="cell-output cell-output-display">
-<div id="plot-b0a7f9ea5b" class="plotly-graph-div" style="width:100%;height:400px;"></div>
+<div id="plot-30e4dff312" class="plotly-graph-div" style="width:100%;height:400px;"></div>
 <script>
 (function() {
   function decodeBdata(obj) {
@@ -20436,13 +20436,13 @@ AY3ExKmMhmauAAAAAElFTkSuQmCC\
       setTimeout(drawPlot, 50);
       return;
     }
-    var el = document.getElementById("plot-b0a7f9ea5b");
+    var el = document.getElementById("plot-30e4dff312");
     if (!el || el.dataset.plotlyDrawn === "1") return;
     Plotly.newPlot(el, spec.data, spec.layout, spec.config).then(function() {
       el.dataset.plotlyDrawn = "1";
       if (typeof Plotly.Plots !== "undefined") Plotly.Plots.resize(el);
     }).catch(function(err) {
-      console.error("Plotly failed (plot-b0a7f9ea5b):", err);
+      console.error("Plotly failed (plot-30e4dff312):", err);
       el.innerHTML = "<p style='color:#7a3b35;font-size:0.9rem'>Chart could not load — try a hard refresh.</p>";
     });
   }
@@ -20456,7 +20456,7 @@ AY3ExKmMhmauAAAAAElFTkSuQmCC\
 <p>Interactive log-likelihood slice: vary β₉ (495) while other coefficients stay at the MLE.</p>
 </div>
 </div>
-<div id="a88e0d9f" class="cell" data-execution_count="10">
+<div id="3a13b778" class="cell" data-execution_count="10">
 <div class="cell-output cell-output-display">
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
@@ -20642,36 +20642,36 @@ input[type=range].anim-slider {
 </style>
 
 <div class="animation">
-  <img id="_anim_img5196c58f3b7b4bc3a906f37c1ad6f042">
+  <img id="_anim_img16dea537af804d9186147a3ffd8d3267">
   <div class="anim-controls">
-    <input id="_anim_slider5196c58f3b7b4bc3a906f37c1ad6f042" type="range" class="anim-slider" name="points" min="0" max="1" step="1" value="0" oninput="anim5196c58f3b7b4bc3a906f37c1ad6f042.set_frame(parseInt(this.value));">
+    <input id="_anim_slider16dea537af804d9186147a3ffd8d3267" type="range" class="anim-slider" name="points" min="0" max="1" step="1" value="0" oninput="anim16dea537af804d9186147a3ffd8d3267.set_frame(parseInt(this.value));">
     <div class="anim-buttons">
-      <button title="Decrease speed" aria-label="Decrease speed" onclick="anim5196c58f3b7b4bc3a906f37c1ad6f042.slower()">
+      <button title="Decrease speed" aria-label="Decrease speed" onclick="anim16dea537af804d9186147a3ffd8d3267.slower()">
           <i class="fa fa-minus"></i></button>
-      <button title="First frame" aria-label="First frame" onclick="anim5196c58f3b7b4bc3a906f37c1ad6f042.first_frame()">
+      <button title="First frame" aria-label="First frame" onclick="anim16dea537af804d9186147a3ffd8d3267.first_frame()">
         <i class="fa fa-fast-backward"></i></button>
-      <button title="Previous frame" aria-label="Previous frame" onclick="anim5196c58f3b7b4bc3a906f37c1ad6f042.previous_frame()">
+      <button title="Previous frame" aria-label="Previous frame" onclick="anim16dea537af804d9186147a3ffd8d3267.previous_frame()">
           <i class="fa fa-step-backward"></i></button>
-      <button title="Play backwards" aria-label="Play backwards" onclick="anim5196c58f3b7b4bc3a906f37c1ad6f042.reverse_animation()">
+      <button title="Play backwards" aria-label="Play backwards" onclick="anim16dea537af804d9186147a3ffd8d3267.reverse_animation()">
           <i class="fa fa-play fa-flip-horizontal"></i></button>
-      <button title="Pause" aria-label="Pause" onclick="anim5196c58f3b7b4bc3a906f37c1ad6f042.pause_animation()">
+      <button title="Pause" aria-label="Pause" onclick="anim16dea537af804d9186147a3ffd8d3267.pause_animation()">
           <i class="fa fa-pause"></i></button>
-      <button title="Play" aria-label="Play" onclick="anim5196c58f3b7b4bc3a906f37c1ad6f042.play_animation()">
+      <button title="Play" aria-label="Play" onclick="anim16dea537af804d9186147a3ffd8d3267.play_animation()">
           <i class="fa fa-play"></i></button>
-      <button title="Next frame" aria-label="Next frame" onclick="anim5196c58f3b7b4bc3a906f37c1ad6f042.next_frame()">
+      <button title="Next frame" aria-label="Next frame" onclick="anim16dea537af804d9186147a3ffd8d3267.next_frame()">
           <i class="fa fa-step-forward"></i></button>
-      <button title="Last frame" aria-label="Last frame" onclick="anim5196c58f3b7b4bc3a906f37c1ad6f042.last_frame()">
+      <button title="Last frame" aria-label="Last frame" onclick="anim16dea537af804d9186147a3ffd8d3267.last_frame()">
           <i class="fa fa-fast-forward"></i></button>
-      <button title="Increase speed" aria-label="Increase speed" onclick="anim5196c58f3b7b4bc3a906f37c1ad6f042.faster()">
+      <button title="Increase speed" aria-label="Increase speed" onclick="anim16dea537af804d9186147a3ffd8d3267.faster()">
           <i class="fa fa-plus"></i></button>
     </div>
-    <form title="Repetition mode" aria-label="Repetition mode" action="#n" name="_anim_loop_select5196c58f3b7b4bc3a906f37c1ad6f042" class="anim-state">
-      <input type="radio" name="state" value="once" id="_anim_radio1_5196c58f3b7b4bc3a906f37c1ad6f042">
-      <label for="_anim_radio1_5196c58f3b7b4bc3a906f37c1ad6f042">Once</label>
-      <input type="radio" name="state" value="loop" id="_anim_radio2_5196c58f3b7b4bc3a906f37c1ad6f042" checked="">
-      <label for="_anim_radio2_5196c58f3b7b4bc3a906f37c1ad6f042">Loop</label>
-      <input type="radio" name="state" value="reflect" id="_anim_radio3_5196c58f3b7b4bc3a906f37c1ad6f042">
-      <label for="_anim_radio3_5196c58f3b7b4bc3a906f37c1ad6f042">Reflect</label>
+    <form title="Repetition mode" aria-label="Repetition mode" action="#n" name="_anim_loop_select16dea537af804d9186147a3ffd8d3267" class="anim-state">
+      <input type="radio" name="state" value="once" id="_anim_radio1_16dea537af804d9186147a3ffd8d3267">
+      <label for="_anim_radio1_16dea537af804d9186147a3ffd8d3267">Once</label>
+      <input type="radio" name="state" value="loop" id="_anim_radio2_16dea537af804d9186147a3ffd8d3267" checked="">
+      <label for="_anim_radio2_16dea537af804d9186147a3ffd8d3267">Loop</label>
+      <input type="radio" name="state" value="reflect" id="_anim_radio3_16dea537af804d9186147a3ffd8d3267">
+      <label for="_anim_radio3_16dea537af804d9186147a3ffd8d3267">Reflect</label>
     </form>
   </div>
 </div>
@@ -20681,9 +20681,9 @@ input[type=range].anim-slider {
   /* Instantiate the Animation class. */
   /* The IDs given should match those used in the template above. */
   (function() {
-    var img_id = "_anim_img5196c58f3b7b4bc3a906f37c1ad6f042";
-    var slider_id = "_anim_slider5196c58f3b7b4bc3a906f37c1ad6f042";
-    var loop_select_id = "_anim_loop_select5196c58f3b7b4bc3a906f37c1ad6f042";
+    var img_id = "_anim_img16dea537af804d9186147a3ffd8d3267";
+    var slider_id = "_anim_slider16dea537af804d9186147a3ffd8d3267";
+    var loop_select_id = "_anim_loop_select16dea537af804d9186147a3ffd8d3267";
     var frames = new Array(55);
     
   frames[0] = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAf4AAAECCAYAAAAfP7VHAAAAOnRFWHRTb2Z0d2FyZQBNYXRwbG90\
@@ -51363,7 +51363,7 @@ RK5CYII=\
     /* set a timeout to make sure all the above elements are created before
        the object is initialized. */
     setTimeout(function() {
-        anim5196c58f3b7b4bc3a906f37c1ad6f042 = new Animation(frames, img_id, slider_id, 100.0,
+        anim16dea537af804d9186147a3ffd8d3267 = new Animation(frames, img_id, slider_id, 100.0,
                                  loop_select_id);
     }, 0);
   })()
@@ -51371,9 +51371,9 @@ RK5CYII=\
 <p>Animated sweep: moving β₉ (495) toward the MLE while other coefficients stay fixed.</p>
 </div>
 </div>
-<div id="841bf48e" class="cell" data-execution_count="11">
+<div id="5e858f0f" class="cell" data-execution_count="11">
 <div class="cell-output cell-output-display">
-<div id="plot-da466d4f8e" class="plotly-graph-div" style="width:100%;height:500px;"></div>
+<div id="plot-13bfec7ae3" class="plotly-graph-div" style="width:100%;height:500px;"></div>
 <script>
 (function() {
   function decodeBdata(obj) {
@@ -51401,13 +51401,13 @@ RK5CYII=\
       setTimeout(drawPlot, 50);
       return;
     }
-    var el = document.getElementById("plot-da466d4f8e");
+    var el = document.getElementById("plot-13bfec7ae3");
     if (!el || el.dataset.plotlyDrawn === "1") return;
     Plotly.newPlot(el, spec.data, spec.layout, spec.config).then(function() {
       el.dataset.plotlyDrawn = "1";
       if (typeof Plotly.Plots !== "undefined") Plotly.Plots.resize(el);
     }).catch(function(err) {
-      console.error("Plotly failed (plot-da466d4f8e):", err);
+      console.error("Plotly failed (plot-13bfec7ae3):", err);
       el.innerHTML = "<p style='color:#7a3b35;font-size:0.9rem'>Chart could not load — try a hard refresh.</p>";
     });
   }
@@ -51424,7 +51424,7 @@ RK5CYII=\
 <p>Every class keeps the <strong>same rank</strong> as the counts table — reassuring. The MNL just translates utilities into something marketers understand: <strong>share of preference</strong> if all ten classes appeared on one mega-screen. <strong>495</strong> grabs about <strong>28%</strong> of that imaginary demand; <strong>444 Consulting</strong> about <strong>4%</strong>.</p>
 <h2 id="mnl-via-bayesian-estimation" class="anchored">MNL via Bayesian Estimation</h2>
 <p>MLE gives a point. Bayes gives a <em>cloud</em>. The posterior is <span class="math inline">\(\pi(\boldsymbol{\beta} \mid \mathbf{y}) \propto L(\boldsymbol{\beta})\,\pi(\boldsymbol{\beta})\)</span> with a gentle prior <span class="math inline">\(\boldsymbol{\beta} \sim N(\mathbf{0}, 10\mathbf{I})\)</span> — wide enough to stay out of the way, tight enough to keep the sampler sane.</p>
-<div id="f77da9a2" class="cell" data-execution_count="12">
+<div id="c8a5af6f" class="cell" data-execution_count="12">
 <details class="code-fold">
 <summary>Show Python code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> log_posterior(b9: np.ndarray) <span class="op">-&gt;</span> <span class="bu">float</span>:</span>
@@ -51632,7 +51632,7 @@ Final acceptance rate: 0.359</code></pre>
 </div>
 </div>
 <p>A healthy MCMC trace looks like a <strong>fuzzy caterpillar</strong> — not a trend, not a stuck needle. The animation draws <strong>β₉ (495)</strong> iteration by iteration; the static panel chart below shows all three key traces at once for comparison.</p>
-<div id="d54e5862" class="cell" data-execution_count="13">
+<div id="e43515b9" class="cell" data-execution_count="13">
 <div class="cell-output cell-output-display">
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
@@ -51818,36 +51818,36 @@ input[type=range].anim-slider {
 </style>
 
 <div class="animation">
-  <img id="_anim_imge20c28f642754ec69df0d39a687a1618">
+  <img id="_anim_imgeb4445f29a72429bba3c4101cbcb86ef">
   <div class="anim-controls">
-    <input id="_anim_slidere20c28f642754ec69df0d39a687a1618" type="range" class="anim-slider" name="points" min="0" max="1" step="1" value="0" oninput="anime20c28f642754ec69df0d39a687a1618.set_frame(parseInt(this.value));">
+    <input id="_anim_slidereb4445f29a72429bba3c4101cbcb86ef" type="range" class="anim-slider" name="points" min="0" max="1" step="1" value="0" oninput="animeb4445f29a72429bba3c4101cbcb86ef.set_frame(parseInt(this.value));">
     <div class="anim-buttons">
-      <button title="Decrease speed" aria-label="Decrease speed" onclick="anime20c28f642754ec69df0d39a687a1618.slower()">
+      <button title="Decrease speed" aria-label="Decrease speed" onclick="animeb4445f29a72429bba3c4101cbcb86ef.slower()">
           <i class="fa fa-minus"></i></button>
-      <button title="First frame" aria-label="First frame" onclick="anime20c28f642754ec69df0d39a687a1618.first_frame()">
+      <button title="First frame" aria-label="First frame" onclick="animeb4445f29a72429bba3c4101cbcb86ef.first_frame()">
         <i class="fa fa-fast-backward"></i></button>
-      <button title="Previous frame" aria-label="Previous frame" onclick="anime20c28f642754ec69df0d39a687a1618.previous_frame()">
+      <button title="Previous frame" aria-label="Previous frame" onclick="animeb4445f29a72429bba3c4101cbcb86ef.previous_frame()">
           <i class="fa fa-step-backward"></i></button>
-      <button title="Play backwards" aria-label="Play backwards" onclick="anime20c28f642754ec69df0d39a687a1618.reverse_animation()">
+      <button title="Play backwards" aria-label="Play backwards" onclick="animeb4445f29a72429bba3c4101cbcb86ef.reverse_animation()">
           <i class="fa fa-play fa-flip-horizontal"></i></button>
-      <button title="Pause" aria-label="Pause" onclick="anime20c28f642754ec69df0d39a687a1618.pause_animation()">
+      <button title="Pause" aria-label="Pause" onclick="animeb4445f29a72429bba3c4101cbcb86ef.pause_animation()">
           <i class="fa fa-pause"></i></button>
-      <button title="Play" aria-label="Play" onclick="anime20c28f642754ec69df0d39a687a1618.play_animation()">
+      <button title="Play" aria-label="Play" onclick="animeb4445f29a72429bba3c4101cbcb86ef.play_animation()">
           <i class="fa fa-play"></i></button>
-      <button title="Next frame" aria-label="Next frame" onclick="anime20c28f642754ec69df0d39a687a1618.next_frame()">
+      <button title="Next frame" aria-label="Next frame" onclick="animeb4445f29a72429bba3c4101cbcb86ef.next_frame()">
           <i class="fa fa-step-forward"></i></button>
-      <button title="Last frame" aria-label="Last frame" onclick="anime20c28f642754ec69df0d39a687a1618.last_frame()">
+      <button title="Last frame" aria-label="Last frame" onclick="animeb4445f29a72429bba3c4101cbcb86ef.last_frame()">
           <i class="fa fa-fast-forward"></i></button>
-      <button title="Increase speed" aria-label="Increase speed" onclick="anime20c28f642754ec69df0d39a687a1618.faster()">
+      <button title="Increase speed" aria-label="Increase speed" onclick="animeb4445f29a72429bba3c4101cbcb86ef.faster()">
           <i class="fa fa-plus"></i></button>
     </div>
-    <form title="Repetition mode" aria-label="Repetition mode" action="#n" name="_anim_loop_selecte20c28f642754ec69df0d39a687a1618" class="anim-state">
-      <input type="radio" name="state" value="once" id="_anim_radio1_e20c28f642754ec69df0d39a687a1618" checked="">
-      <label for="_anim_radio1_e20c28f642754ec69df0d39a687a1618">Once</label>
-      <input type="radio" name="state" value="loop" id="_anim_radio2_e20c28f642754ec69df0d39a687a1618">
-      <label for="_anim_radio2_e20c28f642754ec69df0d39a687a1618">Loop</label>
-      <input type="radio" name="state" value="reflect" id="_anim_radio3_e20c28f642754ec69df0d39a687a1618">
-      <label for="_anim_radio3_e20c28f642754ec69df0d39a687a1618">Reflect</label>
+    <form title="Repetition mode" aria-label="Repetition mode" action="#n" name="_anim_loop_selecteb4445f29a72429bba3c4101cbcb86ef" class="anim-state">
+      <input type="radio" name="state" value="once" id="_anim_radio1_eb4445f29a72429bba3c4101cbcb86ef" checked="">
+      <label for="_anim_radio1_eb4445f29a72429bba3c4101cbcb86ef">Once</label>
+      <input type="radio" name="state" value="loop" id="_anim_radio2_eb4445f29a72429bba3c4101cbcb86ef">
+      <label for="_anim_radio2_eb4445f29a72429bba3c4101cbcb86ef">Loop</label>
+      <input type="radio" name="state" value="reflect" id="_anim_radio3_eb4445f29a72429bba3c4101cbcb86ef">
+      <label for="_anim_radio3_eb4445f29a72429bba3c4101cbcb86ef">Reflect</label>
     </form>
   </div>
 </div>
@@ -51857,9 +51857,9 @@ input[type=range].anim-slider {
   /* Instantiate the Animation class. */
   /* The IDs given should match those used in the template above. */
   (function() {
-    var img_id = "_anim_imge20c28f642754ec69df0d39a687a1618";
-    var slider_id = "_anim_slidere20c28f642754ec69df0d39a687a1618";
-    var loop_select_id = "_anim_loop_selecte20c28f642754ec69df0d39a687a1618";
+    var img_id = "_anim_imgeb4445f29a72429bba3c4101cbcb86ef";
+    var slider_id = "_anim_slidereb4445f29a72429bba3c4101cbcb86ef";
+    var loop_select_id = "_anim_loop_selecteb4445f29a72429bba3c4101cbcb86ef";
     var frames = new Array(55);
     
   frames[0] = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAf4AAAECCAYAAAAfP7VHAAAAOnRFWHRTb2Z0d2FyZQBNYXRwbG90\
@@ -81456,7 +81456,7 @@ gUDoQxDBTyAQCARCH4IIfgKBQCAQ+hBE8BMIBAKB0If4/wEAdShK5mBaUpUAAAAASUVORK5CYII=\
     /* set a timeout to make sure all the above elements are created before
        the object is initialized. */
     setTimeout(function() {
-        anime20c28f642754ec69df0d39a687a1618 = new Animation(frames, img_id, slider_id, 90.0,
+        animeb4445f29a72429bba3c4101cbcb86ef = new Animation(frames, img_id, slider_id, 90.0,
                                  loop_select_id);
     }, 0);
   })()
@@ -81464,9 +81464,9 @@ gUDoQxDBTyAQCARCH4IIfgKBQCAQ+hBE8BMIBAKB0If4/wEAdShK5mBaUpUAAAAASUVORK5CYII=\
 <p>MCMC trace for β₉ (495) building up after burn-in — look for the fuzzy caterpillar.</p>
 </div>
 </div>
-<div id="c6d19d90" class="cell" data-execution_count="14">
+<div id="61539c66" class="cell" data-execution_count="14">
 <div class="cell-output cell-output-display">
-<div id="plot-a111347d01" class="plotly-graph-div" style="width:100%;height:400px;"></div>
+<div id="plot-39b408f391" class="plotly-graph-div" style="width:100%;height:400px;"></div>
 <script>
 (function() {
   function decodeBdata(obj) {
@@ -81494,13 +81494,13 @@ gUDoQxDBTyAQCARCH4IIfgKBQCAQ+hBE8BMIBAKB0If4/wEAdShK5mBaUpUAAAAASUVORK5CYII=\
       setTimeout(drawPlot, 50);
       return;
     }
-    var el = document.getElementById("plot-a111347d01");
+    var el = document.getElementById("plot-39b408f391");
     if (!el || el.dataset.plotlyDrawn === "1") return;
     Plotly.newPlot(el, spec.data, spec.layout, spec.config).then(function() {
       el.dataset.plotlyDrawn = "1";
       if (typeof Plotly.Plots !== "undefined") Plotly.Plots.resize(el);
     }).catch(function(err) {
-      console.error("Plotly failed (plot-a111347d01):", err);
+      console.error("Plotly failed (plot-39b408f391):", err);
       el.innerHTML = "<p style='color:#7a3b35;font-size:0.9rem'>Chart could not load — try a hard refresh.</p>";
     });
   }
@@ -81514,9 +81514,9 @@ gUDoQxDBTyAQCARCH4IIfgKBQCAQ+hBE8BMIBAKB0If4/wEAdShK5mBaUpUAAAAASUVORK5CYII=\
 <p>Interactive MCMC traces — use the buttons below the chart to switch parameter (495, 453, 444).</p>
 </div>
 </div>
-<div id="c6e9c519" class="cell" data-execution_count="15">
+<div id="18728e36" class="cell" data-execution_count="15">
 <div class="cell-output cell-output-display">
-<div id="plot-ee75403c25" class="plotly-graph-div" style="width:100%;height:500px;"></div>
+<div id="plot-c3c224eab6" class="plotly-graph-div" style="width:100%;height:500px;"></div>
 <script>
 (function() {
   function decodeBdata(obj) {
@@ -81544,13 +81544,13 @@ gUDoQxDBTyAQCARCH4IIfgKBQCAQ+hBE8BMIBAKB0If4/wEAdShK5mBaUpUAAAAASUVORK5CYII=\
       setTimeout(drawPlot, 50);
       return;
     }
-    var el = document.getElementById("plot-ee75403c25");
+    var el = document.getElementById("plot-c3c224eab6");
     if (!el || el.dataset.plotlyDrawn === "1") return;
     Plotly.newPlot(el, spec.data, spec.layout, spec.config).then(function() {
       el.dataset.plotlyDrawn = "1";
       if (typeof Plotly.Plots !== "undefined") Plotly.Plots.resize(el);
     }).catch(function(err) {
-      console.error("Plotly failed (plot-ee75403c25):", err);
+      console.error("Plotly failed (plot-c3c224eab6):", err);
       el.innerHTML = "<p style='color:#7a3b35;font-size:0.9rem'>Chart could not load — try a hard refresh.</p>";
     });
   }
@@ -81567,7 +81567,7 @@ gUDoQxDBTyAQCARCH4IIfgKBQCAQ+hBE8BMIBAKB0If4/wEAdShK5mBaUpUAAAAASUVORK5CYII=\
 <p>Posterior means hug the MLE (β₉ ≈ <strong>1.63</strong> either way). The real win is on <strong>shares</strong>: every MCMC draw gets pushed through the softmax, so the error bars on the bar chart are <em>credible intervals</em>, not approximations from a formula you hope is right.</p>
 <h2 id="comparing-the-three-methods" class="anchored">Comparing the Three Methods</h2>
 <p>Same ten classes, three lenses. The table is the scoreboard; the chart lets you flip between <strong>Counts</strong>, <strong>MLE</strong>, and <strong>Bayesian</strong> shares with one click.</p>
-<div id="b239e5cb" class="cell" data-execution_count="16">
+<div id="b54c1f65" class="cell" data-execution_count="16">
 <div class="cell-output cell-output-display">
 <div class="comparison-block">
 <table class="dataframe caption-top">
