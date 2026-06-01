@@ -25,14 +25,14 @@
     "href": "blogs/Final Presentation/final_presentation.html#the-problem",
     "title": "From Startup Chaos to Smart Deal Flow",
     "section": "The Problem",
-    "text": "The Problem\n\nMarketing analytics applied to venture capital — turning messy deal flow into smarter, prioritized investment decisions.\nVCs review thousands of startups, but partner time and attention are limited.\n20,000+\nstartups in the pipeline\nImagine Shark Tank, but with 20,000 startups in a spreadsheet.\n\n  VCs review thousands of pitches every year\n  Partner time is the scarcest resource\n  Most deals never get a real look\n  Great companies get lost in the noise"
+    "text": "The Problem\n\nVCs review thousands of startups, but partner time and attention are limited.\n20,000+\nstartups in the pipeline\nImagine Shark Tank, but with 20,000 startups in a spreadsheet.\n\n  \n    VCs review thousands of pitches every year\n    Partner time is the scarcest resource\n    Most deals never get a real look\n    Great companies get lost in the noise\n  \n  \n    \n      \n      DEAL PIPELINE\n      \n        \n        \n        \n        \n      \n      \n      \n      Too many rows · too little time"
   },
   {
     "objectID": "blogs/Final Presentation/final_presentation.html#before-ai",
     "href": "blogs/Final Presentation/final_presentation.html#before-ai",
     "title": "From Startup Chaos to Smart Deal Flow",
     "section": "Before AI",
-    "text": "Before AI\n\nThe traditional process is manual, inconsistent, and hard to scale.\n\n  CRM Data→\n  Spreadsheets→\n  Manual Research→\n  PitchBook / Harmonic→\n  Gut Feeling→\n  Partner Review\n\n\n  Slow\n  Inconsistent\n  Hard to Scale\n  Data Silos\n\nEvery analyst does it differently. High-potential startups slip through when there isn't enough time to research them all."
+    "text": "Before AI\n\nThe traditional process is manual, inconsistent, and hard to scale.\n\n  \n    \n      CRM→\n      Spreadsheets→\n      Manual Research→\n      PitchBook→\n      Gut Feel→\n      Partner\n    \n    \n      Slow\n      Inconsistent\n      Hard to Scale\n      Data Silos\n    \n    High-potential startups slip through — not enough time to research them all.\n  \n  \n    \n      DISCONNECTED TOOLS\n      CRM\n      \n      Excel\n      \n      PitchBook\n      \n      \n      ↓ manual handoffs ↓\n      \n      Gut feeling\n      Different process every analyst\n      \n      Partner review bottleneck"
   },
   {
     "objectID": "blogs/Final Presentation/final_presentation.html#ai-assisted-deal-flow",
@@ -54,5 +54,12 @@
     "title": "From Startup Chaos to Smart Deal Flow",
     "section": "Impact",
     "text": "Impact\n\nThe goal is not to replace investors — it's to help them focus.\n\n  Less Manual ScreeningAutomate the first pass across thousands of companies\n  Faster ReviewAI summaries cut research time from hours to minutes\n  Consistent ScoringEvery deal evaluated with the same framework\n  Better Data UseHarmonic, PitchBook, and CRM signals unified\n  Easier PrioritizationRanked deal flow replaces gut-only triage\n  Hidden Gems FoundStrong startups surface before competitors notice\n\nThis project applies marketing analytics thinking to venture capital: using AI, segmentation, and relevance scoring to turn messy deal flow into smarter investment decisions."
+  },
+  {
+    "objectID": "blogs/Final Presentation/final_presentation.html#introduction",
+    "href": "blogs/Final Presentation/final_presentation.html#introduction",
+    "title": "From Startup Chaos to Smart Deal Flow",
+    "section": "Introduction",
+    "text": "Introduction\n\n  From Startup Chaos to Smart Deal Flow\n  Using AI to Help VCs Pick Better Companies\n  \n    Eesha Jagdhane\n    May 31, 2026\n    MGTA 495 · Marketing Analytics\n  \n  Marketing analytics applied to venture capital — turning messy deal flow into smarter, prioritized investment decisions."
   }
 ]

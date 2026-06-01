@@ -43,14 +43,109 @@
   line-height: 1.42;
 }
 
+.reveal .slides section.slide-opener > h2 {
+  display: none;
+}
+
+.reveal .slide-opener .intro-hero {
+  margin-top: 0.25em;
+}
+
+.reveal .opener-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  font-size: 0.82em;
+  color: var(--muted);
+  margin-bottom: 0.5em;
+  letter-spacing: 0.04em;
+}
+
+.reveal .opener-meta span {
+  border-right: 1px solid var(--border);
+  padding-right: 1.25rem;
+}
+
+.reveal .opener-meta span:last-child {
+  border-right: none;
+  padding-right: 0;
+}
+
 .reveal .deck-tagline {
-  font-size: 1em;
+  font-size: 1.08em;
   color: var(--ink-soft);
-  margin: 0 0 0.85em;
-  line-height: 1.45;
-  max-width: 100%;
-  padding-bottom: 0.65em;
-  border-bottom: 1px solid var(--border);
+  margin: 1.1em 0 0;
+  line-height: 1.5;
+  max-width: 92%;
+}
+
+.reveal .slide-body.compact {
+  font-size: 0.8em;
+}
+
+.reveal .before-ai-layout {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 0.65rem;
+  align-items: center;
+  margin-top: 0.2em;
+}
+
+.reveal .before-ai-left .slide-intro {
+  margin-bottom: 0.4em;
+}
+
+.reveal .before-ai-left .flow {
+  margin: 0.35em 0;
+  gap: 0.2rem;
+}
+
+.reveal .before-ai-left .flow-step {
+  padding: 0.28rem 0.45rem;
+  font-size: 0.76em;
+  max-width: 7.5rem;
+}
+
+.reveal .before-ai-left .pain-tags {
+  margin-top: 0.35em;
+  gap: 0.28rem;
+}
+
+.reveal .before-ai-left .pain-tag {
+  padding: 0.25rem 0.55rem;
+  font-size: 0.72em;
+}
+
+.reveal .before-ai-left .callout {
+  margin: 0.4em 0 0;
+  padding: 0.45rem 0.6rem;
+  font-size: 0.84em;
+}
+
+.reveal .slide-visual {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.5rem;
+  box-shadow: 0 4px 14px var(--shadow);
+}
+
+.reveal .slide-visual svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.reveal .problem-visual-row {
+  display: grid;
+  grid-template-columns: 1fr 200px;
+  gap: 0.75rem;
+  align-items: center;
+  margin-top: 0.35em;
+}
+
+.reveal .problem-visual-row ul {
+  margin-top: 0.35em;
 }
 
 .reveal .deck-footer-inner {

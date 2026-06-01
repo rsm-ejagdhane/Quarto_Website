@@ -33,44 +33,97 @@ execute:
   message: false
 ---
 
+## Introduction {.slide-opener}
+
+```{=html}
+<div class="intro-hero">
+  <div class="intro-title">From Startup Chaos to Smart Deal Flow</div>
+  <div class="subtitle-line">Using AI to Help VCs Pick Better Companies</div>
+  <div class="opener-meta">
+    <span>Eesha Jagdhane</span>
+    <span>May 31, 2026</span>
+    <span>MGTA 495 · Marketing Analytics</span>
+  </div>
+  <p class="deck-tagline">Marketing analytics applied to venture capital — turning messy deal flow into smarter, prioritized investment decisions.</p>
+</div>
+```
+
 ## The Problem
 
 ```{=html}
 <div class="slide-body">
-<p class="deck-tagline">Marketing analytics applied to venture capital — turning messy deal flow into smarter, prioritized investment decisions.</p>
 <p class="slide-intro">VCs review thousands of startups, but partner time and attention are limited.</p>
 <div class="hero-stat">20,000+</div>
 <div class="hero-stat-label">startups in the pipeline</div>
 <div class="callout">Imagine Shark Tank, but with <span class="metric-sm">20,000</span> startups in a spreadsheet.</div>
-<ul>
-  <li>VCs review thousands of pitches every year</li>
-  <li>Partner time is the scarcest resource</li>
-  <li>Most deals never get a real look</li>
-  <li>Great companies get lost in the noise</li>
-</ul>
+<div class="problem-visual-row">
+  <ul>
+    <li>VCs review thousands of pitches every year</li>
+    <li>Partner time is the scarcest resource</li>
+    <li>Most deals never get a real look</li>
+    <li>Great companies get lost in the noise</li>
+  </ul>
+  <div class="slide-visual">
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="20" y="25" width="160" height="150" rx="6" fill="#fff" stroke="#c9c2b6" stroke-width="1.5"/>
+      <text x="100" y="48" text-anchor="middle" fill="#8a8278" font-size="9" font-family="DM Sans,sans-serif">DEAL PIPELINE</text>
+      <g fill="#e8e3da" stroke="#c9c2b6" stroke-width="0.8">
+        <rect x="32" y="58" width="136" height="10" rx="2"/><rect x="32" y="74" width="136" height="10" rx="2"/>
+        <rect x="32" y="90" width="136" height="10" rx="2"/><rect x="32" y="106" width="136" height="10" rx="2"/>
+        <rect x="32" y="122" width="136" height="10" rx="2"/><rect x="32" y="138" width="136" height="10" rx="2"/>
+        <rect x="32" y="154" width="136" height="10" rx="2"/>
+      </g>
+      <circle cx="155" cy="63" r="5" fill="#2f81f7" opacity="0.9"/><circle cx="48" cy="95" r="5" fill="#2f81f7" opacity="0.7"/>
+      <circle cx="140" cy="127" r="5" fill="#2da44e" opacity="0.85"/><circle cx="70" cy="159" r="4" fill="#8a8278" opacity="0.5"/>
+      <text x="100" y="188" text-anchor="middle" fill="#7a3b35" font-size="8" font-weight="600" font-family="DM Sans,sans-serif">Too many rows · too little time</text>
+    </svg>
+  </div>
+</div>
 </div>
 ```
 
 ## Before AI
 
 ```{=html}
-<div class="slide-body">
+<div class="slide-body compact">
 <p class="slide-intro">The traditional process is manual, inconsistent, and hard to scale.</p>
-<div class="flow">
-  <div class="flow-step">CRM Data</div><div class="flow-arrow">→</div>
-  <div class="flow-step">Spreadsheets</div><div class="flow-arrow">→</div>
-  <div class="flow-step">Manual Research</div><div class="flow-arrow">→</div>
-  <div class="flow-step">PitchBook / Harmonic</div><div class="flow-arrow">→</div>
-  <div class="flow-step muted-step">Gut Feeling</div><div class="flow-arrow">→</div>
-  <div class="flow-step muted-step">Partner Review</div>
+<div class="before-ai-layout">
+  <div class="before-ai-left">
+    <div class="flow">
+      <div class="flow-step">CRM</div><div class="flow-arrow">→</div>
+      <div class="flow-step">Spreadsheets</div><div class="flow-arrow">→</div>
+      <div class="flow-step">Manual Research</div><div class="flow-arrow">→</div>
+      <div class="flow-step">PitchBook</div><div class="flow-arrow">→</div>
+      <div class="flow-step muted-step">Gut Feel</div><div class="flow-arrow">→</div>
+      <div class="flow-step muted-step">Partner</div>
+    </div>
+    <div class="pain-tags">
+      <div class="pain-tag bad">Slow</div>
+      <div class="pain-tag bad">Inconsistent</div>
+      <div class="pain-tag bad">Hard to Scale</div>
+      <div class="pain-tag bad">Data Silos</div>
+    </div>
+    <div class="callout callout-accent">High-potential startups slip through — not enough time to research them all.</div>
+  </div>
+  <div class="slide-visual">
+    <svg viewBox="0 0 280 240" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <text x="140" y="18" text-anchor="middle" fill="#8a8278" font-size="10" font-family="DM Sans,sans-serif" letter-spacing="0.08em">DISCONNECTED TOOLS</text>
+      <rect x="15" y="35" width="75" height="52" rx="6" fill="#fff" stroke="#c9c2b6"/><text x="52" y="58" text-anchor="middle" fill="#2e2825" font-size="9" font-weight="600" font-family="DM Sans,sans-serif">CRM</text>
+      <rect x="8" y="68" width="60" height="6" rx="2" fill="#e8e3da"/><rect x="8" y="78" width="50" height="6" rx="2" fill="#e8e3da"/>
+      <rect x="100" y="28" width="80" height="58" rx="6" fill="#fff" stroke="#7a3b35" stroke-width="1.5"/><text x="140" y="52" text-anchor="middle" fill="#7a3b35" font-size="9" font-weight="600" font-family="DM Sans,sans-serif">Excel</text>
+      <g fill="#e8e3da"><rect x="110" y="62" width="60" height="5" rx="1"/><rect x="110" y="70" width="55" height="5" rx="1"/><rect x="110" y="78" width="62" height="5" rx="1"/></g>
+      <rect x="190" y="40" width="75" height="52" rx="6" fill="#fff" stroke="#c9c2b6"/><text x="227" y="63" text-anchor="middle" fill="#2e2825" font-size="8" font-weight="600" font-family="DM Sans,sans-serif">PitchBook</text>
+      <rect x="198" y="72" width="55" height="6" rx="2" fill="#e8e3da"/><rect x="198" y="82" width="48" height="6" rx="2" fill="#e8e3da"/>
+      <path d="M90 61 L100 55" stroke="#c9c2b6" stroke-width="1.5" stroke-dasharray="3 2"/><path d="M180 61 L190 55" stroke="#c9c2b6" stroke-width="1.5" stroke-dasharray="3 2"/>
+      <text x="140" y="108" text-anchor="middle" fill="#8a8278" font-size="10" font-family="DM Sans,sans-serif">↓ manual handoffs ↓</text>
+      <rect x="55" y="125" width="170" height="48" rx="8" fill="rgba(168,50,40,0.08)" stroke="rgba(168,50,40,0.35)" stroke-width="1.5"/>
+      <text x="140" y="147" text-anchor="middle" fill="#a83228" font-size="11" font-weight="700" font-family="DM Sans,sans-serif">Gut feeling</text>
+      <text x="140" y="162" text-anchor="middle" fill="#6b6560" font-size="9" font-family="DM Sans,sans-serif">Different process every analyst</text>
+      <rect x="70" y="188" width="140" height="38" rx="6" fill="#fff" stroke="#2f81f7" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.7"/>
+      <text x="140" y="210" text-anchor="middle" fill="#8a8278" font-size="9" font-family="DM Sans,sans-serif">Partner review bottleneck</text>
+    </svg>
+  </div>
 </div>
-<div class="pain-tags">
-  <div class="pain-tag bad">Slow</div>
-  <div class="pain-tag bad">Inconsistent</div>
-  <div class="pain-tag bad">Hard to Scale</div>
-  <div class="pain-tag bad">Data Silos</div>
-</div>
-<div class="callout callout-accent">Every analyst does it differently. High-potential startups slip through when there isn't enough time to research them all.</div>
 </div>
 ```
 
