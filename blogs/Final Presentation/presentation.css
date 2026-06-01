@@ -691,7 +691,8 @@
 }
 
 .reveal .before-ai-main .callout {
-  margin-top: auto;
+  /* Keep the sentence box directly under the pain tags */
+  margin-top: 0.55em;
 }
 
 .reveal .before-ai-photo {
@@ -762,18 +763,21 @@
   max-height: none;
   padding: 0.4rem;
   align-self: stretch;
-  min-height: 0;
+  /* Fixed-ish height so we can crop the funnel whitespace */
+  min-height: 13rem;
+  overflow: hidden;
 }
 
 .reveal .slide-ai-photo img {
   width: 100%;
-  max-height: 15rem;
-  min-height: 13rem;
-  object-fit: contain;
-  object-position: center;
+  height: 100%;
+  max-height: none;
+  min-height: 0;
+  object-fit: cover;
+  object-position: center top;
   border-radius: 6px;
   display: block;
-  background: #fff;
+  background: transparent;
 }
 
 .reveal .flow-compact {
