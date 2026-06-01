@@ -25,14 +25,14 @@
     "href": "blogs/Final Presentation/final_presentation.html#the-problem",
     "title": "From Startup Chaos to Smart Deal Flow",
     "section": "The Problem",
-    "text": "The Problem\n\nVCs review thousands of startups, but partner time and attention are limited.\n\n  \n    20,000+\n    startups in the pipeline\n    Imagine Shark Tank, but with 20,000 startups in a spreadsheet.\n    \n      VCs review thousands of pitches every year\n      Partner time is the scarcest resource\n      Most deals never get a real look\n      Great companies get lost in the noise\n    \n  \n  \n    \n      \n      DEAL PIPELINE\n      \n        \n        \n        \n        \n      \n      \n      \n      Too many rows · too little time"
+    "text": "The Problem\n\n\n  VCs review thousands of startups, but partner time and attention are limited.\n  \n    20,000+\n    startups in the pipeline\n    Imagine Shark Tank, but with 20,000 startups in a spreadsheet.\n    \n      VCs review thousands of pitches every year\n      Partner time is the scarcest resource\n      Most deals never get a real look\n      Great companies get lost in the noise\n    \n  \n  \n    \n      \n      DEAL PIPELINE\n      \n        \n        \n        \n        \n      \n      \n      \n      Too many rows · too little time"
   },
   {
     "objectID": "blogs/Final Presentation/final_presentation.html#before-ai",
     "href": "blogs/Final Presentation/final_presentation.html#before-ai",
     "title": "From Startup Chaos to Smart Deal Flow",
     "section": "Before AI",
-    "text": "Before AI\n\nThe traditional process is manual, inconsistent, and hard to scale.\n\n  CRM Data→\n  Spreadsheets→\n  Manual Research→\n  PitchBook / Harmonic→\n  Gut Feeling→\n  Partner Review\n\n\n  Slow\n  Inconsistent\n  Hard to Scale\n  Data Silos\n\nEvery analyst does it differently. High-potential startups slip through when there isn't enough time to research them all.\n\n  \n    \n    CRM\n    \n    Sheets\n    \n    Research\n    \n    \n    \n    Siloed tools · manual handoffs\n    No single source of truth\n    \n    ?"
+    "text": "Before AI\n\nThe traditional process is manual, inconsistent, and hard to scale.\n\n  CRM Data→\n  Spreadsheets→\n  Manual Research→\n  PitchBook / Harmonic→\n  Gut Feeling→\n  Partner Review\n\n\n  Slow\n  Inconsistent\n  Hard to Scale\n  Data Silos\n\nEvery analyst does it differently. High-potential startups slip through when there isn't enough time to research them all.\n\n  \n    DATA SILOS — SAME STARTUP, THREE SYSTEMS\n    \n    CRM\n    Notes & contacts\n    \n    Spreadsheet\n    Rankings & tags\n    \n    PitchBook\n    Funding data\n    \n    \n    ✕\n    ✕\n    \n    No unified view — analysts reconcile by hand\n  \n  The workflow above is linear; the data behind it is not."
   },
   {
     "objectID": "blogs/Final Presentation/final_presentation.html#ai-assisted-deal-flow",
