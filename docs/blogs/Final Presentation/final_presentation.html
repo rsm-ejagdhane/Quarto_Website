@@ -133,7 +133,10 @@
     tagline.textContent = 'Marketing analytics applied to venture capital — turning messy deal flow into smarter, prioritized investment decisions.';
     var date = slide.querySelector('.date');
     if (date) date.insertAdjacentElement('afterend', tagline);
-    else slide.appendChild(tagline);
+    var viz = document.createElement('div');
+    viz.className = 'title-slide-visual';
+    viz.innerHTML = '<svg viewBox="0 0 520 140" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="20" y="20" width="480" height="100" rx="10" fill="rgba(255,255,255,0.55)" stroke="#c9c2b6"/><text x="260" y="42" text-anchor="middle" fill="#8a8278" font-size="11" font-family="DM Sans,sans-serif">DEAL FLOW → PRIORITIZED INSIGHT</text><circle cx="80" cy="78" r="22" fill="rgba(47,129,247,0.15)" stroke="#2f81f7"/><text x="80" y="82" text-anchor="middle" fill="#2f81f7" font-size="10" font-family="DM Sans,sans-serif">Data</text><line x1="102" y1="78" x2="168" y2="78" stroke="#2f81f7" stroke-width="2"/><circle cx="190" cy="78" r="22" fill="rgba(130,80,223,0.14)" stroke="#8250df"/><text x="190" y="82" text-anchor="middle" fill="#8250df" font-size="10" font-family="DM Sans,sans-serif">AI</text><line x1="212" y1="78" x2="278" y2="78" stroke="#8250df" stroke-width="2"/><circle cx="300" cy="78" r="22" fill="rgba(45,164,78,0.16)" stroke="#2da44e"/><text x="300" y="82" text-anchor="middle" fill="#2da44e" font-size="9" font-family="DM Sans,sans-serif">Focus</text><line x1="322" y1="78" x2="388" y2="78" stroke="#2da44e" stroke-width="2"/><circle cx="410" cy="78" r="18" fill="rgba(122,59,53,0.12)" stroke="#7a3b35"/><text x="410" y="82" text-anchor="middle" fill="#7a3b35" font-size="12" font-family="DM Sans,sans-serif">✓</text></svg>';
+    if (tagline.parentNode) tagline.insertAdjacentElement('afterend', viz);
   });
   </script>
 </head>
@@ -159,40 +162,59 @@ Eesha Jagdhane
 <h2>The Problem</h2>
 <div class="slide-body">
 <p class="slide-intro">VCs review thousands of startups, but partner time and attention are limited.</p>
-<div class="hero-stat">20,000+</div>
-<div class="hero-stat-label">startups in the pipeline</div>
-<div class="callout">Imagine Shark Tank, but with <span class="metric-sm">20,000</span> startups in a spreadsheet.</div>
-<ul>
-  <li>VCs review thousands of pitches every year</li>
-  <li>Partner time is the scarcest resource</li>
-  <li>Most deals never get a real look</li>
-  <li>Great companies get lost in the noise</li>
-</ul>
+<div class="content-split">
+  <div class="content-main">
+    <div class="hero-stat">20,000+</div>
+    <div class="hero-stat-label">startups in the pipeline</div>
+    <div class="callout">Imagine Shark Tank, but with <span class="metric-sm">20,000</span> startups in a spreadsheet.</div>
+    <ul>
+      <li>VCs review thousands of pitches every year</li>
+      <li>Partner time is the scarcest resource</li>
+      <li>Most deals never get a real look</li>
+      <li>Great companies get lost in the noise</li>
+    </ul>
+  </div>
+  <div class="slide-visual-box">
+    <svg class="viz-svg" viewbox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="18" y="20" width="164" height="165" rx="6" fill="#fff" stroke="#c9c2b6" stroke-width="1.5"></rect>
+      <text x="100" y="42" text-anchor="middle" fill="#8a8278" font-size="9" font-family="DM Sans,sans-serif">DEAL PIPELINE</text>
+      <g fill="#e8e3da" stroke="#c9c2b6" stroke-width="0.8">
+        <rect x="30" y="52" width="140" height="10" rx="2"></rect><rect x="30" y="68" width="140" height="10" rx="2"></rect>
+        <rect x="30" y="84" width="140" height="10" rx="2"></rect><rect x="30" y="100" width="140" height="10" rx="2"></rect>
+        <rect x="30" y="116" width="140" height="10" rx="2"></rect><rect x="30" y="132" width="140" height="10" rx="2"></rect>
+        <rect x="30" y="148" width="140" height="10" rx="2"></rect>
+      </g>
+      <circle cx="150" cy="57" r="5" fill="#2f81f7"></circle><circle cx="45" cy="89" r="5" fill="#2f81f7" opacity="0.75"></circle>
+      <circle cx="135" cy="121" r="5" fill="#2da44e"></circle><circle cx="65" cy="153" r="4" fill="#8a8278" opacity="0.5"></circle>
+      <text x="100" y="198" text-anchor="middle" fill="#7a3b35" font-size="8" font-weight="600" font-family="DM Sans,sans-serif">Too many rows · too little time</text>
+    </svg>
+  </div>
+</div>
 </div>
 </section>
 <section id="before-ai" class="slide level2">
 <h2>Before AI</h2>
-<div class="slide-body slide-before-ai">
+<div class="slide-body">
 <p class="slide-intro">The traditional process is manual, inconsistent, and hard to scale.</p>
-<div class="before-ai-layout">
-  <div class="before-ai-visual">
-    <svg class="viz-svg" viewbox="0 0 280 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <rect x="8" y="20" width="72" height="48" rx="6" fill="rgba(255,255,255,0.8)" stroke="#c9c2b6"></rect>
-      <text x="44" y="48" text-anchor="middle" font-size="10" fill="#6b6560" font-family="DM Sans,sans-serif">CRM</text>
-      <rect x="100" y="8" width="72" height="48" rx="6" fill="rgba(255,255,255,0.8)" stroke="#c9c2b6"></rect>
-      <text x="136" y="36" text-anchor="middle" font-size="10" fill="#6b6560" font-family="DM Sans,sans-serif">Sheets</text>
-      <rect x="192" y="28" width="72" height="48" rx="6" fill="rgba(255,255,255,0.8)" stroke="#c9c2b6"></rect>
-      <text x="228" y="56" text-anchor="middle" font-size="9" fill="#6b6560" font-family="DM Sans,sans-serif">Research</text>
-      <path d="M44 68 L44 88 L136 88 L136 56" stroke="#c9c2b6" stroke-width="1.5" fill="none" stroke-dasharray="4 3"></path>
-      <path d="M172 76 L200 100 L136 100" stroke="#c9c2b6" stroke-width="1.5" fill="none" stroke-dasharray="4 3"></path>
-      <rect x="40" y="110" width="200" height="52" rx="6" fill="rgba(168,50,40,0.08)" stroke="rgba(168,50,40,0.35)" stroke-dasharray="5 4"></rect>
-      <text x="140" y="132" text-anchor="middle" font-size="11" fill="#a83228" font-family="DM Sans,sans-serif">Siloed tools · manual handoffs</text>
-      <text x="140" y="148" text-anchor="middle" font-size="10" fill="#8a8278" font-family="DM Sans,sans-serif">No single source of truth</text>
-      <circle cx="230" cy="155" r="18" fill="rgba(122,59,53,0.12)" stroke="#7a3b35"></circle>
-      <text x="230" y="159" text-anchor="middle" font-size="14" fill="#7a3b35">?</text>
+<div class="content-split">
+  <div class="slide-visual-box">
+    <svg class="viz-svg" viewbox="0 0 240 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="10" y="15" width="70" height="42" rx="6" fill="rgba(255,255,255,0.85)" stroke="#c9c2b6"></rect>
+      <text x="45" y="40" text-anchor="middle" font-size="10" fill="#6b6560" font-family="DM Sans,sans-serif">CRM</text>
+      <rect x="88" y="5" width="70" height="42" rx="6" fill="rgba(255,255,255,0.85)" stroke="#c9c2b6"></rect>
+      <text x="123" y="30" text-anchor="middle" font-size="10" fill="#6b6560" font-family="DM Sans,sans-serif">Sheets</text>
+      <rect x="160" y="22" width="70" height="42" rx="6" fill="rgba(255,255,255,0.85)" stroke="#c9c2b6"></rect>
+      <text x="195" y="47" text-anchor="middle" font-size="9" fill="#6b6560" font-family="DM Sans,sans-serif">Research</text>
+      <path d="M45 57 L45 75 L123 75 L123 47" stroke="#c9c2b6" stroke-width="1.5" fill="none" stroke-dasharray="4 3"></path>
+      <path d="M158 64 L175 88 L123 88" stroke="#c9c2b6" stroke-width="1.5" fill="none" stroke-dasharray="4 3"></path>
+      <rect x="35" y="100" width="170" height="48" rx="6" fill="rgba(168,50,40,0.08)" stroke="rgba(168,50,40,0.35)" stroke-dasharray="5 4"></rect>
+      <text x="120" y="120" text-anchor="middle" font-size="10" fill="#a83228" font-family="DM Sans,sans-serif">Siloed tools</text>
+      <text x="120" y="134" text-anchor="middle" font-size="9" fill="#8a8278" font-family="DM Sans,sans-serif">Manual handoffs</text>
+      <circle cx="200" cy="145" r="16" fill="rgba(122,59,53,0.12)" stroke="#7a3b35"></circle>
+      <text x="200" y="149" text-anchor="middle" font-size="13" fill="#7a3b35">?</text>
     </svg>
   </div>
-  <div class="before-ai-content">
+  <div class="content-main">
     <div class="flow flow-compact">
       <div class="flow-step">CRM Data</div><div class="flow-arrow">→</div>
       <div class="flow-step">Spreadsheets</div><div class="flow-arrow">→</div>
@@ -216,21 +238,30 @@ Eesha Jagdhane
 <h2>AI-Assisted Deal Flow</h2>
 <div class="slide-body">
 <p class="slide-intro">AI gives deal flow a brain — unified data, faster insight, and prioritized review.</p>
-<div class="ai-visual-accent">
-  <svg class="viz-svg" viewbox="0 0 520 56" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <circle cx="28" cy="28" r="20" fill="rgba(47,129,247,0.15)" stroke="#2f81f7"></circle>
-    <text x="28" y="32" text-anchor="middle" font-size="11" fill="#2f81f7" font-family="DM Sans,sans-serif">AI</text>
-    <line x1="48" y1="28" x2="88" y2="28" stroke="#2f81f7" stroke-width="2"></line>
-    <rect x="88" y="14" width="100" height="28" rx="6" fill="rgba(130,80,223,0.12)" stroke="#8250df"></rect>
-    <text x="138" y="32" text-anchor="middle" font-size="9" fill="#2e2825" font-family="DM Sans,sans-serif">Signals</text>
-    <line x1="188" y1="28" x2="228" y2="28" stroke="#8250df" stroke-width="2"></line>
-    <rect x="228" y="14" width="110" height="28" rx="6" fill="rgba(45,164,78,0.14)" stroke="#2da44e"></rect>
-    <text x="283" y="32" text-anchor="middle" font-size="9" fill="#2e2825" font-family="DM Sans,sans-serif">Prioritized flow</text>
-    <line x1="338" y1="28" x2="378" y2="28" stroke="#2da44e" stroke-width="2"></line>
-    <circle cx="408" cy="28" r="18" fill="rgba(45,164,78,0.2)" stroke="#2da44e"></circle>
-    <text x="408" y="32" text-anchor="middle" font-size="12" fill="#2da44e">✓</text>
+<div class="slide-visual-box slide-visual-wide">
+  <svg class="viz-svg" viewbox="0 0 560 70" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <rect x="0" y="8" width="560" height="54" rx="8" fill="rgba(255,255,255,0.5)" stroke="#c9c2b6"></rect>
+    <circle cx="50" cy="35" r="18" fill="rgba(47,129,247,0.15)" stroke="#2f81f7"></circle>
+    <text x="50" y="39" text-anchor="middle" font-size="10" fill="#2f81f7" font-family="DM Sans,sans-serif">Unified</text>
+    <line x1="68" y1="35" x2="115" y2="35" stroke="#2f81f7" stroke-width="2"></line>
+    <circle cx="140" cy="35" r="18" fill="rgba(47,129,247,0.2)" stroke="#2f81f7" stroke-width="2"></circle>
+    <text x="140" y="39" text-anchor="middle" font-size="10" fill="#2f81f7" font-family="DM Sans,sans-serif">AI</text>
+    <line x1="158" y1="35" x2="205" y2="35" stroke="#8250df" stroke-width="2"></line>
+    <circle cx="230" cy="35" r="18" fill="rgba(130,80,223,0.14)" stroke="#8250df"></circle>
+    <text x="230" y="39" text-anchor="middle" font-size="9" fill="#2e2825" font-family="DM Sans,sans-serif">Signals</text>
+    <line x1="248" y1="35" x2="295" y2="35" stroke="#2da44e" stroke-width="2"></line>
+    <circle cx="320" cy="35" r="18" fill="rgba(45,164,78,0.16)" stroke="#2da44e"></circle>
+    <text x="320" y="39" text-anchor="middle" font-size="8" fill="#2e2825" font-family="DM Sans,sans-serif">Scoring</text>
+    <line x1="338" y1="35" x2="385" y2="35" stroke="#2da44e" stroke-width="2"></line>
+    <circle cx="410" cy="35" r="18" fill="rgba(45,164,78,0.22)" stroke="#2da44e"></circle>
+    <text x="410" y="39" text-anchor="middle" font-size="8" fill="#2da44e" font-family="DM Sans,sans-serif">Priority</text>
+    <line x1="428" y1="35" x2="475" y2="35" stroke="#7a3b35" stroke-width="1.5" stroke-dasharray="3 2"></line>
+    <circle cx="500" cy="35" r="16" fill="rgba(122,59,53,0.12)" stroke="#7a3b35"></circle>
+    <text x="500" y="39" text-anchor="middle" font-size="11" fill="#7a3b35">★</text>
   </svg>
 </div>
+<div class="content-split content-split-ai">
+  <div class="content-main">
 <div class="flow">
   <div class="flow-step">CRM + Harmonic + PitchBook</div><div class="flow-arrow">→</div>
   <div class="flow-step highlight">AI Summaries</div><div class="flow-arrow">→</div>
@@ -244,7 +275,20 @@ Eesha Jagdhane
   <li>Signals surface thesis-fit opportunities automatically</li>
   <li>Partners review the <strong class="metric-sm">best</strong> deals first — not just the loudest</li>
 </ul>
-<div class="callout callout-purple">AI doesn't replace judgment — it front-loads intelligence so investors spend time where it matters.</div>
+<div class="callout callout-purple callout-tight">AI doesn't replace judgment — it front-loads intelligence so investors spend time where it matters.</div>
+  </div>
+  <div class="slide-visual-box">
+    <svg class="viz-svg" viewbox="0 0 180 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <circle cx="90" cy="95" r="55" fill="rgba(47,129,247,0.08)" stroke="#2f81f7" stroke-width="1.5"></circle>
+      <circle cx="90" cy="95" r="35" fill="rgba(130,80,223,0.1)" stroke="#8250df"></circle>
+      <circle cx="90" cy="95" r="18" fill="#2f81f7"></circle>
+      <text x="90" y="99" text-anchor="middle" fill="#fff" font-size="11" font-weight="700" font-family="DM Sans,sans-serif">AI</text>
+      <circle cx="45" cy="55" r="10" fill="#2da44e" opacity="0.9"></circle><circle cx="135" cy="60" r="8" fill="#2f81f7" opacity="0.85"></circle>
+      <circle cx="125" cy="130" r="9" fill="#8250df" opacity="0.85"></circle><circle cx="50" cy="125" r="7" fill="#7a3b35" opacity="0.8"></circle>
+      <text x="90" y="168" text-anchor="middle" fill="#6b6560" font-size="9" font-family="DM Sans,sans-serif">Signals orbit the model</text>
+    </svg>
+  </div>
+</div>
 </div>
 </section>
 <section id="marketing-analytics" class="slide level2">
