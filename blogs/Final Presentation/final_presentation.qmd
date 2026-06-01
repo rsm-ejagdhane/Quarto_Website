@@ -134,6 +134,8 @@ execute:
 ```{=html}
 <div class="slide-body">
 <p class="slide-intro">AI gives deal flow a brain — unified data, faster insight, and prioritized review.</p>
+<div class="content-split content-split-ai">
+  <div class="content-main">
 <div class="slide-visual-box slide-visual-wide">
   <svg class="viz-svg" viewBox="0 0 560 70" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
     <rect x="0" y="8" width="560" height="54" rx="8" fill="rgba(255,255,255,0.5)" stroke="#c9c2b6"/>
@@ -156,9 +158,7 @@ execute:
     <text x="500" y="39" text-anchor="middle" font-size="11" fill="#7a3b35">★</text>
   </svg>
 </div>
-<div class="content-split content-split-ai">
-  <div class="content-main">
-<div class="flow">
+<div class="flow flow-compact">
   <div class="flow-step">CRM + Harmonic + PitchBook</div><div class="flow-arrow">→</div>
   <div class="flow-step highlight">AI Summaries</div><div class="flow-arrow">→</div>
   <div class="flow-step highlight">Investment Signals</div><div class="flow-arrow">→</div>

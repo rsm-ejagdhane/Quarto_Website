@@ -31,16 +31,30 @@
               linear-gradient(180deg, #f6f2ec 0%, var(--paper) 40%, #efe9e0 100%);
   padding: 1.15rem 2rem 1rem !important;
   box-sizing: border-box;
-  overflow: hidden !important;
-  height: 100% !important;
 }
 
-/* All content below the slide title stays inside the frame */
+/* Content slides: flex so body fits under the h2; Reveal scales the whole section */
+.reveal .slides section.slide.level2 {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  overflow: hidden !important;
+}
+
+.reveal .slides section.slide.level2 > h2 {
+  flex-shrink: 0;
+  margin-bottom: 0.2em !important;
+}
+
 .reveal .slide-body {
+  flex: 1 1 auto;
+  min-height: 0;
   max-width: 100%;
   overflow: hidden;
-  font-size: 0.78em;
-  line-height: 1.42;
+  font-size: 0.74em;
+  line-height: 1.38;
+  display: flex;
+  flex-direction: column;
 }
 
 .reveal .deck-tagline {
@@ -216,8 +230,14 @@
 .reveal .analytics-viz {
   display: grid;
   grid-template-columns: 1.05fr 0.95fr;
-  gap: 0.85rem;
-  margin-top: 0.35em;
+  gap: 0.65rem;
+  margin-top: 0.15em;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.reveal .analytics-viz .viz-svg {
+  max-height: 11.5rem;
 }
 .reveal .viz-svg {
   width: 100%;
@@ -257,11 +277,12 @@
   text-transform: uppercase;
 }
 .reveal .slide-intro {
-  font-size: 0.95em;
+  font-size: 0.92em;
   color: var(--ink-soft);
-  margin: 0 0 0.75em;
+  margin: 0 0 0.45em;
   max-width: 100%;
-  line-height: 1.45;
+  line-height: 1.4;
+  flex-shrink: 0;
 }
 .reveal .metric {
   font-family: 'Playfair Display', serif;
@@ -288,14 +309,14 @@
 
 .reveal .slide-body ul {
   list-style: none;
-  margin: 0.45em 0 0;
+  margin: 0.3em 0 0;
   padding: 0;
 }
 
 .reveal .slide-body ul li {
   position: relative;
   padding-left: 1.15em;
-  margin-bottom: 0.35em;
+  margin-bottom: 0.28em;
 }
 
 .reveal .slide-body ul li::before {
@@ -516,8 +537,10 @@
 .reveal .impact-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.45rem;
-  margin: 0.5em 0;
+  gap: 0.4rem;
+  margin: 0.25em 0;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .reveal .impact-item {
@@ -542,9 +565,10 @@
   background: linear-gradient(135deg, rgba(47,129,247,0.10), rgba(130,80,223,0.10));
   border: 1px solid rgba(46, 40, 37, 0.16);
   border-radius: 8px;
-  padding: 0.55rem 0.75rem;
-  margin-top: 0.5em;
-  font-size: 0.9em;
+  padding: 0.45rem 0.65rem;
+  margin-top: 0.35em;
+  font-size: 0.85em;
+  flex-shrink: 0;
   color: var(--ink-soft);
   line-height: 1.4;
   max-width: 100%;
@@ -556,11 +580,11 @@
 
 .reveal .hero-stat {
   font-family: 'Playfair Display', serif;
-  font-size: 2.4em;
+  font-size: 2em;
   font-weight: 900;
   color: var(--blue);
   line-height: 1;
-  margin: 0.2em 0 0.05em;
+  margin: 0.1em 0 0.05em;
   display: inline-block;
 }
 
@@ -591,6 +615,7 @@
   padding: 2rem 2.5rem !important;
   height: 100% !important;
   box-sizing: border-box;
+  overflow: hidden !important;
 }
 
 .reveal #title-slide .title {
@@ -623,34 +648,53 @@
 /* Side-by-side content + visuals (slides 2–4) */
 .reveal .content-split {
   display: grid;
-  grid-template-columns: 1fr 0.42fr;
-  gap: 0.85rem;
-  align-items: center;
-  margin-top: 0.35em;
+  grid-template-columns: 1fr minmax(0, 0.38fr);
+  gap: 0.65rem;
+  align-items: start;
+  margin-top: 0.15em;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .reveal .content-split-ai {
-  grid-template-columns: 1.15fr 0.38fr;
-  align-items: start;
+  grid-template-columns: 1fr minmax(0, 0.34fr);
+}
+
+.reveal .content-main {
+  min-width: 0;
+  min-height: 0;
 }
 
 .reveal .slide-visual-box {
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 0.45rem;
+  padding: 0.35rem;
   box-shadow: 0 4px 14px var(--shadow);
+  max-height: 10.5rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .reveal .slide-visual-box .viz-svg {
   width: 100%;
+  max-height: 9.75rem;
   height: auto;
   display: block;
 }
 
-.reveal .slide-visual-wide {
-  margin: 0.35em 0 0.5em;
-  padding: 0.35rem 0.5rem;
+.reveal .slide-visual-box.slide-visual-wide {
+  margin: 0.15em 0 0.3em;
+  padding: 0.2rem 0.35rem;
+  max-height: 3rem;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.reveal .slide-visual-box.slide-visual-wide .viz-svg {
+  max-height: 2.5rem;
 }
 
 .reveal .flow-compact {
