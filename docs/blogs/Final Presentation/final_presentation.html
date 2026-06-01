@@ -174,8 +174,18 @@ Eesha Jagdhane
   background: radial-gradient(1100px 600px at 20% 10%, rgba(47, 129, 247, 0.09), rgba(47, 129, 247, 0) 60%),
               radial-gradient(900px 520px at 92% 22%, rgba(130, 80, 223, 0.10), rgba(130, 80, 223, 0) 58%),
               linear-gradient(180deg, #f6f2ec 0%, var(--paper) 40%, #efe9e0 100%);
-  padding: 1.95rem 2.6rem !important;
+  padding: 1.5rem 2.4rem 1.35rem !important;
   box-sizing: border-box;
+  overflow: hidden !important;
+  height: 100% !important;
+}
+
+/* All content below the slide title stays inside the frame */
+.reveal .slide-body {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 0.72em;
+  line-height: 1.45;
 }
 
 .reveal h1, .reveal h2, .reveal h3 {
@@ -187,69 +197,115 @@ Eesha Jagdhane
   line-height: 1.05;
 }
 
-.reveal h1 { font-size: 2.4em; margin-bottom: 0.35em; }
-.reveal h2 { font-size: 1.85em; margin-bottom: 0.5em; }
-.reveal .slides section > h2:first-child { display: none; }
-.reveal h3 { font-size: 1.15em; font-weight: 700; color: var(--rose); margin-bottom: 0.6em; }
+.reveal h1 { font-size: 2.5em; margin-bottom: 0.4em; }
+.reveal h2 {
+  font-size: 2em;
+  margin-bottom: 0.4em;
+  padding-bottom: 0.28em;
+  border-bottom: 2px solid rgba(122, 59, 53, 0.25);
+  flex-shrink: 0;
+}
+.reveal h3 {
+  font-size: 0.78em;
+  font-weight: 600;
+  color: var(--rose);
+  margin: 0.55em 0 0.35em;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.reveal .slide-intro {
+  font-size: 0.95em;
+  color: var(--ink-soft);
+  margin: 0 0 0.75em;
+  max-width: 100%;
+  line-height: 1.45;
+}
+.reveal .metric {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  color: var(--blue);
+}
+.reveal .metric-sm {
+  font-weight: 700;
+  color: var(--blue);
+}
+.reveal .two-col-slide {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-top: 0.5em;
+}
 
-.reveal p, .reveal li {
-  font-size: 0.98em;
-  line-height: 1.55;
+.reveal .slide-body p,
+.reveal .slide-body li {
+  font-size: 1em;
+  line-height: 1.4;
   color: var(--ink-soft);
 }
 
-.reveal ul {
+.reveal .slide-body ul {
   list-style: none;
-  margin: 0.6em 0 0 0;
+  margin: 0.45em 0 0;
   padding: 0;
 }
 
-.reveal ul li {
+.reveal .slide-body ul li {
   position: relative;
-  padding-left: 1.4em;
-  margin-bottom: 0.55em;
+  padding-left: 1.15em;
+  margin-bottom: 0.35em;
 }
 
-.reveal ul li::before {
+.reveal .slide-body ul li::before {
   content: "";
   position: absolute;
   left: 0;
-  top: 0.55em;
-  width: 6px;
-  height: 6px;
+  top: 0.45em;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: var(--blue);
 }
 
-.reveal .slide-label {
-  font-size: 0.62em;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--rose);
-  margin-bottom: 0.6em;
-  font-weight: 500;
-}
-
 .reveal .subtitle-line {
-  font-size: 0.95em;
+  font-size: 0.88em;
   color: var(--ink-soft);
   font-weight: 300;
-  margin-bottom: 1.8em;
-  max-width: 85%;
+  margin-bottom: 1em;
+  max-width: 100%;
+}
+.reveal .intro-hero {
+  margin-top: 0.35em;
+  font-size: 0.78em;
+}
+.reveal .intro-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.6em;
+  font-weight: 900;
+  line-height: 1.05;
+  color: var(--ink);
+  margin-bottom: 0.35em;
+  max-width: 100%;
 }
 
 .reveal .callout {
   background: var(--panel);
   border: 1px solid var(--border);
-  border-left: 4px solid var(--blue);
-  border-radius: 10px;
-  padding: 1rem 1.25rem;
-  margin: 1.2em 0;
-  font-size: 0.88em;
-  color: var(--ink);
-  font-style: italic;
-  line-height: 1.5;
-  box-shadow: 0 12px 26px var(--shadow);
+  border-left: 3px solid var(--blue);
+  border-radius: 8px;
+  padding: 0.55rem 0.75rem;
+  margin: 0.55em 0;
+  font-size: 0.92em;
+  color: var(--ink-soft);
+  font-style: normal;
+  line-height: 1.4;
+  box-shadow: 0 4px 14px var(--shadow);
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  display: block;
 }
 
 .reveal .callout-accent {
@@ -264,23 +320,27 @@ Eesha Jagdhane
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0.35rem;
-  margin: 1.4em 0 0.8em;
+  gap: 0.28rem;
+  margin: 0.5em 0;
+  max-width: 100%;
 }
 
 .reveal .flow-step {
   background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 0.55rem 0.85rem;
-  font-size: 0.72em;
+  border-radius: 5px;
+  padding: 0.35rem 0.55rem;
+  font-size: 0.82em;
   color: var(--ink);
   font-weight: 500;
-  white-space: nowrap;
+  white-space: normal;
+  max-width: 9.5rem;
+  line-height: 1.25;
+  text-align: center;
 }
 
 .reveal .flow-step.muted-step {
-  color: var(--gray-text);
+  color: var(--ink-soft);
   border-color: var(--muted);
 }
 
@@ -301,19 +361,20 @@ Eesha Jagdhane
 
 .reveal .flow-arrow {
   color: rgba(46, 40, 37, 0.45);
-  font-size: 0.85em;
+  font-size: 0.75em;
   font-weight: 300;
+  flex-shrink: 0;
 }
 
 .reveal .pain-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 1em;
+  gap: 0.35rem;
+  margin-top: 0.45em;
 }
 
 .reveal .pain-tag {
-  font-size: 0.62em;
+  font-size: 0.78em;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   padding: 0.35rem 0.75rem;
@@ -336,17 +397,22 @@ Eesha Jagdhane
 .reveal .segment-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.65rem;
-  margin-top: 1em;
+  gap: 0.5rem;
+  margin-top: 0.35em;
+}
+.reveal .segment-grid.compact .segment-card {
+  padding: 0.5rem 0.7rem;
+  font-size: 0.65em;
 }
 
 .reveal .segment-card {
   background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 0.7rem 0.9rem;
-  font-size: 0.72em;
+  border-radius: 6px;
+  padding: 0.45rem 0.6rem;
+  font-size: 0.88em;
   color: var(--ink);
+  line-height: 1.3;
 }
 
 .reveal .segment-card span {
@@ -367,16 +433,19 @@ Eesha Jagdhane
 
 .reveal .driver-list {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.5rem 1.5rem;
-  margin-top: 0.8em;
+  grid-template-columns: 1fr;
+  gap: 0.4rem;
+  margin-top: 0.35em;
+}
+.reveal .driver-list.compact .driver-item {
+  font-size: 0.72em;
 }
 
 .reveal .driver-item {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  font-size: 0.78em;
+  gap: 0.45rem;
+  font-size: 0.88em;
   color: var(--ink);
 }
 
@@ -397,51 +466,59 @@ Eesha Jagdhane
 .reveal .impact-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.65rem;
-  margin: 1em 0;
+  gap: 0.45rem;
+  margin: 0.5em 0;
 }
 
 .reveal .impact-item {
   background: var(--panel);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 0.75rem 1rem;
-  font-size: 0.75em;
-  color: var(--ink);
+  border-radius: 6px;
+  padding: 0.45rem 0.6rem;
+  font-size: 0.82em;
+  color: var(--ink-soft);
+  line-height: 1.35;
 }
 
 .reveal .impact-item strong {
   display: block;
   color: var(--green);
-  font-size: 0.9em;
-  margin-bottom: 0.2em;
+  font-size: 1em;
+  margin-bottom: 0.15em;
   font-weight: 600;
 }
 
 .reveal .closing {
   background: linear-gradient(135deg, rgba(47,129,247,0.10), rgba(130,80,223,0.10));
   border: 1px solid rgba(46, 40, 37, 0.16);
-  border-radius: 10px;
-  padding: 1.1rem 1.4rem;
-  margin-top: 1em;
-  font-size: 0.82em;
-  color: var(--ink);
-  line-height: 1.55;
+  border-radius: 8px;
+  padding: 0.55rem 0.75rem;
+  margin-top: 0.5em;
+  font-size: 0.9em;
+  color: var(--ink-soft);
+  line-height: 1.4;
+  max-width: 100%;
+  box-sizing: border-box;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .reveal .hero-stat {
   font-family: 'Playfair Display', serif;
-  font-size: 3.2em;
+  font-size: 2.4em;
   font-weight: 900;
   color: var(--blue);
   line-height: 1;
-  margin: 0.3em 0 0.1em;
+  margin: 0.2em 0 0.05em;
+  display: inline-block;
 }
 
 .reveal .hero-stat-label {
-  font-size: 0.75em;
+  font-size: 0.88em;
   color: var(--ink-soft);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.45em;
 }
 
 .reveal .slide-footer-note {
@@ -458,28 +535,36 @@ Eesha Jagdhane
 .reveal .slide-number { color: rgba(46, 40, 37, 0.55); font-size: 0.55em; }
 </style>
 </section>
-<section id="startup-overload" class="slide level2">
-<h2>Startup Overload</h2>
-<div class="slide-label">
-The Problem
+<section id="introduction" class="slide level2">
+<h2>Introduction</h2>
+<div class="intro-hero">
+<div class="intro-title">
+From Startup Chaos to Smart Deal Flow
 </div>
-</section>
-<section>
-<section id="from-startup-chaos-to-smart-deal-flow" class="title-slide slide level1 center">
-<h1>From Startup Chaos to Smart Deal Flow</h1>
 <div class="subtitle-line">
 Using AI to Help VCs Pick Better Companies
 </div>
+<p class="slide-intro">
+Marketing analytics applied to venture capital — turning messy deal flow into smarter, prioritized investment decisions.
+</p>
+</div>
+</section>
+<section id="the-problem" class="slide level2">
+<h2>The Problem</h2>
+<div class="slide-body">
+<p class="slide-intro">
+VCs review thousands of startups, but partner time and attention are limited.
+</p>
 <div class="hero-stat">
 20,000+
 </div>
 <div class="hero-stat-label">
-startups in the pipeline — time and attention are finite
+startups in the pipeline
 </div>
 <div class="callout callout-none no-icon callout-style-simple">
 <div class="callout-body">
 <div class="callout-content">
-<p>Imagine Shark Tank, but with 20,000 startups in a spreadsheet.</p>
+<p>Imagine Shark Tank, but with <span class="metric-sm">20,000</span> startups in a spreadsheet.</p>
 </div>
 </div>
 </div>
@@ -489,16 +574,14 @@ startups in the pipeline — time and attention are finite
 <li>Most deals never get a real look</li>
 <li>Great companies get lost in the noise</li>
 </ul>
-</section>
-<section id="the-old-workflow" class="slide level2">
-<h2>The Old Workflow</h2>
-<div class="slide-label">
-Before AI
 </div>
-</section></section>
-<section>
-<section id="manual-slow-and-hard-to-scale" class="title-slide slide level1 center">
-<h1>Manual, Slow, and Hard to Scale</h1>
+</section>
+<section id="before-ai" class="slide level2">
+<h2>Before AI</h2>
+<div class="slide-body">
+<p class="slide-intro">
+The traditional process is manual, inconsistent, and hard to scale.
+</p>
 <div class="flow">
 <div class="flow-step">
 CRM Data
@@ -551,20 +634,18 @@ Data Silos
 <div class="callout callout-none no-icon callout-style-simple">
 <div class="callout-body">
 <div class="callout-content">
-<p>Every analyst does it differently. High-potential startups slip through because there simply isn’t enough time to research them all.</p>
+<p>Every analyst does it differently. High-potential startups slip through when there isn’t enough time to research them all.</p>
+</div>
 </div>
 </div>
 </div>
 </section>
-<section id="the-ai-assisted-workflow" class="slide level2">
-<h2>The AI-Assisted Workflow</h2>
-<div class="slide-label">
-The Solution
-</div>
-</section></section>
-<section>
-<section id="ai-gives-deal-flow-a-brain" class="title-slide slide level1 center">
-<h1>AI Gives Deal Flow a Brain</h1>
+<section id="ai-assisted-deal-flow" class="slide level2">
+<h2>AI-Assisted Deal Flow</h2>
+<div class="slide-body">
+<p class="slide-intro">
+AI gives deal flow a brain — unified data, faster insight, and prioritized review.
+</p>
 <div class="flow">
 <div class="flow-step">
 CRM + Harmonic + PitchBook
@@ -598,138 +679,54 @@ Prioritized Deal Flow
 <li>External data unified into one view</li>
 <li>AI distills company narratives in seconds</li>
 <li>Signals surface thesis-fit opportunities automatically</li>
-<li>Partners review the <em>best</em> deals first — not just the loudest</li>
+<li>Partners review the <strong class="metric-sm">best</strong> deals first — not just the loudest</li>
 </ul>
 <div class="callout callout-none no-icon callout-style-simple">
 <div class="callout-body">
 <div class="callout-content">
-<p>The workflow doesn’t replace judgment — it front-loads intelligence so investors spend time where it matters.</p>
+<p>AI doesn’t replace judgment — it front-loads intelligence so investors spend time where it matters.</p>
+</div>
 </div>
 </div>
 </div>
 </section>
-<section id="segmentation" class="slide level2">
-<h2>Segmentation</h2>
-<div class="slide-label">
-Marketing Analytics · Unsupervised ML
+<section id="marketing-analytics" class="slide level2">
+<h2>Marketing Analytics</h2>
+<div class="slide-body">
+<p class="slide-intro">
+How course concepts map to venture deal selection.
+</p>
+<div class="two-col-slide">
+<div>
+<pre><code>&lt;h3&gt;Segmentation (Unsupervised ML)&lt;/h3&gt;
+&lt;p class="slide-intro"&gt;Segment startups, not customers.&lt;/p&gt;
+&lt;div class="segment-grid compact"&gt;
+  &lt;div class="segment-card"&gt;High-Growth AI&lt;span&gt;Headcount &amp; funding velocity&lt;/span&gt;&lt;/div&gt;
+  &lt;div class="segment-card"&gt;Recently Funded&lt;span&gt;Fresh capital, momentum&lt;/span&gt;&lt;/div&gt;
+  &lt;div class="segment-card"&gt;Investor-Backed&lt;span&gt;Top-tier syndicate signals&lt;/span&gt;&lt;/div&gt;
+  &lt;div class="segment-card gem"&gt;Hidden Gems&lt;span&gt;Strong signals, low visibility&lt;/span&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre>
 </div>
-</section></section>
-<section>
-<section id="segment-startups-not-customers" class="title-slide slide level1 center">
-<h1>Segment Startups, Not Customers</h1>
-<p>Instead of clustering buyers, we cluster companies in the deal pipeline — revealing natural groups that guide prioritization.</p>
-<div class="segment-grid">
-<div class="segment-card">
-High-Growth AI Startups<span>Rapid headcount &amp; funding velocity</span>
-</div>
-<div class="segment-card">
-Recently Funded<span>Fresh capital, active momentum</span>
-</div>
-<div class="segment-card">
-Strong Investor-Backed<span>Top-tier VC syndicate signals</span>
-</div>
-<div class="segment-card">
-Thesis-Fit Companies<span>Aligned with fund strategy</span>
-</div>
-<div class="segment-card gem">
-Hidden Gems<span>Strong signals, low visibility</span>
-</div>
-<div class="segment-card low">
-Low-Fit Companies<span>Deprioritize with confidence</span>
-</div>
-</div>
-<div class="callout callout-none no-icon callout-style-simple">
-<div class="callout-body">
-<div class="callout-content">
-<p>Unsupervised learning finds patterns humans miss — turning a flat spreadsheet into a structured map of opportunity.</p>
-</div>
-</div>
-</div>
-</section>
-<section id="key-drivers-of-relevance" class="slide level2">
-<h2>Key Drivers of Relevance</h2>
-<div class="slide-label">
-Marketing Analytics · Supervised ML
-</div>
-</section></section>
-<section>
-<section id="what-drives-a-high-relevance-score" class="title-slide slide level1 center">
-<h1>What Drives a High Relevance Score?</h1>
-<p>Supervised models reveal <em>why</em> a startup ranks high — the same logic as key drivers analysis in marketing.</p>
-<div class="driver-list">
-<div class="driver-item">
-Thesis Fit
-<div class="driver-bar">
-<div class="driver-bar-fill" style="width:92%">
-
-</div>
-</div>
-</div>
-<div class="driver-item">
-Headcount Growth
-<div class="driver-bar">
-<div class="driver-bar-fill" style="width:78%">
-
-</div>
-</div>
-</div>
-<div class="driver-item">
-Recent Funding
-<div class="driver-bar">
-<div class="driver-bar-fill" style="width:71%">
-
-</div>
-</div>
-</div>
-<div class="driver-item">
-Investor Quality
-<div class="driver-bar">
-<div class="driver-bar-fill" style="width:68%">
-
-</div>
-</div>
-</div>
-<div class="driver-item">
-Founder / Team Strength
-<div class="driver-bar">
-<div class="driver-bar-fill" style="width:65%">
-
-</div>
-</div>
-</div>
-<div class="driver-item">
-Geography
-<div class="driver-bar">
-<div class="driver-bar-fill" style="width:48%">
-
-</div>
-</div>
-</div>
-<div class="driver-item">
-Prior Relationship
-<div class="driver-bar">
-<div class="driver-bar-fill" style="width:42%">
-
-</div>
-</div>
-</div>
-</div>
-<div class="callout callout-none no-icon callout-style-simple">
-<div class="callout-body">
-<div class="callout-content">
-<p>Key drivers turn a black-box score into an explainable investment signal — so partners trust and act on the ranking.</p>
+<div>
+<pre><code>&lt;h3&gt;Key Drivers (Supervised ML)&lt;/h3&gt;
+&lt;p class="slide-intro"&gt;What drives a high relevance score?&lt;/p&gt;
+&lt;div class="driver-list compact"&gt;
+  &lt;div class="driver-item"&gt;Thesis Fit &lt;div class="driver-bar"&gt;&lt;div class="driver-bar-fill" style="width:92%"&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div class="driver-item"&gt;Headcount Growth &lt;div class="driver-bar"&gt;&lt;div class="driver-bar-fill" style="width:78%"&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div class="driver-item"&gt;Recent Funding &lt;div class="driver-bar"&gt;&lt;div class="driver-bar-fill" style="width:71%"&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div class="driver-item"&gt;Investor Quality &lt;div class="driver-bar"&gt;&lt;div class="driver-bar-fill" style="width:68%"&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div class="driver-item"&gt;Founder / Team &lt;div class="driver-bar"&gt;&lt;div class="driver-bar-fill" style="width:65%"&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre>
 </div>
 </div>
 </div>
 </section>
 <section id="impact" class="slide level2">
 <h2>Impact</h2>
-<div class="slide-label">
-The Outcome
-</div>
-</section></section>
-<section id="focus-investors-dont-replace-them" class="title-slide slide level1 center">
-<h1>Focus Investors, Don’t Replace Them</h1>
+<div class="slide-body">
+<p class="slide-intro">
+The goal is not to replace investors — it’s to help them focus.
+</p>
 <div class="impact-grid">
 <div class="impact-item">
 <strong>Less Manual Screening</strong>Automate the first pass across thousands of companies
@@ -752,6 +749,7 @@ The Outcome
 </div>
 <div class="closing">
 <p>This project applies marketing analytics thinking to venture capital: using AI, segmentation, and relevance scoring to turn messy deal flow into smarter investment decisions.</p>
+</div>
 </div>
 
 

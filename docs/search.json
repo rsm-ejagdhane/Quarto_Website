@@ -60,6 +60,41 @@
     "href": "blogs/Final Presentation/final_presentation.html#impact",
     "title": "From Startup Chaos to Smart Deal Flow",
     "section": "Impact",
-    "text": "Impact\n\nThe Outcome"
+    "text": "Impact\n\n\nThe goal is not to replace investors — it’s to help them focus.\n\n\n\nLess Manual ScreeningAutomate the first pass across thousands of companies\n\n\nFaster ReviewAI summaries cut research time from hours to minutes\n\n\nConsistent ScoringEvery deal evaluated with the same framework\n\n\nBetter Data UseHarmonic, PitchBook, and CRM signals unified\n\n\nEasier PrioritizationRanked deal flow replaces gut-only triage\n\n\nHidden Gems FoundStrong startups surface before competitors notice\n\n\n\nThis project applies marketing analytics thinking to venture capital: using AI, segmentation, and relevance scoring to turn messy deal flow into smarter investment decisions."
+  },
+  {
+    "objectID": "blogs/Final Presentation/final_presentation.html#introduction",
+    "href": "blogs/Final Presentation/final_presentation.html#introduction",
+    "title": "From Startup Chaos to Smart Deal Flow",
+    "section": "Introduction",
+    "text": "Introduction\n\n\nFrom Startup Chaos to Smart Deal Flow\n\n\nUsing AI to Help VCs Pick Better Companies\n\n\nMarketing analytics applied to venture capital — turning messy deal flow into smarter, prioritized investment decisions."
+  },
+  {
+    "objectID": "blogs/Final Presentation/final_presentation.html#the-problem",
+    "href": "blogs/Final Presentation/final_presentation.html#the-problem",
+    "title": "From Startup Chaos to Smart Deal Flow",
+    "section": "The Problem",
+    "text": "The Problem\n\n\nVCs review thousands of startups, but partner time and attention are limited.\n\n\n20,000+\n\n\nstartups in the pipeline\n\n\n\n\nImagine Shark Tank, but with 20,000 startups in a spreadsheet.\n\n\n\n\nVCs review thousands of pitches every year\nPartner time is the scarcest resource\nMost deals never get a real look\nGreat companies get lost in the noise"
+  },
+  {
+    "objectID": "blogs/Final Presentation/final_presentation.html#before-ai",
+    "href": "blogs/Final Presentation/final_presentation.html#before-ai",
+    "title": "From Startup Chaos to Smart Deal Flow",
+    "section": "Before AI",
+    "text": "Before AI\n\n\nThe traditional process is manual, inconsistent, and hard to scale.\n\n\n\nCRM Data\n\n\n→\n\n\nSpreadsheets\n\n\n→\n\n\nManual Research\n\n\n→\n\n\nPitchBook / Harmonic\n\n\n→\n\n\nGut Feeling\n\n\n→\n\n\nPartner Review\n\n\n\n\nSlow\n\n\nInconsistent\n\n\nHard to Scale\n\n\nData Silos\n\n\n\n\n\nEvery analyst does it differently. High-potential startups slip through when there isn’t enough time to research them all."
+  },
+  {
+    "objectID": "blogs/Final Presentation/final_presentation.html#ai-assisted-deal-flow",
+    "href": "blogs/Final Presentation/final_presentation.html#ai-assisted-deal-flow",
+    "title": "From Startup Chaos to Smart Deal Flow",
+    "section": "AI-Assisted Deal Flow",
+    "text": "AI-Assisted Deal Flow\n\n\nAI gives deal flow a brain — unified data, faster insight, and prioritized review.\n\n\n\nCRM + Harmonic + PitchBook\n\n\n→\n\n\nAI Summaries\n\n\n→\n\n\nInvestment Signals\n\n\n→\n\n\nRelevance Scoring\n\n\n→\n\n\nPrioritized Deal Flow\n\n\n\nExternal data unified into one view\nAI distills company narratives in seconds\nSignals surface thesis-fit opportunities automatically\nPartners review the best deals first — not just the loudest\n\n\n\n\nAI doesn’t replace judgment — it front-loads intelligence so investors spend time where it matters."
+  },
+  {
+    "objectID": "blogs/Final Presentation/final_presentation.html#marketing-analytics",
+    "href": "blogs/Final Presentation/final_presentation.html#marketing-analytics",
+    "title": "From Startup Chaos to Smart Deal Flow",
+    "section": "Marketing Analytics",
+    "text": "Marketing Analytics\n\n\nHow course concepts map to venture deal selection.\n\n\n\n&lt;h3&gt;Segmentation (Unsupervised ML)&lt;/h3&gt;\n&lt;p class=\"slide-intro\"&gt;Segment startups, not customers.&lt;/p&gt;\n&lt;div class=\"segment-grid compact\"&gt;\n  &lt;div class=\"segment-card\"&gt;High-Growth AI&lt;span&gt;Headcount & funding velocity&lt;/span&gt;&lt;/div&gt;\n  &lt;div class=\"segment-card\"&gt;Recently Funded&lt;span&gt;Fresh capital, momentum&lt;/span&gt;&lt;/div&gt;\n  &lt;div class=\"segment-card\"&gt;Investor-Backed&lt;span&gt;Top-tier syndicate signals&lt;/span&gt;&lt;/div&gt;\n  &lt;div class=\"segment-card gem\"&gt;Hidden Gems&lt;span&gt;Strong signals, low visibility&lt;/span&gt;&lt;/div&gt;\n&lt;/div&gt;\n\n\n&lt;h3&gt;Key Drivers (Supervised ML)&lt;/h3&gt;\n&lt;p class=\"slide-intro\"&gt;What drives a high relevance score?&lt;/p&gt;\n&lt;div class=\"driver-list compact\"&gt;\n  &lt;div class=\"driver-item\"&gt;Thesis Fit &lt;div class=\"driver-bar\"&gt;&lt;div class=\"driver-bar-fill\" style=\"width:92%\"&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;\n  &lt;div class=\"driver-item\"&gt;Headcount Growth &lt;div class=\"driver-bar\"&gt;&lt;div class=\"driver-bar-fill\" style=\"width:78%\"&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;\n  &lt;div class=\"driver-item\"&gt;Recent Funding &lt;div class=\"driver-bar\"&gt;&lt;div class=\"driver-bar-fill\" style=\"width:71%\"&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;\n  &lt;div class=\"driver-item\"&gt;Investor Quality &lt;div class=\"driver-bar\"&gt;&lt;div class=\"driver-bar-fill\" style=\"width:68%\"&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;\n  &lt;div class=\"driver-item\"&gt;Founder / Team &lt;div class=\"driver-bar\"&gt;&lt;div class=\"driver-bar-fill\" style=\"width:65%\"&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;\n&lt;/div&gt;"
   }
 ]
