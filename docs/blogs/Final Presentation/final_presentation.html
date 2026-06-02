@@ -234,7 +234,7 @@ Eesha Jagdhane
 <div class="slide-body slide-layout slide-analytics">
 <p class="slide-intro">Segment the universe, then rank companies with a transparent weighted scoring model partners control.</p>
 <div class="analytics-viz">
-  <div class="viz-panel segment-panel">
+  <div class="viz-panel">
     <div class="viz-title">Segmentation · Unsupervised ML</div>
     <svg class="viz-svg" viewbox="0 0 420 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Startup segmentation map">
       <rect x="0" y="0" width="420" height="240" fill="rgba(255,255,255,0.35)" rx="8"></rect>
@@ -260,25 +260,27 @@ Eesha Jagdhane
     <p class="viz-caption">Segment startups into natural groups based on growth, thesis fit, funding, and investor signals.</p>
   </div>
   <div class="viz-panel scoring-panel">
-    <div class="scoring-panel-inner">
-      <div class="viz-title">Key Drivers · Weighted Scoring Model</div>
-      <div class="formula-card">
-        <span class="formula-label">Relevance Score</span>
-        <span class="formula-eq">= Σ (Driver Score × Partner Weight)</span>
-      </div>
-      <p class="scoring-meta-line"><strong>Method:</strong> Partner-adjustable weights · <strong>Goal:</strong> Rank by relevance · <strong>Output:</strong> Top 10 / 20 / 50</p>
-      <div class="driver-weights-title">Illustrative Partner Weights</div>
-      <div class="driver-weights-grid">
-        <div class="driver-row"><span class="d-label">Thesis fit</span><span class="d-track"><span class="d-fill" style="width:88%"></span></span><span class="d-val">22%</span></div>
-        <div class="driver-row"><span class="d-label">Stage fit</span><span class="d-track"><span class="d-fill" style="width:72%"></span></span><span class="d-val">18%</span></div>
-        <div class="driver-row"><span class="d-label">Funding</span><span class="d-track"><span class="d-fill" style="width:64%"></span></span><span class="d-val">16%</span></div>
-        <div class="driver-row"><span class="d-label">Investors</span><span class="d-track"><span class="d-fill" style="width:56%"></span></span><span class="d-val">14%</span></div>
-        <div class="driver-row"><span class="d-label">Headcount</span><span class="d-track"><span class="d-fill" style="width:48%"></span></span><span class="d-val">12%</span></div>
-        <div class="driver-row"><span class="d-label">Geography</span><span class="d-track"><span class="d-fill" style="width:40%"></span></span><span class="d-val">10%</span></div>
-        <div class="driver-row"><span class="d-label">CRM</span><span class="d-track"><span class="d-fill" style="width:32%"></span></span><span class="d-val">8%</span></div>
-      </div>
-      <p class="viz-caption scoring-caption">Partners tune weights by thesis — e.g. $10M+ funding or Series A focus.</p>
+    <div class="viz-title">Key Drivers · Weighted Scoring Model</div>
+    <div class="formula-card">
+      <span class="formula-label">Relevance Score</span>
+      <span class="formula-eq">= Σ (Driver Score × Partner Weight)</span>
     </div>
+    <ul class="scoring-meta">
+      <li><strong>Method:</strong> Partner-adjustable weighted relevance scoring</li>
+      <li><strong>Goal:</strong> Rank companies by relevance</li>
+      <li><strong>Output:</strong> Top 10 / 20 / 50 companies</li>
+    </ul>
+    <div class="driver-weights">
+      <div class="driver-weights-title">Illustrative Partner Weights</div>
+      <div class="driver-row"><span class="d-label">Thesis fit</span><span class="d-track"><span class="d-fill" style="width:88%"></span></span><span class="d-val">22%</span></div>
+      <div class="driver-row"><span class="d-label">Stage fit</span><span class="d-track"><span class="d-fill" style="width:72%"></span></span><span class="d-val">18%</span></div>
+      <div class="driver-row"><span class="d-label">Funding amt.</span><span class="d-track"><span class="d-fill" style="width:64%"></span></span><span class="d-val">16%</span></div>
+      <div class="driver-row"><span class="d-label">Investors</span><span class="d-track"><span class="d-fill" style="width:56%"></span></span><span class="d-val">14%</span></div>
+      <div class="driver-row"><span class="d-label">Headcount</span><span class="d-track"><span class="d-fill" style="width:48%"></span></span><span class="d-val">12%</span></div>
+      <div class="driver-row"><span class="d-label">Geography</span><span class="d-track"><span class="d-fill" style="width:40%"></span></span><span class="d-val">10%</span></div>
+      <div class="driver-row"><span class="d-label">CRM history</span><span class="d-track"><span class="d-fill" style="width:32%"></span></span><span class="d-val">8%</span></div>
+    </div>
+    <p class="viz-caption scoring-caption">Each startup gets driver scores; partners adjust weights by thesis. Example: $10M+ funding → raise funding weight; Series A focus → raise stage-fit weight.</p>
   </div>
 </div>
 </div>
