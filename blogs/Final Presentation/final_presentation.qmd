@@ -22,6 +22,50 @@ format:
     include-in-header:
       - text: |
           <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+          <style id="slide5-overrides">
+          /* Slide 5 — scoped by section id so styles always apply (even if presentation.css is cached) */
+          #marketing-analytics .analytics-viz {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.7rem;
+            align-items: stretch;
+            flex: 1 1 0;
+            min-height: 0;
+            margin-top: 0.1em;
+          }
+          #marketing-analytics .viz-panel {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            padding: 0.5rem 0.55rem;
+          }
+          #marketing-analytics .viz-panel.segment-panel .viz-svg {
+            flex: 1 1 auto;
+            width: 100%;
+            min-height: 11.5rem;
+            max-height: none;
+            height: auto;
+          }
+          #marketing-analytics .viz-panel.segment-panel .viz-title,
+          #marketing-analytics .viz-panel.segment-panel .viz-caption {
+            flex-shrink: 0;
+          }
+          #marketing-analytics .scoring-panel .scoring-meta,
+          #marketing-analytics .scoring-panel .scoring-meta li {
+            font-size: 0.95rem !important;
+            line-height: 1.32 !important;
+          }
+          #marketing-analytics .scoring-panel .scoring-caption {
+            font-size: 0.82rem !important;
+            line-height: 1.35 !important;
+          }
+          #marketing-analytics .scoring-panel .driver-row {
+            font-size: 0.78rem !important;
+          }
+          #marketing-analytics .scoring-panel .driver-row .d-track {
+            height: 8px !important;
+          }
+          </style>
           <script>
           document.addEventListener('DOMContentLoaded', function () {
             var slide = document.getElementById('title-slide');
@@ -132,7 +176,7 @@ execute:
 <div class="slide-body slide-layout slide-analytics">
 <p class="slide-intro">Segment the universe, then rank companies with a transparent weighted scoring model partners control.</p>
 <div class="analytics-viz">
-  <div class="viz-panel">
+  <div class="viz-panel segment-panel">
     <div class="viz-title">Segmentation · Unsupervised ML</div>
     <svg class="viz-svg" viewBox="0 0 420 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Startup segmentation map">
       <rect x="0" y="0" width="420" height="240" fill="rgba(255,255,255,0.35)" rx="8"/>
