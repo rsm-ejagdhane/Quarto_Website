@@ -124,6 +124,17 @@
     }
   </style>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&amp;family=DM+Sans:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var slide = document.getElementById('title-slide');
+    if (!slide || slide.querySelector('.title-tagline')) return;
+    var tagline = document.createElement('p');
+    tagline.className = 'title-tagline';
+    tagline.textContent = 'Marketing analytics applied to venture capital — turning messy deal flow into smarter, prioritized investment decisions.';
+    var date = slide.querySelector('.date');
+    if (date) date.insertAdjacentElement('afterend', tagline);
+  });
+  </script>
 </head>
 <body class="quarto-light">
   <div class="reveal">
@@ -131,7 +142,7 @@
 
 <section id="title-slide" class="quarto-title-block center">
   <h1 class="title">From Startup Chaos to Smart Deal Flow</h1>
-  <p class="subtitle">Marketing analytics applied to venture capital — turning messy deal flow into smarter, prioritized investment decisions.</p>
+  <p class="subtitle">Using AI to Help VCs Pick Better Companies</p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -220,7 +231,7 @@ Eesha Jagdhane
 </section>
 <section id="marketing-analytics" class="slide level2">
 <h2>Marketing Analytics</h2>
-<div class="slide-body slide-static slide-analytics">
+<div class="slide-body slide-layout slide-analytics">
 <p class="slide-intro">Segment the universe, then rank companies with a transparent weighted scoring model partners control.</p>
 <div class="analytics-viz">
   <div class="viz-panel">
@@ -269,8 +280,7 @@ Eesha Jagdhane
       <div class="driver-row"><span class="d-label">Geography</span><span class="d-track"><span class="d-fill" style="width:40%"></span></span><span class="d-val">10%</span></div>
       <div class="driver-row"><span class="d-label">CRM history</span><span class="d-track"><span class="d-fill" style="width:32%"></span></span><span class="d-val">8%</span></div>
     </div>
-    <div class="callout callout-accent callout-compact">$10M+ funding preference → raise funding weight. Series A focus → raise stage-fit weight.</div>
-    <p class="viz-caption">Each startup receives driver scores; partners adjust weights by thesis; the weighted total ranks most → least relevant.</p>
+    <p class="viz-caption scoring-caption">Each startup gets driver scores; partners adjust weights by thesis. Example: $10M+ funding → raise funding weight; Series A focus → raise stage-fit weight.</p>
   </div>
 </div>
 </div>

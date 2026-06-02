@@ -620,14 +620,31 @@
 
 .reveal #title-slide .title {
   font-family: 'Playfair Display', serif !important;
+  text-align: center !important;
+  width: 100%;
+}
+
+.reveal #title-slide .subtitle {
+  font-family: 'DM Sans', sans-serif !important;
+  color: var(--ink-soft) !important;
+  font-weight: 400 !important;
+  text-align: center !important;
+  margin-top: 0.45em !important;
+}
+
+.reveal #title-slide .quarto-title-authors,
+.reveal #title-slide .date {
+  text-align: center !important;
+  font-family: 'DM Sans', sans-serif !important;
+  color: var(--ink-soft) !important;
 }
 
 .reveal #title-slide .title-tagline {
   font-family: 'DM Sans', sans-serif;
-  font-size: 0.92em;
+  font-size: 0.5em;
   color: var(--ink-soft);
   line-height: 1.5;
-  max-width: 680px;
+  max-width: 720px;
   margin: 0.85em auto 0;
   padding-top: 0.75em;
   border-top: 1px solid var(--border);
@@ -825,58 +842,86 @@
   font-size: 0.88em;
 }
 
-/* Slide 5 — weighted scoring panel */
+/* Slide 5 — weighted scoring panel (fit right column) */
 .reveal .slide-analytics {
-  font-size: 0.72em;
+  font-size: 0.7em;
+}
+
+.reveal .slide-analytics .slide-intro {
+  margin-bottom: 0.35em;
 }
 
 .reveal .slide-analytics .analytics-viz {
-  gap: 0.65rem;
-  margin-top: 0.2em;
+  flex: 1 1 0;
+  min-height: 0;
+  gap: 0.7rem;
+  margin-top: 0.1em;
+  grid-template-columns: 0.9fr 1.1fr;
+  align-items: stretch;
+}
+
+.reveal .slide-analytics .viz-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0.5rem 0.55rem;
+}
+
+.reveal .slide-analytics .viz-panel .viz-svg {
+  max-height: 10.75rem;
+  width: 100%;
 }
 
 .reveal .scoring-panel {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.28rem;
+  justify-content: flex-start;
+  min-height: 0;
+  overflow: visible;
 }
 
 .reveal .formula-card {
   background: linear-gradient(135deg, rgba(47, 129, 247, 0.08), rgba(130, 80, 223, 0.08));
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 0.45rem 0.55rem;
+  padding: 0.35rem 0.45rem;
   text-align: center;
+  flex-shrink: 0;
 }
 
 .reveal .formula-label {
   display: block;
   font-family: 'Playfair Display', serif;
   font-weight: 900;
-  font-size: 1.05em;
+  font-size: 0.95em;
   color: var(--ink);
-  margin-bottom: 0.15em;
+  margin-bottom: 0.1em;
+  line-height: 1.1;
 }
 
 .reveal .formula-eq {
   display: block;
-  font-size: 0.95em;
+  font-size: 0.82em;
   font-weight: 600;
   color: var(--blue);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
+  line-height: 1.25;
 }
 
 .reveal .scoring-meta {
   list-style: none;
   margin: 0;
   padding: 0;
-  font-size: 0.92em;
+  font-size: 0.8em;
+  flex-shrink: 0;
 }
 
 .reveal .scoring-meta li {
-  margin-bottom: 0.22em;
+  margin-bottom: 0.12em;
   padding-left: 0;
   color: var(--ink-soft);
+  line-height: 1.3;
 }
 
 .reveal .scoring-meta li::before {
@@ -889,22 +934,29 @@
 }
 
 .reveal .driver-weights {
-  margin-top: 0.15em;
+  margin-top: 0.05em;
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .reveal .driver-weights-title {
-  font-size: 0.68em;
+  font-size: 0.6em;
   font-weight: 600;
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  margin-bottom: 0.35em;
+  margin-bottom: 0.28em;
 }
 
 .reveal .scoring-panel .driver-row {
-  grid-template-columns: 4.8rem 1fr 2.2rem;
-  font-size: 0.68em;
-  gap: 0.3rem;
+  grid-template-columns: 4.1rem 1fr 1.85rem;
+  font-size: 0.62em;
+  gap: 0.22rem;
+  margin-bottom: 0.08em;
+}
+
+.reveal .scoring-panel .driver-row .d-track {
+  height: 7px;
 }
 
 .reveal .scoring-panel .driver-row .d-fill {
@@ -912,16 +964,15 @@
   height: 100%;
 }
 
-.reveal .callout-compact {
-  margin: 0.35em 0 0;
-  padding: 0.4rem 0.55rem;
-  font-size: 0.82em;
-  line-height: 1.35;
+.reveal .scoring-panel .driver-row .d-val {
+  font-size: 0.85em;
 }
 
-.reveal .scoring-panel .viz-caption {
+.reveal .scoring-caption {
   margin-top: 0.25em;
-  font-size: 0.65em;
+  font-size: 0.6em;
+  line-height: 1.32;
+  flex-shrink: 0;
 }
 
 /* Slide 6 — AI arms race */
