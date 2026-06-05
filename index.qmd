@@ -517,9 +517,9 @@ execute:
         <img src="Pictures/Food1.jpeg" alt="Food">
         <img src="Pictures/Food2.jpeg" alt="Food">
         <img src="Pictures/Food4.jpeg" alt="Food">
-        <img src="Pictures/Food9.jpeg" alt="Food">
-        <img src="Pictures/Food5.jpeg" alt="Food">
-        <img src="Pictures/Food8.jpeg" alt="Food">
+        <img src="Pictures/CallofDuty.jpeg" alt="Food">
+        <img src="Pictures/Books.jpeg" alt="Food">
+        <img src="Pictures/Painting.jpeg" alt="Food">
       </div>
     </div>
   </div>
