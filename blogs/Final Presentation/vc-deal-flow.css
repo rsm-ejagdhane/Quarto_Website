@@ -58,12 +58,13 @@ body,
   align-items: center;
 }
 
-/* 16:9 widescreen — vertically centered content block */
+/* Heading always pinned to top; body content centers in remaining space */
 .reveal .slides > section {
   display: flex !important;
   flex-direction: column !important;
-  justify-content: center !important;
+  justify-content: flex-start !important;
   align-items: stretch !important;
+  overflow: hidden !important;
 }
 
 .reveal .slides > section.title-slide {
@@ -73,6 +74,82 @@ body,
 
 .reveal .slides > section > h2 {
   flex-shrink: 0;
+  margin-top: 0 !important;
+}
+
+.reveal .slide-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 0;
+  overflow: hidden;
+  width: 100%;
+}
+
+/* Dense slides: top-align + compact scale so everything fits */
+.reveal .slides > section.slide-dense .slide-body {
+  justify-content: flex-start;
+  gap: 0.2em;
+}
+
+.reveal .slide-dense .slide-intro {
+  font-size: 0.56em;
+  margin: 0 0 0.35em;
+}
+
+.reveal .slide-dense .flow-steps {
+  font-size: 0.36em;
+  margin: 0.3em 0;
+  gap: 0.25rem;
+}
+
+.reveal .slide-dense .pain-tags {
+  margin: 0.3em 0;
+}
+
+.reveal .slide-dense .pain-tag {
+  font-size: 0.38em;
+  padding: 0.25em 0.55em;
+}
+
+.reveal .slide-dense .callout {
+  font-size: 0.44em;
+  margin-top: 0.35em;
+  padding: 0.45rem 0.65rem;
+  line-height: 1.35;
+}
+
+.reveal .slide-dense .slide-img-dense {
+  max-height: 175px;
+  margin: 0.2em auto 0;
+}
+
+.reveal .slide-dense .results-cols {
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.reveal .slide-dense .metric-row {
+  gap: 0.45rem;
+  margin: 0.25em 0 0.35em;
+}
+
+.reveal .slide-dense .metric-card {
+  padding: 0.4rem 0.45rem;
+}
+
+.reveal .slide-dense .metric-value {
+  font-size: 1.05em;
+}
+
+.reveal .slide-dense .metric-label {
+  font-size: 0.34em;
+}
+
+.reveal .slide-dense .caption {
+  font-size: 0.34em;
+  margin-top: 0.2em;
 }
 
 .reveal h1 {

@@ -113,8 +113,9 @@ Simulated CRM, Harmonic, and PitchBook exports · 20,000 records each
 :::
 :::
 
-## Before AI {transition="fade"}
+## Before AI {transition="fade" .slide-dense}
 
+::: {.slide-body}
 ::: {.slide-intro}
 The traditional process is manual, inconsistent, and hard to scale.
 :::
@@ -172,6 +173,7 @@ Data Silos
 
 ::: {.callout .callout-accent}
 Manual screening is uneven and time-bound — high-potential startups slip through when analysts cannot research every company the same way.
+:::
 :::
 
 ## AI-Assisted Deal Flow {transition="convex"}
@@ -334,22 +336,23 @@ Partners can reweight drivers by thesis — e.g., raise stage weight for a Serie
 :::
 :::
 
-## Results {transition="slide"}
+## Results {transition="slide" .slide-dense}
 
+::: {.slide-body}
 ::: {.slide-intro}
 Did the ranking match historical CRM disposition labels?
 :::
 
-::: {.columns}
-::: {.column width="48%"}
-![Precision at top-K against CRM labels](images/precision_metrics.png){.slide-img .slide-img-sm}
+::: {.columns .results-cols}
+::: {.column width="50%"}
+![Precision at top-K against CRM labels](images/precision_metrics.png){.slide-img .slide-img-dense}
 
 ::: {.caption}
 Backtested against simulated CRM positive / negative labels
 :::
 :::
 
-::: {.column width="52%"}
+::: {.column width="50%"}
 ::: {.metric-row .metric-row-4}
 ::: {.metric-card .green-glow}
 ::: {.metric-value}
@@ -385,12 +388,13 @@ AI summaries
 :::
 :::
 
-![Score distribution across all ranked companies](images/score_distribution.png){.slide-img .slide-img-sm}
+![Score distribution across all ranked companies](images/score_distribution.png){.slide-img .slide-img-dense}
 :::
 :::
 
 ::: {.callout .callout-success}
 The model is **selective** — mean score ~26.8, max ~62.8 — not inflating every company to the top of the list.
+:::
 :::
 
 ## Impact & The AI Arms Race {transition="fade"}
