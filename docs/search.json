@@ -39,14 +39,14 @@
     "href": "blogs/Final Presentation/Jagdhane_Eesha-VC_deal_flow.html#before-ai",
     "title": "From Startup Chaos to Smart Deal Flow",
     "section": "Before AI",
-    "text": "Before AI\n\nThe traditional process is manual, inconsistent, and hard to scale.\n\n\n\nCRM Data\n\n\n→\n\n\nSpreadsheets\n\n\n→\n\n\nManual Research\n\n\n→\n\n\nPitchBook / Harmonic\n\n\n→\n\n\nGut Feeling\n\n\n→\n\n\nPartner Review\n\n\n\n\nSlow\n\n\nInconsistent\n\n\nHard to Scale\n\n\nData Silos\n\n\n\n\n\n\nManual screening is uneven and time-bound — high-potential startups slip through when analysts cannot research every company the same way."
+    "text": "Before AI\n\nThe traditional process is manual, inconsistent, and hard to scale.\n\n\n\nCRM Data\n\n\n→\n\n\nSpreadsheets\n\n\n→\n\n\nManual Research\n\n\n→\n\n\nPitchBook / Harmonic\n\n\n→\n\n\nGut Feeling\n\n\n→\n\n\nPartner Review\n\n\n\n\nSlow\n\n\nInconsistent\n\n\nHard to Scale\n\n\nData Silos\n\n\n\n\n\nManual screening is uneven and time-bound — high-potential startups slip through when analysts cannot research every company the same way."
   },
   {
     "objectID": "blogs/Final Presentation/Jagdhane_Eesha-VC_deal_flow.html#ai-assisted-deal-flow",
     "href": "blogs/Final Presentation/Jagdhane_Eesha-VC_deal_flow.html#ai-assisted-deal-flow",
     "title": "From Startup Chaos to Smart Deal Flow",
     "section": "AI-Assisted Deal Flow",
-    "text": "AI-Assisted Deal Flow\n\nAI gives deal flow a brain — unified data, faster insight, and prioritized review.\n\n::::::{.cell reveal=true theme=“dark” init=“{”theme”:“dark”,“themeVariables”:{“primaryColor”:“#6366f1”,“primaryTextColor”:“#e8eaf0”,“primaryBorderColor”:“#4f46e5”,“lineColor”:“#8b95a8”,“secondaryColor”:“#121a2e”,“tertiaryColor”:“#0b1020”}}” layout-align=“default”}\n\n\n\n\nflowchart LR\n    A[CRM + Harmonic + PitchBook] --&gt; B[Dedupe & Merge]\n    B --&gt; C[6 Feature Scores]\n    C --&gt; D[0–100 Ranking]\n    D --&gt; E[AI Summaries]\n    E --&gt; F[Evaluate vs CRM Labels]\n    F --&gt; G[API + Deal Memos]\n    style A fill:#1e1b4b,stroke:#6366f1\n    style D fill:#14532d,stroke:#22c55e\n    style G fill:#3b0764,stroke:#a78bfa\n\n\n\n\n\n::::::\n\n\n\nAI Summaries\n\n\nInvestment Signals\n\n\nRelevance Scoring\n\n\nPrioritized Deal Flow\n\n\n\n\n\n\n\nRelevance scoring is not a black-box model — it is a transparent weighted layer that ranks companies using partner-selected investment criteria.\n\n\n\n\n\nAI doesn’t replace judgment — it front-loads intelligence so investors spend time where it matters."
+    "text": "AI-Assisted Deal Flow\n\nAI gives deal flow a brain — unified data, faster insight, and prioritized review.\n\n\n\nCRM + Harmonic + PitchBook\n\n\n→\n\n\nDedupe & Merge\n\n\n→\n\n\n6 Feature Scores\n\n\n→\n\n\n0–100 Ranking\n\n\n→\n\n\nAI Summaries\n\n\n→\n\n\nEvaluate vs CRM\n\n\n→\n\n\nAPI + Deal Memos\n\n\n\n\n\n\nAI Summaries\n\n\nInvestment Signals\n\n\nRelevance Scoring\n\n\nPrioritized Deal Flow\n\n\n\n\n\n\nRelevance scoring is not a black-box model — it is a transparent weighted layer that ranks companies using partner-selected investment criteria.\n\n\n\n\n\n\nAI doesn’t replace judgment — it front-loads intelligence so investors spend time where it matters."
   },
   {
     "objectID": "blogs/Final Presentation/Jagdhane_Eesha-VC_deal_flow.html#the-data",
@@ -74,7 +74,7 @@
     "href": "blogs/Final Presentation/Jagdhane_Eesha-VC_deal_flow.html#results",
     "title": "From Startup Chaos to Smart Deal Flow",
     "section": "Results",
-    "text": "Results\n\nDid the ranking match historical CRM disposition labels?\n\n\n\n\n\n\nPrecision at top-K against CRM labels\n\n\n\nBacktested against simulated CRM positive / negative labels\n\n\n\n\n\n20%\n\n\nPrecision@20\n\n\n\n\n30%\n\n\nPrecision@50\n\n\n\n\n5.4K\n\n\nCRM positives\n\n\n\n\n50\n\n\nAI summaries\n\n\n\n\n\n\n\nScore distribution across all ranked companies\n\n\n\n\n\n\n\n\nThe model is selective — mean score ~26.8, max ~62.8 — not inflating every company to the top of the list."
+    "text": "Results\n\nDid the ranking match historical CRM disposition labels?\n\n\n\n\n\n\nPrecision at top-K against CRM labels\n\n\n\nBacktested against simulated CRM positive / negative labels\n\n\n\n\n\n20%\n\n\nPrecision@20\n\n\n\n\n30%\n\n\nPrecision@50\n\n\n\n\n5.4K\n\n\nCRM positives\n\n\n\n\n50\n\n\nAI summaries\n\n\n\n\n\n\nScore distribution across all ranked companies\n\n\n\n\n\n\nThe model is selective — mean score ~26.8, max ~62.8 — not inflating every company to the top of the list."
   },
   {
     "objectID": "blogs/Final Presentation/Jagdhane_Eesha-VC_deal_flow.html#impact-the-ai-arms-race",

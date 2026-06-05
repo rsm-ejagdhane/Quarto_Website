@@ -169,7 +169,7 @@ Data Silos
 :::
 :::
 
-::: {.fragment .fade-up .callout .callout-accent}
+::: {.callout .callout-accent}
 Manual screening is uneven and time-bound — high-potential startups slip through when analysts cannot research every company the same way.
 :::
 
@@ -179,22 +179,50 @@ Manual screening is uneven and time-bound — high-potential startups slip throu
 AI gives deal flow a brain — unified data, faster insight, and prioritized review.
 :::
 
-```{mermaid}
-%%| theme: dark
-%%| init: {'theme': 'dark', 'themeVariables': {'primaryColor': '#6366f1', 'primaryTextColor': '#e8eaf0', 'primaryBorderColor': '#4f46e5', 'lineColor': '#8b95a8', 'secondaryColor': '#121a2e', 'tertiaryColor': '#0b1020'}}
-flowchart LR
-    A[CRM + Harmonic + PitchBook] --> B[Dedupe & Merge]
-    B --> C[6 Feature Scores]
-    C --> D[0–100 Ranking]
-    D --> E[AI Summaries]
-    E --> F[Evaluate vs CRM Labels]
-    F --> G[API + Deal Memos]
-    style A fill:#1e1b4b,stroke:#6366f1
-    style D fill:#14532d,stroke:#22c55e
-    style G fill:#3b0764,stroke:#a78bfa
-```
+::: {.flow-steps .pipeline-flow}
+::: {.flow-step .highlight}
+CRM + Harmonic + PitchBook
+:::
+::: {.flow-arrow}
+→
+:::
+::: {.flow-step}
+Dedupe & Merge
+:::
+::: {.flow-arrow}
+→
+:::
+::: {.flow-step .highlight}
+6 Feature Scores
+:::
+::: {.flow-arrow}
+→
+:::
+::: {.flow-step .highlight-green}
+0–100 Ranking
+:::
+::: {.flow-arrow}
+→
+:::
+::: {.flow-step}
+AI Summaries
+:::
+::: {.flow-arrow}
+→
+:::
+::: {.flow-step}
+Evaluate vs CRM
+:::
+::: {.flow-arrow}
+→
+:::
+::: {.flow-step .highlight-green}
+API + Deal Memos
+:::
+:::
 
-::: {.fragment .fade-up}
+::: {.columns}
+::: {.column width="50%"}
 ::: {.flow-steps}
 ::: {.flow-step .highlight}
 AI Summaries
@@ -211,12 +239,15 @@ Prioritized Deal Flow
 :::
 :::
 
-::: {.fragment .fade-up .callout .callout-success}
+::: {.column width="50%"}
+::: {.callout .callout-success}
 **Relevance scoring is not a black-box model** — it is a transparent weighted layer that ranks companies using partner-selected investment criteria.
 :::
 
-::: {.fragment .fade-up}
+::: {.callout}
 AI doesn't replace judgment — it **front-loads intelligence** so investors spend time where it matters.
+:::
+:::
 :::
 
 ## The Data {transition="slide" .has-dark-gradient}
@@ -399,13 +430,11 @@ AI summaries
 :::
 :::
 
-::: {.fragment .fade-up}
 ![Score distribution across all ranked companies](images/score_distribution.png){.slide-img .slide-img-sm}
 :::
 :::
-:::
 
-::: {.fragment .fade-up .callout .callout-success}
+::: {.callout .callout-success}
 The model is **selective** — mean score ~26.8, max ~62.8 — not inflating every company to the top of the list.
 :::
 
