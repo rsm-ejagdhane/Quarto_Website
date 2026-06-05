@@ -1,26 +1,5 @@
 [
   {
-    "objectID": "blogs/worldcup/worldcup.html#my-pick-france",
-    "href": "blogs/worldcup/worldcup.html#my-pick-france",
-    "title": "FIFA 2026 World Cup Winner Prediction",
-    "section": "My pick: France!",
-    "text": "My pick: France!\nMGTA 495 — Marketing Analytics\nThe team is a tournament-experienced squad that made it to the semi-finals during the last FIFA World Cup. They have elite players like Kylian Mbappé, Ousmane Dembélé, and Mike Maignan."
-  },
-  {
-    "objectID": "blogs/worldcup/worldcup.html#why-france",
-    "href": "blogs/worldcup/worldcup.html#why-france",
-    "title": "FIFA 2026 World Cup Winner Prediction",
-    "section": "Why France?",
-    "text": "Why France?\n\nElite depth: High-level talent across every area of the field, not just a few star players\nBig-game experience: Consistently deep tournament runs — this squad knows how to handle knockout pressure\nStrong chemistry: Many players are used to performing together in demanding, high-stakes matches\nTactical flexibility: France can win through counterattacks, physicality, or controlling key moments\nMatch-winners: Players who can change a game instantly with one run, pass, or finish"
-  },
-  {
-    "objectID": "blogs/worldcup/worldcup.html#caveats",
-    "href": "blogs/worldcup/worldcup.html#caveats",
-    "title": "FIFA 2026 World Cup Winner Prediction",
-    "section": "Caveats",
-    "text": "Caveats\n\n\nInjuries — Even one key injury can completely change a team’s chances.\n\n\n\n\nTournament draw — A difficult bracket path can make even the best team vulnerable.\n\n\n\n\nKnockout variance — One bad performance, one mistake, or one unlucky moment can end a run.\n\n\nThese are the biggest reasons predictions should be treated as probabilities, not guarantees."
-  },
-  {
     "objectID": "blogs/Final Presentation/final_presentation.html#the-problem",
     "href": "blogs/Final Presentation/final_presentation.html#the-problem",
     "title": "From Startup Chaos to Smart Deal Flow",
@@ -51,6 +30,62 @@
   {
     "objectID": "blogs/Final Presentation/final_presentation.html#impact",
     "href": "blogs/Final Presentation/final_presentation.html#impact",
+    "title": "From Startup Chaos to Smart Deal Flow",
+    "section": "Impact",
+    "text": "Impact\n\nThe goal is not to replace investors — it's to help them focus.\n\n  Less Manual ScreeningAutomate the first pass across thousands of companies\n  Faster ReviewAI summaries cut research time from hours to minutes\n  Consistent ScoringEvery deal evaluated with the same framework\n  Better Data UseHarmonic, PitchBook, and CRM signals unified\n  Easier PrioritizationRanked deal flow replaces gut-only triage\n  Hidden Gems FoundStrong startups surface before competitors notice\n\n\n  The AI Arms Race\n  If VCs use AI to review startups, founders may use AI to optimize pitches. To avoid AI evaluating AI-generated language, rely on harder-to-fake signals: funding history, headcount growth, investor quality, CRM activity, traction, and human judgment.\n  AI can polish a pitch, but it cannot easily fake traction.\n\nThis project applies marketing analytics thinking to venture capital: using AI, segmentation, and relevance scoring to turn messy deal flow into smarter investment decisions."
+  },
+  {
+    "objectID": "blogs/worldcup/worldcup.html#my-pick-france",
+    "href": "blogs/worldcup/worldcup.html#my-pick-france",
+    "title": "FIFA 2026 World Cup Winner Prediction",
+    "section": "My pick: France!",
+    "text": "My pick: France!\nMGTA 495 — Marketing Analytics\nThe team is a tournament-experienced squad that made it to the semi-finals during the last FIFA World Cup. They have elite players like Kylian Mbappé, Ousmane Dembélé, and Mike Maignan."
+  },
+  {
+    "objectID": "blogs/worldcup/worldcup.html#why-france",
+    "href": "blogs/worldcup/worldcup.html#why-france",
+    "title": "FIFA 2026 World Cup Winner Prediction",
+    "section": "Why France?",
+    "text": "Why France?\n\nElite depth: High-level talent across every area of the field, not just a few star players\nBig-game experience: Consistently deep tournament runs — this squad knows how to handle knockout pressure\nStrong chemistry: Many players are used to performing together in demanding, high-stakes matches\nTactical flexibility: France can win through counterattacks, physicality, or controlling key moments\nMatch-winners: Players who can change a game instantly with one run, pass, or finish"
+  },
+  {
+    "objectID": "blogs/worldcup/worldcup.html#caveats",
+    "href": "blogs/worldcup/worldcup.html#caveats",
+    "title": "FIFA 2026 World Cup Winner Prediction",
+    "section": "Caveats",
+    "text": "Caveats\n\n\nInjuries — Even one key injury can completely change a team’s chances.\n\n\n\n\nTournament draw — A difficult bracket path can make even the best team vulnerable.\n\n\n\n\nKnockout variance — One bad performance, one mistake, or one unlucky moment can end a run.\n\n\nThese are the biggest reasons predictions should be treated as probabilities, not guarantees."
+  },
+  {
+    "objectID": "submission/Jagdhane_Eesha-vc_deal_flow.html#the-problem",
+    "href": "submission/Jagdhane_Eesha-vc_deal_flow.html#the-problem",
+    "title": "From Startup Chaos to Smart Deal Flow",
+    "section": "The Problem",
+    "text": "The Problem\n\nVCs review thousands of startups, but partner time and attention are limited.\n20,000+\nstartups in the pipeline\nImagine Shark Tank, but with 20,000 startups in a spreadsheet.\nThe issue is not a lack of data — it is too much scattered data and not enough partner attention.\n\n  \n    Signals live across CRM, spreadsheets, and research tools\n    Partner time is the scarcest resource\n    Most deals never get a real look\n    Great companies get lost in the noise"
+  },
+  {
+    "objectID": "submission/Jagdhane_Eesha-vc_deal_flow.html#before-ai",
+    "href": "submission/Jagdhane_Eesha-vc_deal_flow.html#before-ai",
+    "title": "From Startup Chaos to Smart Deal Flow",
+    "section": "Before AI",
+    "text": "Before AI\n\n  \n    The traditional process is manual, inconsistent, and hard to scale.\n    \n      CRM Data→\n      Spreadsheets→\n      Manual Research→\n      PitchBook / Harmonic→\n      Gut Feeling→\n      Partner Review\n    \n    \n      Slow\n      Inconsistent\n      Hard to Scale\n      Data Silos\n    \n    Manual screening is uneven and time-bound — high-potential startups slip through when analysts cannot research every company the same way."
+  },
+  {
+    "objectID": "submission/Jagdhane_Eesha-vc_deal_flow.html#ai-assisted-deal-flow",
+    "href": "submission/Jagdhane_Eesha-vc_deal_flow.html#ai-assisted-deal-flow",
+    "title": "From Startup Chaos to Smart Deal Flow",
+    "section": "AI-Assisted Deal Flow",
+    "text": "AI-Assisted Deal Flow\n\nAI gives deal flow a brain — unified data, faster insight, and prioritized review.\n\n  \n    \n      CRM + Harmonic + PitchBook→\n      AI Summaries→\n      Investment Signals→\n      Relevance Scoring→\n      Prioritized Deal Flow\n    \n    \n      External data unified into one view\n      AI distills company narratives in seconds\n      Signals surface thesis-fit opportunities automatically\n      Partners review the best deals first — not just the loudest\n    \n    Relevance scoring is not a black-box model — it is a structured layer that ranks companies using partner-selected investment criteria.\n    AI doesn't replace judgment — it front-loads intelligence so investors spend time where it matters."
+  },
+  {
+    "objectID": "submission/Jagdhane_Eesha-vc_deal_flow.html#marketing-analytics",
+    "href": "submission/Jagdhane_Eesha-vc_deal_flow.html#marketing-analytics",
+    "title": "From Startup Chaos to Smart Deal Flow",
+    "section": "Marketing Analytics",
+    "text": "Marketing Analytics\n\nSegment the universe, then rank companies with a transparent weighted scoring model partners control.\n\n  \n    Segmentation · Unsupervised ML\n    \n      \n      THESIS FIT ↑\n      GROWTH →\n      \n      \n      \n      Investor-\n      Backed\n      \n      High-Growth\n      AI\n      \n      Recently\n      Funded\n      \n      Hidden\n      Gems\n      \n      Low-Fit\n    \n    Segment startups into natural groups based on growth, thesis fit, funding, and investor signals.\n  \n  \n    Key Drivers · Weighted Scoring Model\n    \n      Relevance Score\n      = Σ (Driver Score × Partner Weight)\n    \n    \n      Method: Partner-adjustable weighted relevance scoring\n      Goal: Rank companies by relevance\n      Output: Top 10 / 20 / 50 companies\n    \n    \n      Illustrative Partner Weights\n      Thesis fit22%\n      Stage fit18%\n      Funding16%\n      Investors14%\n      Headcount12%\n      Geography10%\n      CRM history8%\n    \n    Each startup gets driver scores; partners adjust weights by thesis. Example: $10M+ funding → raise funding weight; Series A focus → raise stage-fit weight."
+  },
+  {
+    "objectID": "submission/Jagdhane_Eesha-vc_deal_flow.html#impact",
+    "href": "submission/Jagdhane_Eesha-vc_deal_flow.html#impact",
     "title": "From Startup Chaos to Smart Deal Flow",
     "section": "Impact",
     "text": "Impact\n\nThe goal is not to replace investors — it's to help them focus.\n\n  Less Manual ScreeningAutomate the first pass across thousands of companies\n  Faster ReviewAI summaries cut research time from hours to minutes\n  Consistent ScoringEvery deal evaluated with the same framework\n  Better Data UseHarmonic, PitchBook, and CRM signals unified\n  Easier PrioritizationRanked deal flow replaces gut-only triage\n  Hidden Gems FoundStrong startups surface before competitors notice\n\n\n  The AI Arms Race\n  If VCs use AI to review startups, founders may use AI to optimize pitches. To avoid AI evaluating AI-generated language, rely on harder-to-fake signals: funding history, headcount growth, investor quality, CRM activity, traction, and human judgment.\n  AI can polish a pitch, but it cannot easily fake traction.\n\nThis project applies marketing analytics thinking to venture capital: using AI, segmentation, and relevance scoring to turn messy deal flow into smarter investment decisions."
