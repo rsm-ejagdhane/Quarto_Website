@@ -70,6 +70,24 @@ body,
 .reveal .slides > section.title-slide {
   justify-content: center !important;
   align-items: center !important;
+  text-align: center !important;
+}
+
+.reveal .title-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: 92%;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.reveal .title-body .slide-tagline {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .reveal .slides > section > h2 {
@@ -123,6 +141,11 @@ body,
 .reveal .slide-dense .slide-img-dense {
   max-height: 175px;
   margin: 0.2em auto 0;
+}
+
+.reveal .slide-dense .slide-img-results {
+  max-height: 240px;
+  margin: 0.25em auto 0;
 }
 
 .reveal .slide-dense .results-cols {

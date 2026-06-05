@@ -39,6 +39,7 @@ execute:
 
 ## {.title-slide}
 
+::: {.title-body}
 ::: {.fit-text .text-primary}
 From Startup Chaos to Smart Deal Flow
 :::
@@ -53,6 +54,7 @@ Marketing analytics applied to venture capital — turning messy deal flow into 
 
 ::: {.fragment .fade-up}
 All quantitative results in this deck come from a **simulated multi-source VC dataset**. The pipeline design mirrors a real end-to-end build.
+:::
 :::
 
 ## The Problem {transition="slide"}
@@ -345,7 +347,7 @@ Did the ranking match historical CRM disposition labels?
 
 ::: {.columns .results-cols}
 ::: {.column width="50%"}
-![Precision at top-K against CRM labels](images/precision_metrics.png){.slide-img .slide-img-dense}
+![Precision at top-K against CRM labels](images/precision_metrics.png){.slide-img .slide-img-results}
 
 ::: {.caption}
 Backtested against simulated CRM positive / negative labels
@@ -388,7 +390,7 @@ AI summaries
 :::
 :::
 
-![Score distribution across all ranked companies](images/score_distribution.png){.slide-img .slide-img-dense}
+![Score distribution across all ranked companies](images/score_distribution.png){.slide-img .slide-img-results}
 :::
 :::
 
