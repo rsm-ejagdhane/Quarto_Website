@@ -16,9 +16,11 @@ format:
     center: true
     code-fold: true
     highlight-style: github-dark
-    width: 1600
-    height: 900
-    margin: 0.06
+    width: 1280
+    height: 720
+    margin: 0.04
+    min-scale: 0.2
+    max-scale: 1.0
     background-color: "#0b1020"
     include-in-header:
       - text: |
@@ -57,8 +59,9 @@ All quantitative results in this deck come from a **simulated multi-source VC da
 :::
 :::
 
-## The Problem {transition="slide"}
+## The Problem {transition="slide" .slide-dense}
 
+::: {.slide-body}
 ::: {.slide-intro}
 VCs review thousands of startups, but partner time and attention are limited.
 :::
@@ -111,6 +114,7 @@ The issue is not a lack of data — it is **too much scattered data** and **not 
 
 ::: {.caption}
 Simulated CRM, Harmonic, and PitchBook exports · 20,000 records each
+:::
 :::
 :::
 :::
@@ -180,6 +184,7 @@ Manual screening is uneven and time-bound — high-potential startups slip throu
 
 ## AI-Assisted Deal Flow {transition="convex"}
 
+::: {.slide-body}
 ::: {.slide-intro}
 AI gives deal flow a brain — unified data, faster insight, and prioritized review.
 :::
@@ -208,9 +213,11 @@ Prioritized Deal Flow
 ::: {.fragment .fade-up}
 AI doesn't replace judgment — it **front-loads intelligence** so investors spend time where it matters.
 :::
+:::
 
-## The Data {transition="slide"}
+## The Data {transition="slide" .slide-dense}
 
+::: {.slide-body}
 ::: {.slide-intro}
 A fully synthetic dataset with the same structure as real VC exports — privacy-safe, demo-ready.
 :::
@@ -238,9 +245,11 @@ A fully synthetic dataset with the same structure as real VC exports — privacy
 :::
 :::
 :::
+:::
 
-## Key Drivers {transition="zoom" #marketing-analytics}
+## Key Drivers {transition="zoom" #marketing-analytics .slide-dense}
 
+::: {.slide-body}
 ::: {.slide-intro}
 Segment the universe, then rank companies with a transparent weighted scoring model partners control.
 :::
@@ -275,9 +284,11 @@ Six key drivers · weights sum to 100%
 :::
 :::
 :::
+:::
 
-## Score Breakdown {transition="fade"}
+## Score Breakdown {transition="fade" .slide-dense}
 
+::: {.slide-body}
 ::: {.slide-intro}
 Every ranked company gets a transparent point contribution per driver — like marketing attribution.
 :::
@@ -334,6 +345,7 @@ Top contributors for the #1 company:
 
 ::: {.fragment .fade-up .callout}
 Partners can reweight drivers by thesis — e.g., raise stage weight for a Series A focus, or semantic weight for a narrow AI-infra mandate.
+:::
 :::
 :::
 :::
@@ -399,8 +411,9 @@ The model is **selective** — mean score ~26.8, max ~62.8 — not inflating eve
 :::
 :::
 
-## Impact & The AI Arms Race {transition="fade"}
+## Impact & The AI Arms Race {transition="fade" .slide-dense}
 
+::: {.slide-body}
 ::: {.slide-intro}
 The goal is not to replace investors — it is to help them focus.
 :::
@@ -444,4 +457,5 @@ Strong startups surface before competitors notice
 
 ::: {.fragment .fade-up .closing-line}
 This project applies marketing analytics thinking to venture capital: using **segmentation, weighted scoring, and attribution** to turn messy deal flow into smarter investment decisions.
+:::
 :::
