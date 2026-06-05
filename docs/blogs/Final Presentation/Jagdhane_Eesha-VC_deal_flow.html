@@ -495,12 +495,28 @@ margin: 0 0.8em 0.2em -1em;  vertical-align: middle;
 --accent: #a78bfa;
 --bg-dark: #0b1020;
 --bg-darker: #070b16;
+--slide-bg: linear-gradient(135deg, #0b1020 0%, #111827 55%, #0f172a 100%);
 --panel: rgba(18, 26, 46, 0.92);
 --text-light: #e8eaf0;
 --text-muted: #8b95a8;
 --border: rgba(99, 102, 241, 0.28);
 --glow-primary: rgba(99, 102, 241, 0.35);
 --glow-secondary: rgba(34, 197, 94, 0.3);
+}
+
+html,
+body,
+.reveal-viewport,
+.reveal {
+background-color: var(--bg-dark) !important;
+background-image: none !important;
+}
+.reveal .backgrounds {
+background-color: var(--bg-dark) !important;
+}
+.reveal .slide-background {
+background: var(--slide-bg) !important;
+background-color: var(--bg-dark) !important;
 }
 .reveal {
 font-family: "Inter", system-ui, sans-serif;
@@ -511,17 +527,32 @@ color: var(--text-light);
 .reveal .slides {
 text-align: left;
 }
-.reveal .slides section {
-background: linear-gradient(135deg, var(--bg-dark) 0%, #111827 55%, #0f172a 100%);
+.reveal .slides > section,
+.reveal .slides > section > section {
+background: var(--slide-bg) !important;
+background-color: var(--bg-dark) !important;
 padding: 1.1rem 2rem 1rem !important;
 box-sizing: border-box;
+height: 100% !important;
 }
 .reveal .slides section.title-slide {
-background: linear-gradient(135deg, #070b16 0%, var(--bg-dark) 40%, #1e1b4b 100%);
 text-align: center;
+justify-content: center;
+align-items: center;
 }
-.reveal .slides section.has-dark-gradient {
-background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 50%, #1a1f3a 100%);
+
+.reveal .slides > section {
+display: flex !important;
+flex-direction: column !important;
+justify-content: flex-start !important;
+align-items: stretch !important;
+}
+.reveal .slides > section.title-slide {
+justify-content: center !important;
+align-items: center !important;
+}
+.reveal .slides > section > h2 {
+flex-shrink: 0;
 }
 .reveal h1 {
 font-size: 2.5em;
@@ -1388,7 +1419,7 @@ Eesha Jagdhane
 
   <p class="date">June 5, 2026</p>
 </section>
-<section id="section" class="slide level2 center" data-background="linear-gradient(135deg, #070b16 0%, #0b1020 45%, #1e1b4b 100%)">
+<section id="section" class="slide level2 title-slide center">
 <h2></h2>
 <div class="fit-text text-primary">
 <p>From Startup Chaos to Smart Deal Flow</p>
@@ -1402,7 +1433,7 @@ Eesha Jagdhane
 <p>All quantitative results in this deck come from a <strong>simulated multi-source VC dataset</strong>. The pipeline design mirrors a real end-to-end build.</p>
 </div>
 </section>
-<section id="the-problem" class="slide level2 center" data-transition="slide">
+<section id="the-problem" class="slide level2" data-transition="slide">
 <h2>The Problem</h2>
 <div class="slide-intro">
 <p>VCs review thousands of startups, but partner time and attention are limited.</p>
@@ -1464,7 +1495,7 @@ Eesha Jagdhane
 </div>
 </div></div>
 </section>
-<section id="before-ai" class="slide level2 center" data-transition="fade">
+<section id="before-ai" class="slide level2" data-transition="fade">
 <h2>Before AI</h2>
 <div class="slide-intro">
 <p>The traditional process is manual, inconsistent, and hard to scale.</p>
@@ -1526,7 +1557,7 @@ Eesha Jagdhane
 </div>
 </div>
 </section>
-<section id="ai-assisted-deal-flow" class="slide level2 center" data-transition="convex">
+<section id="ai-assisted-deal-flow" class="slide level2" data-transition="convex">
 <h2>AI-Assisted Deal Flow</h2>
 <div class="slide-intro">
 <p>AI gives deal flow a brain — unified data, faster insight, and prioritized review.</p>
@@ -1560,7 +1591,7 @@ Eesha Jagdhane
 <p>AI doesn’t replace judgment — it <strong>front-loads intelligence</strong> so investors spend time where it matters.</p>
 </div>
 </section>
-<section id="the-data" class="slide level2 has-dark-gradient center" data-transition="slide">
+<section id="the-data" class="slide level2" data-transition="slide">
 <h2>The Data</h2>
 <div class="slide-intro">
 <p>A fully synthetic dataset with the same structure as real VC exports — privacy-safe, demo-ready.</p>
@@ -1617,7 +1648,7 @@ Eesha Jagdhane
 </div>
 </div></div>
 </section>
-<section id="marketing-analytics" class="slide level2 center" data-transition="zoom">
+<section id="marketing-analytics" class="slide level2" data-transition="zoom">
 <h2>Key Drivers</h2>
 <div class="slide-intro">
 <p>Segment the universe, then rank companies with a transparent weighted scoring model partners control.</p>
@@ -1696,7 +1727,7 @@ Eesha Jagdhane
 </div>
 </div></div>
 </section>
-<section id="score-breakdown" class="slide level2 center" data-transition="fade">
+<section id="score-breakdown" class="slide level2" data-transition="fade">
 <h2>Score Breakdown</h2>
 <div class="slide-intro">
 <p>Every ranked company gets a transparent point contribution per driver — like marketing attribution.</p>
@@ -1761,7 +1792,7 @@ Eesha Jagdhane
 </div>
 </div></div>
 </section>
-<section id="results" class="slide level2 center" data-transition="slide">
+<section id="results" class="slide level2" data-transition="slide">
 <h2>Results</h2>
 <div class="slide-intro">
 <p>Did the ranking match historical CRM disposition labels?</p>
@@ -1827,7 +1858,7 @@ Eesha Jagdhane
 </div>
 </div>
 </section>
-<section id="impact-the-ai-arms-race" class="slide level2 center" data-transition="fade">
+<section id="impact-the-ai-arms-race" class="slide level2" data-transition="fade">
 <h2>Impact &amp; The AI Arms Race</h2>
 <div class="slide-intro">
 <p>The goal is not to replace investors — it is to help them focus.</p>
@@ -2918,7 +2949,7 @@ window.QuartoSupport = function () {
         disableLayout: false,
 
         // Vertical centering of slides
-        center: true,
+        center: false,
 
         // Enables touch navigation on devices with touch input
         touch: true,
@@ -3019,7 +3050,7 @@ window.QuartoSupport = function () {
         height: 900,
 
         // Factor of the display size that should remain empty around the content
-        margin: 8.0e-2,
+        margin: 6.0e-2,
 
         math: {
           mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',

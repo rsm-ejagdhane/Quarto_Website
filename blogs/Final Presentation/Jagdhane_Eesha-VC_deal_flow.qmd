@@ -13,12 +13,13 @@ format:
     transition-speed: default
     background-transition: fade
     slide-number: true
-    center: true
+    center: false
     code-fold: true
     highlight-style: github-dark
     width: 1600
     height: 900
-    margin: 0.08
+    margin: 0.06
+    background-color: "#0b1020"
     include-in-header:
       - text: |
           <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -36,7 +37,7 @@ execute:
   message: false
 ---
 
-## {data-background="linear-gradient(135deg, #070b16 0%, #0b1020 45%, #1e1b4b 100%)"}
+## {.title-slide}
 
 ::: {.fit-text .text-primary}
 From Startup Chaos to Smart Deal Flow
@@ -204,7 +205,7 @@ Prioritized Deal Flow
 AI doesn't replace judgment — it **front-loads intelligence** so investors spend time where it matters.
 :::
 
-## The Data {transition="slide" .has-dark-gradient}
+## The Data {transition="slide"}
 
 ::: {.slide-intro}
 A fully synthetic dataset with the same structure as real VC exports — privacy-safe, demo-ready.
