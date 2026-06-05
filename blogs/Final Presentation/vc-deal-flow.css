@@ -58,11 +58,11 @@ body,
   align-items: center;
 }
 
-/* Consistent 16:9 widescreen fill — top-aligned content like slide 2 */
+/* 16:9 widescreen — vertically centered content block */
 .reveal .slides > section {
   display: flex !important;
   flex-direction: column !important;
-  justify-content: flex-start !important;
+  justify-content: center !important;
   align-items: stretch !important;
 }
 

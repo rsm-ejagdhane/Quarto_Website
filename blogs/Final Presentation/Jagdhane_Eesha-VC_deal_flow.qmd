@@ -13,7 +13,7 @@ format:
     transition-speed: default
     background-transition: fade
     slide-number: true
-    center: false
+    center: true
     code-fold: true
     highlight-style: github-dark
     width: 1600
