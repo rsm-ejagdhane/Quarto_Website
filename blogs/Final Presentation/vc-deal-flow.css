@@ -7,8 +7,8 @@
   --bg-darker: #070b16;
   --slide-bg: linear-gradient(135deg, #0b1020 0%, #111827 55%, #0f172a 100%);
   --panel: rgba(18, 26, 46, 0.92);
-  --text-light: #e8eaf0;
-  --text-muted: #8b95a8;
+  --text-light: #f4f6fa;
+  --text-muted: #a8b4c8;
   --border: rgba(99, 102, 241, 0.28);
   --glow-primary: rgba(99, 102, 241, 0.35);
   --glow-secondary: rgba(34, 197, 94, 0.3);
@@ -34,9 +34,10 @@ body,
 
 .reveal {
   font-family: "Inter", system-ui, sans-serif;
-  font-size: 34px;
-  font-weight: 400;
+  font-size: 38px;
+  font-weight: 500;
   color: var(--text-light);
+  -webkit-font-smoothing: antialiased;
 }
 
 .reveal .slides {
@@ -106,130 +107,147 @@ body,
   gap: 0.15em;
 }
 
-/* Compact layout — applied to all content-heavy slides */
+/* Dense slides — still compact, but legible when projected */
 .reveal .slides > section.slide-dense > h2 {
-  font-size: 1.35em !important;
-  margin-bottom: 0.3em !important;
+  font-size: 1.48em !important;
+  margin-bottom: 0.28em !important;
   padding-bottom: 0.15em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
 .reveal .slide-dense .slide-intro {
-  font-size: 0.54em;
-  margin: 0 0 0.28em;
-  line-height: 1.35;
+  font-size: 0.58em;
+  margin: 0 0 0.26em;
+  line-height: 1.38;
+  color: var(--text-muted);
 }
 
 .reveal .slide-dense .flow-steps {
-  font-size: 0.34em;
-  margin: 0.22em 0;
-  gap: 0.22rem;
+  font-size: 0.4em;
+  margin: 0.2em 0;
+  gap: 0.24rem;
 }
 
 .reveal .slide-dense .pain-tags {
-  margin: 0.22em 0;
+  margin: 0.2em 0;
 }
 
 .reveal .slide-dense .pain-tag {
-  font-size: 0.36em;
-  padding: 0.22em 0.5em;
+  font-size: 0.4em;
+  padding: 0.24em 0.55em;
+  font-weight: 600;
 }
 
 .reveal .slide-dense .callout {
-  font-size: 0.42em;
-  margin-top: 0.28em;
-  padding: 0.4rem 0.6rem;
-  line-height: 1.32;
+  font-size: 0.48em;
+  margin-top: 0.26em;
+  padding: 0.42rem 0.65rem;
+  line-height: 1.38;
+  font-weight: 500;
 }
 
 .reveal .slide-dense .columns {
-  gap: 0.7rem;
+  gap: 0.75rem;
 }
 
 .reveal .slide-dense .slide-img {
-  max-height: 200px;
-  margin: 0.15em auto 0;
+  max-height: 235px;
+  margin: 0.12em auto 0;
 }
 
 .reveal .slide-dense .slide-img-sm {
-  max-height: 165px;
+  max-height: 210px;
 }
 
 .reveal .slide-dense .slide-img-results {
-  max-height: 155px;
-  margin: 0.15em auto 0;
+  max-height: 195px;
+  margin: 0.12em auto 0;
 }
 
 .reveal .slide-dense .results-cols {
-  gap: 0.6rem;
+  gap: 0.65rem;
   align-items: flex-start;
 }
 
 .reveal .slide-dense .metric-row {
-  gap: 0.35rem;
-  margin: 0.2em 0 0.28em;
+  gap: 0.4rem;
+  margin: 0.18em 0 0.26em;
 }
 
 .reveal .slide-dense .metric-card {
-  padding: 0.32rem 0.38rem;
+  padding: 0.36rem 0.42rem;
   border-radius: 8px;
+  border-width: 1.5px;
 }
 
 .reveal .slide-dense .metric-value {
-  font-size: 0.95em;
+  font-size: 1.05em;
 }
 
 .reveal .slide-dense .metric-label {
-  font-size: 0.32em;
+  font-size: 0.36em;
+  font-weight: 600;
 }
 
 .reveal .slide-dense .caption {
-  font-size: 0.32em;
-  margin-top: 0.15em;
-  line-height: 1.3;
+  font-size: 0.36em;
+  margin-top: 0.14em;
+  line-height: 1.35;
+  color: var(--text-muted);
 }
 
 .reveal .slide-dense table {
-  font-size: 0.4em;
-  margin: 0.2em 0;
+  font-size: 0.46em;
+  margin: 0.18em 0;
 }
 
 .reveal .slide-dense table th,
 .reveal .slide-dense table td {
-  padding: 0.32em 0.45em;
+  padding: 0.36em 0.5em;
+}
+
+.reveal .slide-dense table th {
+  font-weight: 700;
 }
 
 .reveal .slide-dense .formula-box {
-  font-size: 0.4em;
-  margin: 0.28em 0;
-  padding: 0.38rem 0.55rem;
+  font-size: 0.46em;
+  margin: 0.26em 0;
+  padding: 0.42rem 0.6rem;
+  font-weight: 600;
 }
 
 .reveal .slide-dense .impact-grid {
-  font-size: 0.38em;
-  gap: 0.4rem;
-  margin: 0.28em 0;
+  font-size: 0.42em;
+  gap: 0.42rem;
+  margin: 0.26em 0;
 }
 
 .reveal .slide-dense .impact-item {
-  padding: 0.38rem 0.45rem;
+  padding: 0.42rem 0.5rem;
+}
+
+.reveal .slide-dense .impact-item strong {
+  font-size: 1.1em;
 }
 
 .reveal .slide-dense blockquote {
-  font-size: 0.46em;
-  margin: 0.3em 0;
-  padding: 0.45rem 0.65rem;
+  font-size: 0.5em;
+  margin: 0.28em 0;
+  padding: 0.48rem 0.7rem;
 }
 
 .reveal .slide-dense .closing-line {
-  font-size: 0.44em;
-  margin-top: 0.35em;
+  font-size: 0.48em;
+  margin-top: 0.32em;
 }
 
 .reveal .slide-dense ul,
 .reveal .slide-dense ol {
-  font-size: 0.5em;
-  margin: 0.2em 0;
-  line-height: 1.35;
+  font-size: 0.54em;
+  margin: 0.18em 0;
+  line-height: 1.4;
+  font-weight: 500;
 }
 
 .reveal h1 {
@@ -241,13 +259,14 @@ body,
 }
 
 .reveal h2 {
-  font-size: 1.45em;
-  font-weight: 700;
+  font-size: 1.55em;
+  font-weight: 800;
   color: var(--text-light);
   letter-spacing: -0.01em;
   margin-bottom: 0.35em !important;
   padding-bottom: 0.15em;
-  border-bottom: 2px solid var(--border);
+  border-bottom: 3px solid var(--border);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
 .reveal h3 {
@@ -286,11 +305,12 @@ body,
 }
 
 .reveal .slide-tagline {
-  font-size: 0.55em;
+  font-size: 0.58em;
   color: var(--text-muted);
   margin-top: 0.6em;
   line-height: 1.5;
   max-width: 90%;
+  font-weight: 500;
 }
 
 .reveal .slide-intro {
@@ -336,10 +356,11 @@ body,
 }
 
 .reveal .metric-value {
-  font-size: 1.35em;
+  font-size: 1.45em;
   font-weight: 800;
   color: var(--primary);
   line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 
 .reveal .metric-card.green-glow .metric-value {
@@ -418,10 +439,11 @@ body,
 
 .reveal .flow-step {
   background: var(--panel);
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--border);
   border-radius: 8px;
-  padding: 0.35em 0.55em;
+  padding: 0.38em 0.6em;
   color: var(--text-light);
+  font-weight: 600;
 }
 
 .reveal .flow-step.highlight {
@@ -449,10 +471,12 @@ body,
 .reveal .slide-img {
   display: block;
   max-width: 100%;
-  max-height: 260px;
+  max-height: 300px;
   margin: 0.2em auto 0;
   border-radius: 10px;
-  border: 1px solid var(--border);
+  border: 2px solid var(--border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  image-rendering: -webkit-optimize-contrast;
 }
 
 .reveal .slide-img-sm {
@@ -569,10 +593,12 @@ body,
 }
 
 .reveal .fit-text {
-  font-size: 1.4em;
+  font-size: 1.55em;
   font-weight: 800;
   text-align: center;
   color: var(--text-light);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+  letter-spacing: -0.02em;
 }
 
 .reveal .closing-line {
