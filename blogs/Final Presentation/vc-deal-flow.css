@@ -214,12 +214,6 @@
   margin: 0.5em 0;
 }
 
-.reveal .flow-steps.pipeline-flow {
-  font-size: 0.4em;
-  margin: 0.35em 0 0.55em;
-  justify-content: center;
-}
-
 /* Hide Quarto code-cell chrome if any executable blocks slip through */
 .reveal .cell,
 .reveal .cell-output,
