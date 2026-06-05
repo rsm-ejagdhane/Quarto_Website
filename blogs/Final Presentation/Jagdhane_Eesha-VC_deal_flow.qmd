@@ -300,6 +300,10 @@ Every ranked company gets a transparent point contribution per driver — like m
 ::: {.caption}
 Top-ranked company · Score = **62.8 / 100** (simulated)
 :::
+
+::: {.fragment .fade-up .callout}
+Partners can reweight drivers by thesis — e.g., raise stage weight for a Series A focus, or semantic weight for a narrow AI-infra mandate.
+:::
 :::
 
 ::: {.column width="48%"}
@@ -341,10 +345,6 @@ Top contributors for the #1 company:
 5. **Traction** — ~6.8 pts
 6. **Hygiene** — 5.0 pts
 :::
-:::
-
-::: {.fragment .fade-up .callout}
-Partners can reweight drivers by thesis — e.g., raise stage weight for a Series A focus, or semantic weight for a narrow AI-infra mandate.
 :::
 :::
 :::

@@ -67,7 +67,7 @@
     "href": "blogs/Final Presentation/Jagdhane_Eesha-VC_deal_flow.html#score-breakdown",
     "title": "From Startup Chaos to Smart Deal Flow",
     "section": "Score Breakdown",
-    "text": "Score Breakdown\n\n\nEvery ranked company gets a transparent point contribution per driver — like marketing attribution.\n\n\n\n\n\n\nPoint contributions for the top-ranked company\n\n\n\nTop-ranked company · Score = 62.8 / 100 (simulated)\n\n\n\n\n\n62.8\n\n\nMax score\n\n\n\n\n26.8\n\n\nMean score\n\n\n\n\n6\n\n\nDrivers\n\n\n\n\nTop contributors for the #1 company:\n\nStage fit — 20.0 pts\nGeo fit — 10.0 pts\nInvestor signal — 10.0 pts\nSemantic similarity — ~11.0 pts\nTraction — ~6.8 pts\nHygiene — 5.0 pts\n\n\n\n\n\n\nPartners can reweight drivers by thesis — e.g., raise stage weight for a Series A focus, or semantic weight for a narrow AI-infra mandate."
+    "text": "Score Breakdown\n\n\nEvery ranked company gets a transparent point contribution per driver — like marketing attribution.\n\n\n\n\n\n\nPoint contributions for the top-ranked company\n\n\n\nTop-ranked company · Score = 62.8 / 100 (simulated)\n\n\n\n\n\nPartners can reweight drivers by thesis — e.g., raise stage weight for a Series A focus, or semantic weight for a narrow AI-infra mandate.\n\n\n\n\n\n\n\n\n62.8\n\n\nMax score\n\n\n\n\n26.8\n\n\nMean score\n\n\n\n\n6\n\n\nDrivers\n\n\n\n\nTop contributors for the #1 company:\n\nStage fit — 20.0 pts\nGeo fit — 10.0 pts\nInvestor signal — 10.0 pts\nSemantic similarity — ~11.0 pts\nTraction — ~6.8 pts\nHygiene — 5.0 pts"
   },
   {
     "objectID": "blogs/Final Presentation/Jagdhane_Eesha-VC_deal_flow.html#results",
