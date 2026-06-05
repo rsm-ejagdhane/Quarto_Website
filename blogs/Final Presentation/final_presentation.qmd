@@ -6,6 +6,8 @@ date: "2026-06-05"
 date-format: "MMMM D, YYYY"
 format:
   revealjs:
+    revealjs:
+      embed-resources: true
     theme: simple
     transition: fade
     background-transition: fade
