@@ -59,6 +59,7 @@ execute:
   .post-body .chart-caption { font-size: 0.85rem; color: #8a8278; font-style: italic; margin: -0.5rem 0 1.5rem; text-align: center; }
   .post-body .plotly-graph-div { max-width: 100% !important; margin: 0 auto; }
   .post-body .cell-output-display:has(.plotly-graph-div) > div { margin: 0; }
+  .post-body .cell-output-display img { display: block; max-width: 100%; height: auto; margin: 0 auto 0.5rem; }
   @media (max-width: 800px) { .nav, .post-header, .post-body { padding-left: 1.5rem; padding-right: 1.5rem; } }
   body details:has(pre.sourceCode) { margin: 0 0 1.25rem; border: 1px solid #c9c2b6; border-radius: 2px; background: #e8e3da; }
   body details:has(pre.sourceCode) > summary { cursor: pointer; list-style: none; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: #f0ece4; background: #2e2825; padding: 0.55rem 1rem; }
@@ -115,6 +116,7 @@ from itertools import combinations
 from math import factorial
 from pathlib import Path
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
@@ -155,6 +157,18 @@ HIGHLIGHT = "#7a3b35"
 PALETTE = ["#7a3b35", "#2e2825", "#8a8278", "#c9a09b", "#6b6560"]
 
 pio.templates.default = "simple_white"
+
+
+def style_axes(ax):
+    ax.set_facecolor(PANEL)
+    ax.figure.set_facecolor(BG)
+    ax.grid(True, axis="both", color=GRID, linewidth=0.7, alpha=0.8)
+    for spine in ("top", "right"):
+        ax.spines[spine].set_visible(False)
+    ax.tick_params(colors="#8a8278")
+    ax.xaxis.label.set_color(ACCENT)
+    ax.yaxis.label.set_color(ACCENT)
+    ax.title.set_color(ACCENT)
 
 
 def _decode_bdata(obj: dict) -> list:
@@ -412,7 +426,7 @@ display(Markdown(
 
 ## Visualizations
 
-Numbers in a table are precise; charts make the *pattern* obvious — especially where bivariate correlations disagree with multivariate decompositions. **Hover** any point or cell for exact values; click legend items to show or hide methods.
+Numbers in a table are precise; charts make the *pattern* obvious — especially where bivariate correlations disagree with multivariate decompositions. The bar and scatter charts are interactive (**hover** for values; click legend items to toggle methods).
 
 ### Driver importance across methods
 
@@ -466,41 +480,33 @@ Drivers are positively correlated with each other — respondents who agree with
 
 ```{python}
 #| echo: true
+#| fig-cap: "Pearson correlations among drivers and satisfaction. Darker red = stronger positive association."
 
 heat_cols = [OUTCOME] + DRIVERS
 heat_labels = ["Satisfaction"] + [LABELS[d] for d in DRIVERS]
 corr_heat = df[heat_cols].corr()
-z = corr_heat.to_numpy()
-text = [[f"{val:.2f}" for val in row] for row in z]
+corr_heat.index = heat_labels
+corr_heat.columns = heat_labels
 
-fig_heat = go.Figure(data=go.Heatmap(
-    z=z,
-    x=heat_labels,
-    y=heat_labels,
-    colorscale=[
-        [0.0, "#2166ac"],
-        [0.5, "#f7f7f7"],
-        [1.0, "#b2182b"],
-    ],
-    zmin=-0.2,
-    zmax=1.0,
-    text=text,
-    texttemplate="%{text}",
-    textfont=dict(size=10, color=ACCENT),
-    hovertemplate="<b>%{y}</b> vs <b>%{x}</b><br>Pearson r = %{z:.3f}<extra></extra>",
-    colorbar=dict(title="r"),
-))
-fig_heat.update_layout(
-    title="Drivers move together — multicollinearity is real",
-    xaxis=dict(tickangle=-35, side="bottom"),
-    yaxis=dict(autorange="reversed"),
-    margin=dict(l=10, r=10, t=60, b=100),
-    height=520,
-)
-show_plotly(
-    fig_heat,
-    caption="Pearson correlations among drivers and satisfaction. Darker red = stronger positive association.",
-)
+fig, ax = plt.subplots(figsize=(8.8, 6.8), dpi=140)
+im = ax.imshow(corr_heat, cmap="RdBu_r", vmin=-0.2, vmax=1.0, aspect="auto")
+ax.set_xticks(range(len(heat_labels)))
+ax.set_yticks(range(len(heat_labels)))
+ax.set_xticklabels(heat_labels, rotation=45, ha="right")
+ax.set_yticklabels(heat_labels)
+ax.set_title("Drivers move together — multicollinearity is real")
+
+for i in range(len(heat_labels)):
+    for j in range(len(heat_labels)):
+        val = corr_heat.iloc[i, j]
+        color = "#f0ece4" if abs(val) > 0.45 else ACCENT
+        ax.text(j, i, f"{val:.2f}", ha="center", va="center", fontsize=7.5, color=color)
+
+cbar = fig.colorbar(im, ax=ax, fraction=0.03, pad=0.02)
+cbar.ax.tick_params(colors="#8a8278")
+fig.patch.set_facecolor(BG)
+plt.tight_layout()
+plt.show()
 ```
 
 ### Bivariate vs. model-adjusted importance

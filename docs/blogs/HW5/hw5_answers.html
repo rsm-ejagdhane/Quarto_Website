@@ -165,6 +165,7 @@ window.Quarto = {
   .post-body .chart-caption { font-size: 0.85rem; color: #8a8278; font-style: italic; margin: -0.5rem 0 1.5rem; text-align: center; }
   .post-body .plotly-graph-div { max-width: 100% !important; margin: 0 auto; }
   .post-body .cell-output-display:has(.plotly-graph-div) > div { margin: 0; }
+  .post-body .cell-output-display img { display: block; max-width: 100%; height: auto; margin: 0 auto 0.5rem; }
   @media (max-width: 800px) { .nav, .post-header, .post-body { padding-left: 1.5rem; padding-right: 1.5rem; } }
   body details:has(pre.sourceCode) { margin: 0 0 1.25rem; border: 1px solid #c9c2b6; border-radius: 2px; background: #e8e3da; }
   body details:has(pre.sourceCode) > summary { cursor: pointer; list-style: none; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: #f0ece4; background: #2e2825; padding: 0.55rem 1rem; }
@@ -203,7 +204,7 @@ window.Quarto = {
 <p>Shapley values are implemented from scratch using <span class="math inline">\(R^2\)</span> as the fit metric; Johnson weights follow the standard correlation-matrix algorithm (Tonidandel &amp; LeBreton, 2015).</p>
 <h2 id="the-data" class="anchored">The Data</h2>
 <p>The file <code>data_for_drivers_analysis.csv</code> contains 2,553 survey responses across two brands. Each row records whether a respondent agreed (1) or disagreed (0) with nine attribute statements, plus an overall <strong>satisfaction</strong> score on a 1–5 scale.</p>
-<div id="a6fd3a40" class="cell" data-execution_count="1">
+<div id="a4bbc045" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Show Python code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> base64</span>
@@ -214,164 +215,177 @@ window.Quarto = {
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> math <span class="im">import</span> factorial</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objects <span class="im">as</span> go</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.io <span class="im">as</span> pio</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> HTML, Markdown, display</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy.linalg <span class="im">import</span> eig, inv</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> stats</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestRegressor</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LinearRegression</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>DATA_DIR <span class="op">=</span> Path(<span class="st">"."</span>)</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">not</span> (DATA_DIR <span class="op">/</span> <span class="st">"data_for_drivers_analysis.csv"</span>).exists():</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    DATA_DIR <span class="op">=</span> Path(<span class="st">"blogs/HW5"</span>)</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>DRIVERS <span class="op">=</span> [</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="st">"trust"</span>, <span class="st">"build"</span>, <span class="st">"differs"</span>, <span class="st">"easy"</span>, <span class="st">"appealing"</span>,</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">"rewarding"</span>, <span class="st">"popular"</span>, <span class="st">"service"</span>, <span class="st">"impact"</span>,</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>OUTCOME <span class="op">=</span> <span class="st">"satisfaction"</span></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>LABELS <span class="op">=</span> {</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    <span class="st">"trust"</span>: <span class="st">"Trust"</span>,</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    <span class="st">"build"</span>: <span class="st">"Build quality"</span>,</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    <span class="st">"differs"</span>: <span class="st">"Differentiation"</span>,</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    <span class="st">"easy"</span>: <span class="st">"Ease of use"</span>,</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    <span class="st">"appealing"</span>: <span class="st">"Appealing design"</span>,</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    <span class="st">"rewarding"</span>: <span class="st">"Rewarding experience"</span>,</span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    <span class="st">"popular"</span>: <span class="st">"Popularity"</span>,</span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>    <span class="st">"service"</span>: <span class="st">"Customer service"</span>,</span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>    <span class="st">"impact"</span>: <span class="st">"Social impact"</span>,</span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>ACCENT <span class="op">=</span> <span class="st">"#2e2825"</span></span>
-<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>BG <span class="op">=</span> <span class="st">"#f0ece4"</span></span>
-<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>PANEL <span class="op">=</span> <span class="st">"#e8e3da"</span></span>
-<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>GRID <span class="op">=</span> <span class="st">"#c9c2b6"</span></span>
-<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>HIGHLIGHT <span class="op">=</span> <span class="st">"#7a3b35"</span></span>
-<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>PALETTE <span class="op">=</span> [<span class="st">"#7a3b35"</span>, <span class="st">"#2e2825"</span>, <span class="st">"#8a8278"</span>, <span class="st">"#c9a09b"</span>, <span class="st">"#6b6560"</span>]</span>
-<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>pio.templates.default <span class="op">=</span> <span class="st">"simple_white"</span></span>
-<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.graph_objects <span class="im">as</span> go</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.io <span class="im">as</span> pio</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> HTML, Markdown, display</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numpy.linalg <span class="im">import</span> eig, inv</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> stats</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.ensemble <span class="im">import</span> RandomForestRegressor</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LinearRegression</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>DATA_DIR <span class="op">=</span> Path(<span class="st">"."</span>)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">not</span> (DATA_DIR <span class="op">/</span> <span class="st">"data_for_drivers_analysis.csv"</span>).exists():</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    DATA_DIR <span class="op">=</span> Path(<span class="st">"blogs/HW5"</span>)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>DRIVERS <span class="op">=</span> [</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">"trust"</span>, <span class="st">"build"</span>, <span class="st">"differs"</span>, <span class="st">"easy"</span>, <span class="st">"appealing"</span>,</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    <span class="st">"rewarding"</span>, <span class="st">"popular"</span>, <span class="st">"service"</span>, <span class="st">"impact"</span>,</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>OUTCOME <span class="op">=</span> <span class="st">"satisfaction"</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>LABELS <span class="op">=</span> {</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    <span class="st">"trust"</span>: <span class="st">"Trust"</span>,</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    <span class="st">"build"</span>: <span class="st">"Build quality"</span>,</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    <span class="st">"differs"</span>: <span class="st">"Differentiation"</span>,</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    <span class="st">"easy"</span>: <span class="st">"Ease of use"</span>,</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    <span class="st">"appealing"</span>: <span class="st">"Appealing design"</span>,</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    <span class="st">"rewarding"</span>: <span class="st">"Rewarding experience"</span>,</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>    <span class="st">"popular"</span>: <span class="st">"Popularity"</span>,</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>    <span class="st">"service"</span>: <span class="st">"Customer service"</span>,</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>    <span class="st">"impact"</span>: <span class="st">"Social impact"</span>,</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>ACCENT <span class="op">=</span> <span class="st">"#2e2825"</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>BG <span class="op">=</span> <span class="st">"#f0ece4"</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>PANEL <span class="op">=</span> <span class="st">"#e8e3da"</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>GRID <span class="op">=</span> <span class="st">"#c9c2b6"</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>HIGHLIGHT <span class="op">=</span> <span class="st">"#7a3b35"</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>PALETTE <span class="op">=</span> [<span class="st">"#7a3b35"</span>, <span class="st">"#2e2825"</span>, <span class="st">"#8a8278"</span>, <span class="st">"#c9a09b"</span>, <span class="st">"#6b6560"</span>]</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>pio.templates.default <span class="op">=</span> <span class="st">"simple_white"</span></span>
 <span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _decode_bdata(obj: <span class="bu">dict</span>) <span class="op">-&gt;</span> <span class="bu">list</span>:</span>
-<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>    raw <span class="op">=</span> base64.b64decode(obj[<span class="st">"bdata"</span>])</span>
-<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>    dtype <span class="op">=</span> obj[<span class="st">"dtype"</span>]</span>
-<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> dtype <span class="op">==</span> <span class="st">"f8"</span>:</span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">list</span>(struct.unpack(<span class="ss">f"&lt;</span><span class="sc">{</span><span class="bu">len</span>(raw) <span class="op">//</span> <span class="dv">8</span><span class="sc">}</span><span class="ss">d"</span>, raw))</span>
-<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> dtype <span class="op">==</span> <span class="st">"f4"</span>:</span>
-<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">list</span>(struct.unpack(<span class="ss">f"&lt;</span><span class="sc">{</span><span class="bu">len</span>(raw) <span class="op">//</span> <span class="dv">4</span><span class="sc">}</span><span class="ss">f"</span>, raw))</span>
-<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> dtype <span class="op">==</span> <span class="st">"i2"</span>:</span>
-<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">list</span>(struct.unpack(<span class="ss">f"&lt;</span><span class="sc">{</span><span class="bu">len</span>(raw) <span class="op">//</span> <span class="dv">2</span><span class="sc">}</span><span class="ss">h"</span>, raw))</span>
-<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> dtype <span class="op">==</span> <span class="st">"i4"</span>:</span>
-<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">list</span>(struct.unpack(<span class="ss">f"&lt;</span><span class="sc">{</span><span class="bu">len</span>(raw) <span class="op">//</span> <span class="dv">4</span><span class="sc">}</span><span class="ss">i"</span>, raw))</span>
-<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">list</span>(raw)</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> style_axes(ax):</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>    ax.set_facecolor(PANEL)</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>    ax.figure.set_facecolor(BG)</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>    ax.grid(<span class="va">True</span>, axis<span class="op">=</span><span class="st">"both"</span>, color<span class="op">=</span>GRID, linewidth<span class="op">=</span><span class="fl">0.7</span>, alpha<span class="op">=</span><span class="fl">0.8</span>)</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> spine <span class="kw">in</span> (<span class="st">"top"</span>, <span class="st">"right"</span>):</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>        ax.spines[spine].set_visible(<span class="va">False</span>)</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>    ax.tick_params(colors<span class="op">=</span><span class="st">"#8a8278"</span>)</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>    ax.xaxis.label.set_color(ACCENT)</span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>    ax.yaxis.label.set_color(ACCENT)</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>    ax.title.set_color(ACCENT)</span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _plain_json(obj):</span>
-<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">isinstance</span>(obj, <span class="bu">dict</span>):</span>
-<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="st">"bdata"</span> <span class="kw">in</span> obj <span class="kw">and</span> <span class="st">"dtype"</span> <span class="kw">in</span> obj:</span>
-<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> _decode_bdata(obj)</span>
-<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> {k: _plain_json(v) <span class="cf">for</span> k, v <span class="kw">in</span> obj.items()}</span>
-<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">isinstance</span>(obj, (<span class="bu">list</span>, <span class="bu">tuple</span>)):</span>
-<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> [_plain_json(v) <span class="cf">for</span> v <span class="kw">in</span> obj]</span>
-<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">isinstance</span>(obj, np.ndarray):</span>
-<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> obj.tolist()</span>
-<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">isinstance</span>(obj, (np.integer, np.floating, np.bool_)):</span>
-<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> obj.item()</span>
-<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> obj</span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _decode_bdata(obj: <span class="bu">dict</span>) <span class="op">-&gt;</span> <span class="bu">list</span>:</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>    raw <span class="op">=</span> base64.b64decode(obj[<span class="st">"bdata"</span>])</span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>    dtype <span class="op">=</span> obj[<span class="st">"dtype"</span>]</span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> dtype <span class="op">==</span> <span class="st">"f8"</span>:</span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">list</span>(struct.unpack(<span class="ss">f"&lt;</span><span class="sc">{</span><span class="bu">len</span>(raw) <span class="op">//</span> <span class="dv">8</span><span class="sc">}</span><span class="ss">d"</span>, raw))</span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> dtype <span class="op">==</span> <span class="st">"f4"</span>:</span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">list</span>(struct.unpack(<span class="ss">f"&lt;</span><span class="sc">{</span><span class="bu">len</span>(raw) <span class="op">//</span> <span class="dv">4</span><span class="sc">}</span><span class="ss">f"</span>, raw))</span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> dtype <span class="op">==</span> <span class="st">"i2"</span>:</span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">list</span>(struct.unpack(<span class="ss">f"&lt;</span><span class="sc">{</span><span class="bu">len</span>(raw) <span class="op">//</span> <span class="dv">2</span><span class="sc">}</span><span class="ss">h"</span>, raw))</span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> dtype <span class="op">==</span> <span class="st">"i4"</span>:</span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">list</span>(struct.unpack(<span class="ss">f"&lt;</span><span class="sc">{</span><span class="bu">len</span>(raw) <span class="op">//</span> <span class="dv">4</span><span class="sc">}</span><span class="ss">i"</span>, raw))</span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">list</span>(raw)</span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> embed_plotly(fig: go.Figure, div_id: <span class="bu">str</span>, height: <span class="bu">int</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
-<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>    fig.update_layout(</span>
-<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>        height<span class="op">=</span>height,</span>
-<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>        paper_bgcolor<span class="op">=</span>BG,</span>
-<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>        plot_bgcolor<span class="op">=</span>PANEL,</span>
-<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a>        font<span class="op">=</span><span class="bu">dict</span>(color<span class="op">=</span>ACCENT, family<span class="op">=</span><span class="st">"DM Sans, sans-serif"</span>),</span>
-<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>    fig.update_xaxes(gridcolor<span class="op">=</span>GRID, zerolinecolor<span class="op">=</span>GRID)</span>
-<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>    fig.update_yaxes(gridcolor<span class="op">=</span>GRID, zerolinecolor<span class="op">=</span>GRID)</span>
-<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>    raw <span class="op">=</span> fig.to_dict()</span>
-<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>    layout <span class="op">=</span> _plain_json(raw.get(<span class="st">"layout"</span>, {}))</span>
-<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>    layout.pop(<span class="st">"template"</span>, <span class="va">None</span>)</span>
-<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>    payload <span class="op">=</span> json.dumps(</span>
-<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a>        {</span>
-<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>            <span class="st">"data"</span>: _plain_json(raw.get(<span class="st">"data"</span>, [])),</span>
-<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a>            <span class="st">"layout"</span>: layout,</span>
-<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>            <span class="st">"config"</span>: {<span class="st">"displayModeBar"</span>: <span class="va">True</span>, <span class="st">"responsive"</span>: <span class="va">True</span>},</span>
-<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="ss">f"""&lt;div id="</span><span class="sc">{</span>div_id<span class="sc">}</span><span class="ss">" class="plotly-graph-div" style="width:100%;height:</span><span class="sc">{</span>height<span class="sc">}</span><span class="ss">px;"&gt;&lt;/div&gt;</span></span>
-<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;script&gt;</span></span>
-<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a><span class="ss">(function() </span><span class="ch">{{</span></span>
-<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a><span class="ss">  function decodeBdata(obj) </span><span class="ch">{{</span></span>
-<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a><span class="ss">    if (Array.isArray(obj)) return obj.map(decodeBdata);</span></span>
-<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a><span class="ss">    if (obj &amp;&amp; typeof obj === "object") </span><span class="ch">{{</span></span>
-<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a><span class="ss">      if (obj.bdata &amp;&amp; obj.dtype) </span><span class="ch">{{</span></span>
-<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a><span class="ss">        var bin = atob(obj.bdata);</span></span>
-<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a><span class="ss">        var buf = new ArrayBuffer(bin.length);</span></span>
-<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a><span class="ss">        var view = new Uint8Array(buf);</span></span>
-<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a><span class="ss">        for (var i = 0; i &lt; bin.length; i++) view[i] = bin.charCodeAt(i);</span></span>
-<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a><span class="ss">        if (obj.dtype === "f8") return Array.from(new Float64Array(buf));</span></span>
-<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a><span class="ss">        if (obj.dtype === "f4") return Array.from(new Float32Array(buf));</span></span>
-<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a><span class="ss">        if (obj.dtype === "i2") return Array.from(new Int16Array(buf));</span></span>
-<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a><span class="ss">        if (obj.dtype === "i4") return Array.from(new Int32Array(buf));</span></span>
-<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a><span class="ss">      </span><span class="ch">}}</span></span>
-<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a><span class="ss">      var out = </span><span class="ch">{{}}</span><span class="ss">;</span></span>
-<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a><span class="ss">      for (var k in obj) out[k] = decodeBdata(obj[k]);</span></span>
-<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a><span class="ss">      return out;</span></span>
-<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a><span class="ss">    </span><span class="ch">}}</span></span>
-<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a><span class="ss">    return obj;</span></span>
-<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a><span class="ss">  </span><span class="ch">}}</span></span>
-<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a><span class="ss">  var spec = decodeBdata(</span><span class="sc">{</span>payload<span class="sc">}</span><span class="ss">);</span></span>
-<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a><span class="ss">  function drawPlot() </span><span class="ch">{{</span></span>
-<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a><span class="ss">    if (typeof Plotly === "undefined") </span><span class="ch">{{</span></span>
-<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a><span class="ss">      setTimeout(drawPlot, 50);</span></span>
-<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a><span class="ss">      return;</span></span>
-<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a><span class="ss">    </span><span class="ch">}}</span></span>
-<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a><span class="ss">    var el = document.getElementById("</span><span class="sc">{</span>div_id<span class="sc">}</span><span class="ss">");</span></span>
-<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a><span class="ss">    if (!el || el.dataset.plotlyDrawn === "1") return;</span></span>
-<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a><span class="ss">    Plotly.newPlot(el, spec.data, spec.layout, spec.config).then(function() </span><span class="ch">{{</span></span>
-<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a><span class="ss">      el.dataset.plotlyDrawn = "1";</span></span>
-<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a><span class="ss">      if (typeof Plotly.Plots !== "undefined") Plotly.Plots.resize(el);</span></span>
-<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a><span class="ss">    </span><span class="ch">}}</span><span class="ss">).catch(function(err) </span><span class="ch">{{</span></span>
-<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a><span class="ss">      console.error("Plotly failed (</span><span class="sc">{</span>div_id<span class="sc">}</span><span class="ss">):", err);</span></span>
-<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a><span class="ss">      el.innerHTML = "&lt;p style='color:#7a3b35;font-size:0.9rem'&gt;Chart could not load — try a hard refresh.&lt;/p&gt;";</span></span>
-<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a><span class="ss">    </span><span class="ch">}}</span><span class="ss">);</span></span>
-<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a><span class="ss">  </span><span class="ch">}}</span></span>
-<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a><span class="ss">  if (document.readyState === "loading") </span><span class="ch">{{</span></span>
-<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a><span class="ss">    document.addEventListener("DOMContentLoaded", drawPlot);</span></span>
-<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a><span class="ss">  </span><span class="ch">}}</span><span class="ss"> else </span><span class="ch">{{</span></span>
-<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a><span class="ss">    drawPlot();</span></span>
-<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a><span class="ss">  </span><span class="ch">}}</span></span>
-<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a><span class="ch">}}</span><span class="ss">)();</span></span>
-<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;/script&gt;"""</span></span>
-<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> show_plotly(fig: go.Figure, height<span class="op">=</span><span class="va">None</span>, caption<span class="op">=</span><span class="va">None</span>) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
-<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a>    plot_h <span class="op">=</span> <span class="bu">int</span>(height <span class="cf">if</span> height <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span> <span class="cf">else</span> (fig.layout.height <span class="kw">or</span> <span class="dv">500</span>))</span>
-<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a>    div_id <span class="op">=</span> <span class="st">"plot-"</span> <span class="op">+</span> uuid.uuid4().<span class="bu">hex</span>[:<span class="dv">10</span>]</span>
-<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a>    html <span class="op">=</span> embed_plotly(fig, div_id, plot_h)</span>
-<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> caption:</span>
-<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a>        html <span class="op">+=</span> <span class="ss">f'&lt;p class="chart-caption"&gt;&lt;em&gt;</span><span class="sc">{</span>caption<span class="sc">}</span><span class="ss">&lt;/em&gt;&lt;/p&gt;'</span></span>
-<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a>    display(HTML(html))</span>
-<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(DATA_DIR <span class="op">/</span> <span class="st">"data_for_drivers_analysis.csv"</span>)</span>
-<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> df[DRIVERS].to_numpy(dtype<span class="op">=</span><span class="bu">float</span>)</span>
-<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> df[OUTCOME].to_numpy(dtype<span class="op">=</span><span class="bu">float</span>)</span>
-<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a>n, p <span class="op">=</span> X.shape</span>
-<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a>summary <span class="op">=</span> pd.DataFrame({</span>
-<span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a>    <span class="st">"n"</span>: [n],</span>
-<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a>    <span class="st">"brands"</span>: [df[<span class="st">"brand"</span>].nunique()],</span>
-<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a>    <span class="st">"mean satisfaction"</span>: [df[OUTCOME].mean()],</span>
-<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a>    <span class="st">"sd satisfaction"</span>: [df[OUTCOME].std(ddof<span class="op">=</span><span class="dv">1</span>)],</span>
-<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a>display(Markdown(<span class="st">"**Sample overview**"</span>))</span>
-<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a>display(summary.<span class="bu">round</span>(<span class="dv">3</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _plain_json(obj):</span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">isinstance</span>(obj, <span class="bu">dict</span>):</span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="st">"bdata"</span> <span class="kw">in</span> obj <span class="kw">and</span> <span class="st">"dtype"</span> <span class="kw">in</span> obj:</span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> _decode_bdata(obj)</span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> {k: _plain_json(v) <span class="cf">for</span> k, v <span class="kw">in</span> obj.items()}</span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">isinstance</span>(obj, (<span class="bu">list</span>, <span class="bu">tuple</span>)):</span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> [_plain_json(v) <span class="cf">for</span> v <span class="kw">in</span> obj]</span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">isinstance</span>(obj, np.ndarray):</span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> obj.tolist()</span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">isinstance</span>(obj, (np.integer, np.floating, np.bool_)):</span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> obj.item()</span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> obj</span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> embed_plotly(fig: go.Figure, div_id: <span class="bu">str</span>, height: <span class="bu">int</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>    fig.update_layout(</span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a>        height<span class="op">=</span>height,</span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>        paper_bgcolor<span class="op">=</span>BG,</span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a>        plot_bgcolor<span class="op">=</span>PANEL,</span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>        font<span class="op">=</span><span class="bu">dict</span>(color<span class="op">=</span>ACCENT, family<span class="op">=</span><span class="st">"DM Sans, sans-serif"</span>),</span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>    fig.update_xaxes(gridcolor<span class="op">=</span>GRID, zerolinecolor<span class="op">=</span>GRID)</span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>    fig.update_yaxes(gridcolor<span class="op">=</span>GRID, zerolinecolor<span class="op">=</span>GRID)</span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>    raw <span class="op">=</span> fig.to_dict()</span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a>    layout <span class="op">=</span> _plain_json(raw.get(<span class="st">"layout"</span>, {}))</span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a>    layout.pop(<span class="st">"template"</span>, <span class="va">None</span>)</span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a>    payload <span class="op">=</span> json.dumps(</span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a>            <span class="st">"data"</span>: _plain_json(raw.get(<span class="st">"data"</span>, [])),</span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>            <span class="st">"layout"</span>: layout,</span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a>            <span class="st">"config"</span>: {<span class="st">"displayModeBar"</span>: <span class="va">True</span>, <span class="st">"responsive"</span>: <span class="va">True</span>},</span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="ss">f"""&lt;div id="</span><span class="sc">{</span>div_id<span class="sc">}</span><span class="ss">" class="plotly-graph-div" style="width:100%;height:</span><span class="sc">{</span>height<span class="sc">}</span><span class="ss">px;"&gt;&lt;/div&gt;</span></span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;script&gt;</span></span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a><span class="ss">(function() </span><span class="ch">{{</span></span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a><span class="ss">  function decodeBdata(obj) </span><span class="ch">{{</span></span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a><span class="ss">    if (Array.isArray(obj)) return obj.map(decodeBdata);</span></span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a><span class="ss">    if (obj &amp;&amp; typeof obj === "object") </span><span class="ch">{{</span></span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a><span class="ss">      if (obj.bdata &amp;&amp; obj.dtype) </span><span class="ch">{{</span></span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a><span class="ss">        var bin = atob(obj.bdata);</span></span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a><span class="ss">        var buf = new ArrayBuffer(bin.length);</span></span>
+<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a><span class="ss">        var view = new Uint8Array(buf);</span></span>
+<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a><span class="ss">        for (var i = 0; i &lt; bin.length; i++) view[i] = bin.charCodeAt(i);</span></span>
+<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a><span class="ss">        if (obj.dtype === "f8") return Array.from(new Float64Array(buf));</span></span>
+<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a><span class="ss">        if (obj.dtype === "f4") return Array.from(new Float32Array(buf));</span></span>
+<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a><span class="ss">        if (obj.dtype === "i2") return Array.from(new Int16Array(buf));</span></span>
+<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a><span class="ss">        if (obj.dtype === "i4") return Array.from(new Int32Array(buf));</span></span>
+<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a><span class="ss">      </span><span class="ch">}}</span></span>
+<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a><span class="ss">      var out = </span><span class="ch">{{}}</span><span class="ss">;</span></span>
+<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a><span class="ss">      for (var k in obj) out[k] = decodeBdata(obj[k]);</span></span>
+<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a><span class="ss">      return out;</span></span>
+<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a><span class="ss">    </span><span class="ch">}}</span></span>
+<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a><span class="ss">    return obj;</span></span>
+<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a><span class="ss">  </span><span class="ch">}}</span></span>
+<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a><span class="ss">  var spec = decodeBdata(</span><span class="sc">{</span>payload<span class="sc">}</span><span class="ss">);</span></span>
+<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a><span class="ss">  function drawPlot() </span><span class="ch">{{</span></span>
+<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a><span class="ss">    if (typeof Plotly === "undefined") </span><span class="ch">{{</span></span>
+<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a><span class="ss">      setTimeout(drawPlot, 50);</span></span>
+<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a><span class="ss">      return;</span></span>
+<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a><span class="ss">    </span><span class="ch">}}</span></span>
+<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a><span class="ss">    var el = document.getElementById("</span><span class="sc">{</span>div_id<span class="sc">}</span><span class="ss">");</span></span>
+<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a><span class="ss">    if (!el || el.dataset.plotlyDrawn === "1") return;</span></span>
+<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a><span class="ss">    Plotly.newPlot(el, spec.data, spec.layout, spec.config).then(function() </span><span class="ch">{{</span></span>
+<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a><span class="ss">      el.dataset.plotlyDrawn = "1";</span></span>
+<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a><span class="ss">      if (typeof Plotly.Plots !== "undefined") Plotly.Plots.resize(el);</span></span>
+<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a><span class="ss">    </span><span class="ch">}}</span><span class="ss">).catch(function(err) </span><span class="ch">{{</span></span>
+<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a><span class="ss">      console.error("Plotly failed (</span><span class="sc">{</span>div_id<span class="sc">}</span><span class="ss">):", err);</span></span>
+<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a><span class="ss">      el.innerHTML = "&lt;p style='color:#7a3b35;font-size:0.9rem'&gt;Chart could not load — try a hard refresh.&lt;/p&gt;";</span></span>
+<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a><span class="ss">    </span><span class="ch">}}</span><span class="ss">);</span></span>
+<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a><span class="ss">  </span><span class="ch">}}</span></span>
+<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a><span class="ss">  if (document.readyState === "loading") </span><span class="ch">{{</span></span>
+<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a><span class="ss">    document.addEventListener("DOMContentLoaded", drawPlot);</span></span>
+<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a><span class="ss">  </span><span class="ch">}}</span><span class="ss"> else </span><span class="ch">{{</span></span>
+<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a><span class="ss">    drawPlot();</span></span>
+<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a><span class="ss">  </span><span class="ch">}}</span></span>
+<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a><span class="ch">}}</span><span class="ss">)();</span></span>
+<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a><span class="ss">&lt;/script&gt;"""</span></span>
+<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> show_plotly(fig: go.Figure, height<span class="op">=</span><span class="va">None</span>, caption<span class="op">=</span><span class="va">None</span>) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a>    plot_h <span class="op">=</span> <span class="bu">int</span>(height <span class="cf">if</span> height <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span> <span class="cf">else</span> (fig.layout.height <span class="kw">or</span> <span class="dv">500</span>))</span>
+<span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a>    div_id <span class="op">=</span> <span class="st">"plot-"</span> <span class="op">+</span> uuid.uuid4().<span class="bu">hex</span>[:<span class="dv">10</span>]</span>
+<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a>    html <span class="op">=</span> embed_plotly(fig, div_id, plot_h)</span>
+<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> caption:</span>
+<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a>        html <span class="op">+=</span> <span class="ss">f'&lt;p class="chart-caption"&gt;&lt;em&gt;</span><span class="sc">{</span>caption<span class="sc">}</span><span class="ss">&lt;/em&gt;&lt;/p&gt;'</span></span>
+<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a>    display(HTML(html))</span>
+<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(DATA_DIR <span class="op">/</span> <span class="st">"data_for_drivers_analysis.csv"</span>)</span>
+<span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> df[DRIVERS].to_numpy(dtype<span class="op">=</span><span class="bu">float</span>)</span>
+<span id="cb1-169"><a href="#cb1-169" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> df[OUTCOME].to_numpy(dtype<span class="op">=</span><span class="bu">float</span>)</span>
+<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a>n, p <span class="op">=</span> X.shape</span>
+<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a>summary <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a>    <span class="st">"n"</span>: [n],</span>
+<span id="cb1-174"><a href="#cb1-174" aria-hidden="true" tabindex="-1"></a>    <span class="st">"brands"</span>: [df[<span class="st">"brand"</span>].nunique()],</span>
+<span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a>    <span class="st">"mean satisfaction"</span>: [df[OUTCOME].mean()],</span>
+<span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a>    <span class="st">"sd satisfaction"</span>: [df[OUTCOME].std(ddof<span class="op">=</span><span class="dv">1</span>)],</span>
+<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a>display(Markdown(<span class="st">"**Sample overview**"</span>))</span>
+<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a>display(summary.<span class="bu">round</span>(<span class="dv">3</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display cell-output-markdown">
 <p><strong>Sample overview</strong></p>
@@ -417,7 +431,7 @@ window.Quarto = {
 </div>
 </div>
 <p>All regression-based metrics use a linear model predicting standardized satisfaction from the nine binary attribute indicators.</p>
-<div id="56d75b62" class="cell" data-execution_count="2">
+<div id="238144ea" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Show Python code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> r2_subset(indices):</span>
@@ -496,7 +510,7 @@ window.Quarto = {
 </div>
 <h2 id="results" class="anchored">Results</h2>
 <p>The table below matches the slide-75 layout. Correlations and standardized betas are shown as-is. Usefulness, Shapley, and Johnson weights are <strong><span class="math inline">\(R^2\)</span> contributions</strong> (they sum to the model’s <span class="math inline">\(R^2 \approx 0.109\)</span>). The last column shows random-forest Gini importance, rescaled to percentages for comparability.</p>
-<div id="16f03dee" class="cell" data-execution_count="3">
+<div id="5d168646" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Show Python code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> markdown_table(headers, rows):</span>
@@ -671,10 +685,10 @@ window.Quarto = {
 </div>
 </div>
 <h2 id="visualizations" class="anchored">Visualizations</h2>
-<p>Numbers in a table are precise; charts make the <em>pattern</em> obvious — especially where bivariate correlations disagree with multivariate decompositions. <strong>Hover</strong> any point or cell for exact values; click legend items to show or hide methods.</p>
+<p>Numbers in a table are precise; charts make the <em>pattern</em> obvious — especially where bivariate correlations disagree with multivariate decompositions. The bar and scatter charts are interactive (<strong>hover</strong> for values; click legend items to toggle methods).</p>
 <h3 id="driver-importance-across-methods" class="anchored">Driver importance across methods</h3>
 <p>Each metric is rescaled to <strong>percent of its own total</strong> so the four ranking methods are comparable on one chart. Trust, social impact, and customer service lead under every decomposition; popularity and rewarding experience trail.</p>
-<div id="ecb8ddaa" class="cell" data-execution_count="4">
+<div id="bee39be4" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Show Python code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>plot_df <span class="op">=</span> results.copy()</span>
@@ -716,7 +730,7 @@ window.Quarto = {
 <span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="plot-01c94b1bc1" class="plotly-graph-div" style="width:100%;height:460px;"></div>
+<div id="plot-bd88f015bc" class="plotly-graph-div" style="width:100%;height:460px;"></div>
 <script>
 (function() {
   function decodeBdata(obj) {
@@ -744,13 +758,13 @@ window.Quarto = {
       setTimeout(drawPlot, 50);
       return;
     }
-    var el = document.getElementById("plot-01c94b1bc1");
+    var el = document.getElementById("plot-bd88f015bc");
     if (!el || el.dataset.plotlyDrawn === "1") return;
     Plotly.newPlot(el, spec.data, spec.layout, spec.config).then(function() {
       el.dataset.plotlyDrawn = "1";
       if (typeof Plotly.Plots !== "undefined") Plotly.Plots.resize(el);
     }).catch(function(err) {
-      console.error("Plotly failed (plot-01c94b1bc1):", err);
+      console.error("Plotly failed (plot-bd88f015bc):", err);
       el.innerHTML = "<p style='color:#7a3b35;font-size:0.9rem'>Chart could not load — try a hard refresh.</p>";
     });
   }
@@ -765,95 +779,47 @@ window.Quarto = {
 </div>
 <h3 id="correlation-structure" class="anchored">Correlation structure</h3>
 <p>Drivers are positively correlated with each other — respondents who agree with one statement tend to agree with others. That shared variance is exactly why Pearson <em>r</em> alone can mislead: attributes like <strong>popularity</strong> look moderately correlated with satisfaction until the other drivers are controlled for.</p>
-<div id="f318ef63" class="cell" data-execution_count="5">
+<div id="6e708939" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Show Python code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>heat_cols <span class="op">=</span> [OUTCOME] <span class="op">+</span> DRIVERS</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>heat_labels <span class="op">=</span> [<span class="st">"Satisfaction"</span>] <span class="op">+</span> [LABELS[d] <span class="cf">for</span> d <span class="kw">in</span> DRIVERS]</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>corr_heat <span class="op">=</span> df[heat_cols].corr()</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> corr_heat.to_numpy()</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> [[<span class="ss">f"</span><span class="sc">{</span>val<span class="sc">:.2f}</span><span class="ss">"</span> <span class="cf">for</span> val <span class="kw">in</span> row] <span class="cf">for</span> row <span class="kw">in</span> z]</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>corr_heat.index <span class="op">=</span> heat_labels</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>corr_heat.columns <span class="op">=</span> heat_labels</span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>fig_heat <span class="op">=</span> go.Figure(data<span class="op">=</span>go.Heatmap(</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    z<span class="op">=</span>z,</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span>heat_labels,</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span>heat_labels,</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    colorscale<span class="op">=</span>[</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">0.0</span>, <span class="st">"#2166ac"</span>],</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">0.5</span>, <span class="st">"#f7f7f7"</span>],</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        [<span class="fl">1.0</span>, <span class="st">"#b2182b"</span>],</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    ],</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    zmin<span class="op">=-</span><span class="fl">0.2</span>,</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    zmax<span class="op">=</span><span class="fl">1.0</span>,</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    text<span class="op">=</span>text,</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    texttemplate<span class="op">=</span><span class="st">"%</span><span class="sc">{text}</span><span class="st">"</span>,</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    textfont<span class="op">=</span><span class="bu">dict</span>(size<span class="op">=</span><span class="dv">10</span>, color<span class="op">=</span>ACCENT),</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    hovertemplate<span class="op">=</span><span class="st">"&lt;b&gt;%</span><span class="sc">{y}</span><span class="st">&lt;/b&gt; vs &lt;b&gt;%</span><span class="sc">{x}</span><span class="st">&lt;/b&gt;&lt;br&gt;Pearson r = %</span><span class="sc">{z:.3f}</span><span class="st">&lt;extra&gt;&lt;/extra&gt;"</span>,</span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    colorbar<span class="op">=</span><span class="bu">dict</span>(title<span class="op">=</span><span class="st">"r"</span>),</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>))</span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>fig_heat.update_layout(</span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">"Drivers move together — multicollinearity is real"</span>,</span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    xaxis<span class="op">=</span><span class="bu">dict</span>(tickangle<span class="op">=-</span><span class="dv">35</span>, side<span class="op">=</span><span class="st">"bottom"</span>),</span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    yaxis<span class="op">=</span><span class="bu">dict</span>(autorange<span class="op">=</span><span class="st">"reversed"</span>),</span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    margin<span class="op">=</span><span class="bu">dict</span>(l<span class="op">=</span><span class="dv">10</span>, r<span class="op">=</span><span class="dv">10</span>, t<span class="op">=</span><span class="dv">60</span>, b<span class="op">=</span><span class="dv">100</span>),</span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    height<span class="op">=</span><span class="dv">520</span>,</span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>show_plotly(</span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>    fig_heat,</span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>    caption<span class="op">=</span><span class="st">"Pearson correlations among drivers and satisfaction. Darker red = stronger positive association."</span>,</span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="fl">8.8</span>, <span class="fl">6.8</span>), dpi<span class="op">=</span><span class="dv">140</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>im <span class="op">=</span> ax.imshow(corr_heat, cmap<span class="op">=</span><span class="st">"RdBu_r"</span>, vmin<span class="op">=-</span><span class="fl">0.2</span>, vmax<span class="op">=</span><span class="fl">1.0</span>, aspect<span class="op">=</span><span class="st">"auto"</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>ax.set_xticks(<span class="bu">range</span>(<span class="bu">len</span>(heat_labels)))</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>ax.set_yticks(<span class="bu">range</span>(<span class="bu">len</span>(heat_labels)))</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>ax.set_xticklabels(heat_labels, rotation<span class="op">=</span><span class="dv">45</span>, ha<span class="op">=</span><span class="st">"right"</span>)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>ax.set_yticklabels(heat_labels)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Drivers move together — multicollinearity is real"</span>)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(heat_labels)):</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(heat_labels)):</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>        val <span class="op">=</span> corr_heat.iloc[i, j]</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>        color <span class="op">=</span> <span class="st">"#f0ece4"</span> <span class="cf">if</span> <span class="bu">abs</span>(val) <span class="op">&gt;</span> <span class="fl">0.45</span> <span class="cf">else</span> ACCENT</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>        ax.text(j, i, <span class="ss">f"</span><span class="sc">{</span>val<span class="sc">:.2f}</span><span class="ss">"</span>, ha<span class="op">=</span><span class="st">"center"</span>, va<span class="op">=</span><span class="st">"center"</span>, fontsize<span class="op">=</span><span class="fl">7.5</span>, color<span class="op">=</span>color)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>cbar <span class="op">=</span> fig.colorbar(im, ax<span class="op">=</span>ax, fraction<span class="op">=</span><span class="fl">0.03</span>, pad<span class="op">=</span><span class="fl">0.02</span>)</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>cbar.ax.tick_params(colors<span class="op">=</span><span class="st">"#8a8278"</span>)</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>fig.patch.set_facecolor(BG)</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="plot-e71988aa7e" class="plotly-graph-div" style="width:100%;height:520px;"></div>
-<script>
-(function() {
-  function decodeBdata(obj) {
-    if (Array.isArray(obj)) return obj.map(decodeBdata);
-    if (obj && typeof obj === "object") {
-      if (obj.bdata && obj.dtype) {
-        var bin = atob(obj.bdata);
-        var buf = new ArrayBuffer(bin.length);
-        var view = new Uint8Array(buf);
-        for (var i = 0; i < bin.length; i++) view[i] = bin.charCodeAt(i);
-        if (obj.dtype === "f8") return Array.from(new Float64Array(buf));
-        if (obj.dtype === "f4") return Array.from(new Float32Array(buf));
-        if (obj.dtype === "i2") return Array.from(new Int16Array(buf));
-        if (obj.dtype === "i4") return Array.from(new Int32Array(buf));
-      }
-      var out = {};
-      for (var k in obj) out[k] = decodeBdata(obj[k]);
-      return out;
-    }
-    return obj;
-  }
-  var spec = decodeBdata({"data": [{"colorbar": {"title": {"text": "r"}}, "colorscale": [[0.0, "#2166ac"], [0.5, "#f7f7f7"], [1.0, "#b2182b"]], "hovertemplate": "<b>%{y}</b> vs <b>%{x}</b><br>Pearson r = %{z:.3f}<extra></extra>", "text": [["1.00", "0.26", "0.19", "0.18", "0.21", "0.21", "0.19", "0.17", "0.25", "0.25"], ["0.26", "1.00", "0.40", "0.31", "0.48", "0.42", "0.42", "0.39", "0.50", "0.35"], ["0.19", "0.40", "1.00", "0.37", "0.44", "0.37", "0.44", "0.33", "0.41", "0.38"], ["0.18", "0.31", "0.37", "1.00", "0.35", "0.42", "0.35", "0.27", "0.37", "0.42"], ["0.21", "0.48", "0.44", "0.35", "1.00", "0.43", "0.46", "0.39", "0.46", "0.41"], ["0.21", "0.42", "0.37", "0.42", "0.43", "1.00", "0.48", "0.38", "0.43", "0.39"], ["0.19", "0.42", "0.44", "0.35", "0.46", "0.48", "1.00", "0.35", "0.46", "0.38"], ["0.17", "0.39", "0.33", "0.27", "0.39", "0.38", "0.35", "1.00", "0.38", "0.31"], ["0.25", "0.50", "0.41", "0.37", "0.46", "0.43", "0.46", "0.38", "1.00", "0.41"], ["0.25", "0.35", "0.38", "0.42", "0.41", "0.39", "0.38", "0.31", "0.41", "1.00"]], "textfont": {"color": "#2e2825", "size": 10}, "texttemplate": "%{text}", "x": ["Satisfaction", "Trust", "Build quality", "Differentiation", "Ease of use", "Appealing design", "Rewarding experience", "Popularity", "Customer service", "Social impact"], "y": ["Satisfaction", "Trust", "Build quality", "Differentiation", "Ease of use", "Appealing design", "Rewarding experience", "Popularity", "Customer service", "Social impact"], "z": [1.0, 0.25570553126859213, 0.1918957473777913, 0.18480092559442615, 0.21298469175429582, 0.2079965205748118, 0.19456145004200356, 0.17142528145850655, 0.2510982317565476, 0.25453855149020155, 0.25570553126859213, 1.0, 0.39965244216009077, 0.30649287389404956, 0.480972698160425, 0.4207043363128754, 0.42386849129683246, 0.3894089678760558, 0.5039658922255355, 0.35406198312577863, 0.1918957473777913, 0.39965244216009077, 1.0, 0.3707050552755713, 0.4439531645835801, 0.36945570092055435, 0.4357695946698772, 0.33366700581493824, 0.4079557726063085, 0.38363940067604446, 0.18480092559442615, 0.30649287389404956, 0.3707050552755713, 1.0, 0.3496928728823222, 0.4181587397422375, 0.34975753679640376, 0.26645564289446466, 0.3676148640055818, 0.41695658682447145, 0.21298469175429582, 0.480972698160425, 0.4439531645835801, 0.3496928728823222, 1.0, 0.43290418173326406, 0.4613160922021231, 0.3873036888239589, 0.4569763656008673, 0.4120918249062401, 0.2079965205748118, 0.4207043363128754, 0.36945570092055435, 0.4181587397422375, 0.43290418173326406, 1.0, 0.4811592909826296, 0.376080360795543, 0.4254626021352736, 0.39428153888986484, 0.19456145004200356, 0.42386849129683246, 0.4357695946698772, 0.34975753679640376, 0.4613160922021231, 0.4811592909826296, 1.0, 0.35082532926766724, 0.4570159777424409, 0.384244988477467, 0.17142528145850655, 0.3894089678760558, 0.33366700581493824, 0.26645564289446466, 0.3873036888239589, 0.376080360795543, 0.35082532926766724, 1.0, 0.37826207825137476, 0.30526485110019597, 0.2510982317565476, 0.5039658922255355, 0.4079557726063085, 0.3676148640055818, 0.4569763656008673, 0.4254626021352736, 0.4570159777424409, 0.37826207825137476, 1.0, 0.41231277027371305, 0.25453855149020155, 0.35406198312577863, 0.38363940067604446, 0.41695658682447145, 0.4120918249062401, 0.39428153888986484, 0.384244988477467, 0.30526485110019597, 0.41231277027371305, 1.0], "zmax": 1.0, "zmin": -0.2, "type": "heatmap"}], "layout": {"xaxis": {"tickangle": -35, "side": "bottom", "gridcolor": "#c9c2b6", "zerolinecolor": "#c9c2b6"}, "yaxis": {"autorange": "reversed", "gridcolor": "#c9c2b6", "zerolinecolor": "#c9c2b6"}, "margin": {"l": 10, "r": 10, "t": 60, "b": 100}, "title": {"text": "Drivers move together \u2014 multicollinearity is real"}, "height": 520, "font": {"color": "#2e2825", "family": "DM Sans, sans-serif"}, "paper_bgcolor": "#f0ece4", "plot_bgcolor": "#e8e3da"}, "config": {"displayModeBar": true, "responsive": true}});
-  function drawPlot() {
-    if (typeof Plotly === "undefined") {
-      setTimeout(drawPlot, 50);
-      return;
-    }
-    var el = document.getElementById("plot-e71988aa7e");
-    if (!el || el.dataset.plotlyDrawn === "1") return;
-    Plotly.newPlot(el, spec.data, spec.layout, spec.config).then(function() {
-      el.dataset.plotlyDrawn = "1";
-      if (typeof Plotly.Plots !== "undefined") Plotly.Plots.resize(el);
-    }).catch(function(err) {
-      console.error("Plotly failed (plot-e71988aa7e):", err);
-      el.innerHTML = "<p style='color:#7a3b35;font-size:0.9rem'>Chart could not load — try a hard refresh.</p>";
-    });
-  }
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", drawPlot);
-  } else {
-    drawPlot();
-  }
-})();
-</script><p class="chart-caption"><em>Pearson correlations among drivers and satisfaction. Darker red = stronger positive association.</em></p>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img src="hw5_answers_files/figure-html/cell-6-output-1.png" class="img-fluid"></p>
+<figcaption>Pearson correlations among drivers and satisfaction. Darker red = stronger positive association.</figcaption>
+</figure>
+</div>
 </div>
 </div>
 <h3 id="bivariate-vs.-model-adjusted-importance" class="anchored">Bivariate vs.&nbsp;model-adjusted importance</h3>
 <p>Pearson <em>r</em> treats each driver in isolation; standardized β controls for the others. Points below the diagonal are drivers whose apparent bivariate link with satisfaction <strong>shrinks</strong> once the rest of the model is included — the classic multicollinearity story for popularity and rewarding experience.</p>
-<div id="0ca8cc5a" class="cell" data-execution_count="6">
+<div id="bac861d7" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Show Python code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>scatter_df <span class="op">=</span> results.copy()</span>
@@ -896,7 +862,7 @@ window.Quarto = {
 <span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="plot-ce990925e7" class="plotly-graph-div" style="width:100%;height:460px;"></div>
+<div id="plot-d00beb05bf" class="plotly-graph-div" style="width:100%;height:460px;"></div>
 <script>
 (function() {
   function decodeBdata(obj) {
@@ -924,13 +890,13 @@ window.Quarto = {
       setTimeout(drawPlot, 50);
       return;
     }
-    var el = document.getElementById("plot-ce990925e7");
+    var el = document.getElementById("plot-d00beb05bf");
     if (!el || el.dataset.plotlyDrawn === "1") return;
     Plotly.newPlot(el, spec.data, spec.layout, spec.config).then(function() {
       el.dataset.plotlyDrawn = "1";
       if (typeof Plotly.Plots !== "undefined") Plotly.Plots.resize(el);
     }).catch(function(err) {
-      console.error("Plotly failed (plot-ce990925e7):", err);
+      console.error("Plotly failed (plot-d00beb05bf):", err);
       el.innerHTML = "<p style='color:#7a3b35;font-size:0.9rem'>Chart could not load — try a hard refresh.</p>";
     });
   }
