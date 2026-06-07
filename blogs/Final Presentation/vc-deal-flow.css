@@ -250,6 +250,49 @@ body,
   font-weight: 500;
 }
 
+/* Combined Problem + Data slide */
+.reveal .slide-problem-data .slide-intro {
+  font-size: 0.52em;
+  margin-bottom: 0.2em;
+}
+
+.reveal .slide-problem-data ul {
+  font-size: 0.46em;
+  margin: 0.12em 0;
+  line-height: 1.32;
+}
+
+.reveal .slide-problem-data table {
+  font-size: 0.38em;
+  margin: 0.12em 0;
+}
+
+.reveal .slide-problem-data table th,
+.reveal .slide-problem-data table td {
+  padding: 0.28em 0.4em;
+}
+
+.reveal .slide-problem-data .callout {
+  font-size: 0.42em;
+  margin-top: 0.18em;
+  padding: 0.32rem 0.5rem;
+}
+
+.reveal .slide-problem-data .slide-img-sm {
+  max-height: 175px;
+  margin-top: 0.08em;
+}
+
+.reveal .slide-problem-data .caption {
+  font-size: 0.3em;
+  margin-top: 0.08em;
+  margin-bottom: 0.1em;
+}
+
+.reveal .slide-problem-data .metric-row {
+  margin: 0.12em 0 0.18em;
+}
+
 .reveal h1 {
   font-size: 2.5em;
   font-weight: 800;

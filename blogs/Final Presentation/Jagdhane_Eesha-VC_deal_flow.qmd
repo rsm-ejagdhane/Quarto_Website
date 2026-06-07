@@ -54,20 +54,18 @@ From Startup Chaos to Smart Deal Flow
 Marketing analytics applied to venture capital — turning messy deal flow into smarter, prioritized investment decisions.
 :::
 
-::: {.fragment .fade-up}
 All quantitative results in this deck come from a **simulated multi-source VC dataset**. The pipeline design mirrors a real end-to-end build.
 :::
-:::
 
-## The Problem {transition="slide" .slide-dense}
+## The Problem & The Data {transition="slide" .slide-dense .slide-problem-data}
 
 ::: {.slide-body}
 ::: {.slide-intro}
-VCs review thousands of startups, but partner time and attention are limited.
+VCs review thousands of startups across fragmented sources — partner time is limited. We built on a fully synthetic, privacy-safe dataset with the same structure as real VC exports.
 :::
 
 ::: {.columns}
-::: {.column width="48%"}
+::: {.column width="52%"}
 ::: {.metric-row}
 ::: {.metric-card .green-glow}
 ::: {.metric-value}
@@ -95,25 +93,34 @@ Data sources
 :::
 :::
 
-::: {.fragment .fade-up}
-::: {.incremental}
 - Signals live across **CRM**, **Harmonic**, and **PitchBook**
-- Partner time is the scarcest resource
-- Most deals never get a real look
-- Great companies get lost in the noise
-:::
-:::
+- Partner time is the scarcest resource — most deals never get a real look
+- **~40% intentional overlap** across sources to test entity resolution
+- CRM labels: **~5,400 positive** · **~14,600 negative**
+- No real company names or contact information in this deck
 
-::: {.fragment .fade-up .callout}
+| Source | Records | Key fields |
+|--------|--------:|------------|
+| Simulated CRM | 20,000 | Status, thesis area, geo, funding, investors |
+| Simulated Harmonic | 20,000 | Descriptions, headcount, 90d growth, tags |
+| Simulated PitchBook | 20,000 | Industry, verticals, financing, HQ |
+
+::: {.callout}
 The issue is not a lack of data — it is **too much scattered data** and **not enough partner attention**.
 :::
 :::
 
-::: {.column width="52%"}
-![Simulated data volume across three sources](images/data_sources.png){.slide-img}
+::: {.column width="48%"}
+![Simulated data volume across three sources](images/data_sources.png){.slide-img .slide-img-sm}
 
 ::: {.caption}
 Simulated CRM, Harmonic, and PitchBook exports · 20,000 records each
+:::
+
+![Entity resolution: raw records to canonical companies](images/dedupe_funnel.png){.slide-img .slide-img-sm}
+
+::: {.caption}
+60,000 raw → 44,104 unique companies · **26.5%** dedupe rate
 :::
 :::
 :::
@@ -189,7 +196,6 @@ Manual screening is uneven and time-bound — high-potential startups slip throu
 AI gives deal flow a brain — unified data, faster insight, and prioritized review.
 :::
 
-::: {.fragment .fade-up}
 ::: {.flow-steps}
 ::: {.flow-step .highlight}
 AI Summaries
@@ -204,47 +210,12 @@ Relevance Scoring
 Prioritized Deal Flow
 :::
 :::
-:::
 
-::: {.fragment .fade-up .callout .callout-success}
+::: {.callout .callout-success}
 **Relevance scoring is not a black-box model** — it is a transparent weighted layer that ranks companies using partner-selected investment criteria.
 :::
 
-::: {.fragment .fade-up}
 AI doesn't replace judgment — it **front-loads intelligence** so investors spend time where it matters.
-:::
-:::
-
-## The Data {transition="slide" .slide-dense}
-
-::: {.slide-body}
-::: {.slide-intro}
-A fully synthetic dataset with the same structure as real VC exports — privacy-safe, demo-ready.
-:::
-
-::: {.columns}
-::: {.column width="55%"}
-| Source | Records | Key fields |
-|--------|--------:|------------|
-| Simulated CRM | 20,000 | Status, thesis area, geo, funding, investors |
-| Simulated Harmonic | 20,000 | Descriptions, headcount, 90d growth, tags |
-| Simulated PitchBook | 20,000 | Industry, verticals, financing, HQ |
-
-::: {.fragment .fade-up}
-- **~40% intentional overlap** across sources to test entity resolution
-- CRM labels: **~5,400 positive** · **~14,600 negative**
-- No real company names or contact information in this deck
-:::
-:::
-
-::: {.column width="45%"}
-![Entity resolution: raw records to canonical companies](images/dedupe_funnel.png){.slide-img .slide-img-sm}
-
-::: {.caption}
-60,000 raw → 44,104 unique companies · **26.5%** dedupe rate
-:::
-:::
-:::
 :::
 
 ## Key Drivers {transition="zoom" #marketing-analytics .slide-dense}
@@ -268,7 +239,6 @@ Six key drivers · weights sum to 100%
 :::
 
 ::: {.column width="50%"}
-::: {.fragment .fade-up}
 | Driver | Weight | How calculated |
 |--------|-------:|------------------|
 | Semantic similarity | 40% | Thesis vs. company text · cosine similarity |
@@ -277,9 +247,8 @@ Six key drivers · weights sum to 100%
 | Traction | 15% | Headcount growth + funding recency |
 | Investor signal | 10% | Normalized investor count |
 | Hygiene | 5% | Data completeness score |
-:::
 
-::: {.fragment .fade-up .callout}
+::: {.callout}
 **Not** a Random Forest or MSE model — this is **attribution-style explainability**: every score decomposes into points per driver.
 :::
 :::
@@ -301,7 +270,7 @@ Every ranked company gets a transparent point contribution per driver — like m
 Top-ranked company · Score = **62.8 / 100** (simulated)
 :::
 
-::: {.fragment .fade-up .callout}
+::: {.callout}
 Partners can reweight drivers by thesis — e.g., raise stage weight for a Series A focus, or semantic weight for a narrow AI-infra mandate.
 :::
 :::
@@ -334,18 +303,14 @@ Drivers
 :::
 :::
 
-::: {.fragment .fade-up}
 Top contributors for the #1 company:
 
-::: {.incremental}
 1. **Stage fit** — 20.0 pts
 2. **Geo fit** — 10.0 pts
 3. **Investor signal** — 10.0 pts
 4. **Semantic similarity** — ~11.0 pts
 5. **Traction** — ~6.8 pts
 6. **Hygiene** — 5.0 pts
-:::
-:::
 :::
 :::
 :::
@@ -445,17 +410,13 @@ Strong startups surface before competitors notice
 :::
 :::
 
-::: {.fragment .fade-up}
 ::: {.callout .callout-accent}
 **The AI arms race:** If VCs use AI to review startups, founders may use AI to optimize pitches. To avoid AI evaluating AI-generated language, rely on harder-to-fake signals: **funding history, headcount growth, investor quality, traction, and human judgment**.
 :::
-:::
 
-::: {.fragment .fade-up}
 > AI can polish a pitch, but it cannot easily fake traction.
-:::
 
-::: {.fragment .fade-up .closing-line}
+::: {.closing-line}
 This project applies marketing analytics thinking to venture capital: using **segmentation, weighted scoring, and attribution** to turn messy deal flow into smarter investment decisions.
 :::
 :::
