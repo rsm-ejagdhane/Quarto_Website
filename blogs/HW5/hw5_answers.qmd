@@ -77,7 +77,7 @@ execute:
 <div class="post-header">
   <div class="post-tag">Assignment 5 — Key Drivers Analysis</div>
   <div class="post-title">What Drives Customer Satisfaction?</div>
-  <div class="post-subtitle">Replicating the slide-75 driver table with seven importance metrics on survey data.</div>
+  <div class="post-subtitle">Nine survey attributes, seven ways to rank them — and popularity is not the winner you’d expect.</div>
   <div class="post-meta">Eesha Jagdhane &nbsp;·&nbsp; June 7, 2026</div>
 </div>
 
@@ -88,22 +88,26 @@ execute:
 
 ## Introduction
 
-Customer satisfaction surveys usually ask people to rate a brand on several attributes — trust, ease of use, service quality, and so on. The hard question is not *whether* these attributes correlate with overall satisfaction, but **which ones matter most** once the predictors overlap.
+Run a Pearson correlation on every brand attribute and you get a tidy ranking: trust looks important, popularity looks fine, move on. Then you fit the full model and half the story changes — because **survey attributes move together**. People who trust a brand also tend to like its design, its service, its social impact. Correlation is not causation, but here it is also not independence.
 
-That is **key drivers analysis**: rank attributes by importance using methods that behave sensibly under multicollinearity. This post replicates the comparison table from slide 75 of the course key-drivers deck. For each of nine brand attributes I compute:
+That is the whole point of **key drivers analysis**: figure out which attributes actually move satisfaction once the others are accounted for. For this optional assignment I built the full comparison table — Pearson, standardized betas, drop-one usefulness, Shapley values, Johnson relative weights, and random-forest Gini importance — on real customer survey data.
 
-1. **Pearson correlation** with satisfaction (bivariate, no controls)
-2. **Standardized regression coefficient** from a multiple linear model
-3. **Drop-one usefulness** — how much $R^2$ falls when a predictor is removed
-4. **Shapley values** (LMG decomposition) — fair allocation of $R^2$ across predictors
-5. **Johnson's relative weights** — orthogonalized decomposition that sums to $R^2$
-6. **Random forest mean decrease in Gini** — nonlinear importance from an ensemble of trees
+The part I enjoyed most: **hand-coding Shapley values** from scratch, using $R^2$ as the fit metric and looping over every predictor subset. With only nine attributes that is manageable; it also makes you feel the method instead of just calling a package.
 
-Shapley values are implemented from scratch using $R^2$ as the fit metric; Johnson weights follow the standard correlation-matrix algorithm (Tonidandel & LeBreton, 2015).
+Here is what I computed for each driver:
+
+1. **Pearson *r*** — bivariate link with satisfaction, no controls
+2. **Standardized β** — coefficient in the full linear model
+3. **Drop-one usefulness** — how much $R^2$ drops when you remove that predictor
+4. **Shapley values** — fair share of $R^2$ (LMG decomposition; my own code)
+5. **Johnson relative weights** — orthogonalized $R^2$ shares that sum to the model total
+6. **Random forest Gini** — nonlinear importance from 500 trees
+
+Spoiler: the methods mostly agree on the top three. The interesting bit is who *falls* once you stop looking at drivers one at a time.
 
 ## The Data
 
-The file `data_for_drivers_analysis.csv` contains 2,553 survey responses across two brands. Each row records whether a respondent agreed (1) or disagreed (0) with nine attribute statements, plus an overall **satisfaction** score on a 1–5 scale.
+`data_for_drivers_analysis.csv` has **2,553 responses** across two brands. Each row is one person’s yes/no answers to nine attribute statements — trust, build quality, ease of use, social impact, and so on — plus overall **satisfaction** on a 1–5 scale. Binary predictors, ordinal outcome: not glamorous, but very typical of the satisfaction surveys marketers actually run.
 
 ```{python}
 #| echo: true
@@ -291,7 +295,7 @@ display(summary.round(3))
 
 ## Methods
 
-All regression-based metrics use a linear model predicting standardized satisfaction from the nine binary attribute indicators.
+I standardized satisfaction and all nine attribute dummies, then ran everything off a single multiple regression backbone. Pearson correlations and the random forest are the exceptions — one is purely bivariate, the other deliberately nonlinear.
 
 ```{python}
 #| echo: true
@@ -364,12 +368,16 @@ rf = RandomForestRegressor(n_estimators=500, random_state=42)
 rf.fit(X, y)
 rf_gini = rf.feature_importances_
 
-display(Markdown(f"**Full-model** $R^2 = {full_r2:.3f}$ — modest, which is typical when satisfaction has many unmeasured causes."))
+display(Markdown(
+    f"**Full-model** $R^2 = {full_r2:.3f}$. "
+    "Honestly? That is low — most of what drives satisfaction is not in these nine dummies. "
+    "But the goal here is *relative* importance among the measured attributes, not explaining everything."
+))
 ```
 
 ## Results
 
-The table below matches the slide-75 layout. Correlations and standardized betas are shown as-is. Usefulness, Shapley, and Johnson weights are **$R^2$ contributions** (they sum to the model's $R^2 \approx 0.109$). The last column shows random-forest Gini importance, rescaled to percentages for comparability.
+The table below is the assignment deliverable: one row per driver, one column per method. Correlations and betas are raw; drop-one, Shapley, and Johnson are **$R^2$ contributions** (together they sum to about 0.109). RF Gini is rescaled to percentages so you can compare it on the same visual scale as the decompositions.
 
 ```{python}
 #| echo: true
@@ -426,11 +434,11 @@ display(Markdown(
 
 ## Visualizations
 
-Numbers in a table are precise; charts make the *pattern* obvious — especially where bivariate correlations disagree with multivariate decompositions. The bar and scatter charts are interactive (**hover** for values; click legend items to toggle methods).
+Tables are for precision; charts are for the *oh, that is why* moment. I kept the heatmap static because the labeled cells read better that way. The bar and scatter charts are interactive — hover for exact values, click legend items to toggle methods.
 
 ### Driver importance across methods
 
-Each metric is rescaled to **percent of its own total** so the four ranking methods are comparable on one chart. Trust, social impact, and customer service lead under every decomposition; popularity and rewarding experience trail.
+I rescaled each metric to **percent of its own total** so four different methods fit on one chart. The headline: trust, social impact, and customer service lead everywhere. Popularity and rewarding experience sit at the bottom no matter how you slice it.
 
 ```{python}
 #| echo: true
@@ -476,7 +484,7 @@ show_plotly(
 
 ### Correlation structure
 
-Drivers are positively correlated with each other — respondents who agree with one statement tend to agree with others. That shared variance is exactly why Pearson *r* alone can mislead: attributes like **popularity** look moderately correlated with satisfaction until the other drivers are controlled for.
+Look at the off-diagonal cells — almost everything is positively correlated with everything else. If someone agrees the brand is trustworthy, they probably also agree it has good service, appealing design, social impact, the works. That clustering is exactly why a simple correlation ranking can lie to you. **Popularity** looks decent in isolation; it is much less special once the other attributes enter the model.
 
 ```{python}
 #| echo: true
@@ -511,7 +519,7 @@ plt.show()
 
 ### Bivariate vs. model-adjusted importance
 
-Pearson *r* treats each driver in isolation; standardized β controls for the others. Points below the diagonal are drivers whose apparent bivariate link with satisfaction **shrinks** once the rest of the model is included — the classic multicollinearity story for popularity and rewarding experience.
+This is my favorite chart. The dashed line is parity: same importance bivariate and multivariate. Points **below** the line looked better alone than they do in the full model — popularity and rewarding experience fall here. Points **above** it gain punch once everything else is controlled for — social impact is the clearest example. That gap between alone and adjusted is the whole multicollinearity lesson in one picture.
 
 ```{python}
 #| echo: true
@@ -556,28 +564,32 @@ show_plotly(
 )
 ```
 
-## What the metrics agree on
+## What surprised me
 
-Three attributes consistently rise to the top:
+I expected more disagreement across methods. Instead, the ranking is stubbornly consistent:
 
-- **Social impact** and **trust** lead on Shapley and Johnson weights (each ~20–22% of explained variance). They also show the largest drop-one usefulness scores.
-- **Customer service** is a clear third driver (~17% of $R^2$ in the decomposition methods).
-- **Rewarding experience** and **popularity** matter least once other attributes are in the model — their Pearson correlations look respectable in isolation, but multicollinearity and shared variance push their regression-based importance down.
+- **Social impact** and **trust** top the decomposition methods (~20–22% of explained variance each). They also take the biggest hits in drop-one usefulness — remove either one and $R^2$ actually moves.
+- **Customer service** is a solid third (~17%). Not flashy, but steady across Shapley, Johnson, and the forest.
+- **Popularity** and **rewarding experience** are the fakers. Respectable Pearson correlations, weak everything else. They are riding coattails.
 
-The random forest ranks the same broad leaders (trust, impact, service) but spreads importance more evenly across mid-tier attributes like build quality and rewarding experience. That is expected: trees capture nonlinearities and interactions that a linear model folds into the error term.
+The random forest tells roughly the same story but spreads credit more evenly — build quality and rewarding experience pick up importance that the linear model does not give them. Trees are picking up something (maybe interactions), but they are not overturning the top three.
 
-## Takeaways
+The sanity check I liked: **Shapley and Johnson weights nearly match row for row**, and both sum to $R^2$. When two completely different decompositions agree, I trust the ranking more than any single column in the table.
 
-| Method | What it measures | Caveat |
+## What I’d actually recommend
+
+If this were a real brand tracker — not a classroom dataset — I would tell the client to focus on **trust, social impact, and customer service** first. Not because one method said so, but because six methods pointed the same direction.
+
+| Method | What it tells you | When it misleads |
 | --- | --- | --- |
-| Pearson *r* | Bivariate association | Ignores other drivers; can overstate importance |
-| Std β | Marginal effect in a linear model | Unstable when predictors correlate |
-| Drop-one | Unique $R^2$ lost if removed | Order-sensitive; can double-count |
-| Shapley | Fair average marginal $R^2$ contribution | Assumes linearity; exact but slow for many predictors |
-| Johnson RW | Orthogonalized $R^2$ shares | Fast; sums exactly to $R^2$ |
-| RF Gini | Nonlinear split importance | Not a causal effect; scale differs from $R^2$ |
+| Pearson *r* | Simple bivariate link | When drivers correlate (here: always) |
+| Std β | Marginal effect in the full model | Same collinearity problem, different flavor |
+| Drop-one | What you lose by removing a variable | Can feel punitive to correlated drivers |
+| Shapley | Fair average share of $R^2$ | Slow with many predictors; assumes linearity |
+| Johnson RW | Fast orthogonalized $R^2$ shares | Less intuitive behind the scenes |
+| RF Gini | Nonlinear split importance | Different scale; not a causal claim |
 
-For prioritizing product investments on this survey, **trust, social impact, and customer service** are the attributes worth focusing on. The decomposition methods (Shapley and Johnson) tell the same story, which is reassuring — when those agree, you can trust the ranking more than any single metric alone.
+Would I run all six every time? Probably not in production — Johnson or Shapley plus a correlation heatmap would be my default. But for learning why marketing analytics nerds distrust raw correlations, this dataset is a great toy.
 
 ```{=html}
 </div>

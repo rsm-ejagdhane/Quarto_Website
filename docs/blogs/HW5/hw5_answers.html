@@ -183,7 +183,7 @@ window.Quarto = {
 <div class="post-header">
   <div class="post-tag">Assignment 5 — Key Drivers Analysis</div>
   <div class="post-title">What Drives Customer Satisfaction?</div>
-  <div class="post-subtitle">Replicating the slide-75 driver table with seven importance metrics on survey data.</div>
+  <div class="post-subtitle">Nine survey attributes, seven ways to rank them — and popularity is not the winner you’d expect.</div>
   <div class="post-meta">Eesha Jagdhane &nbsp;·&nbsp; June 7, 2026</div>
 </div>
 
@@ -191,20 +191,22 @@ window.Quarto = {
 
 <div class="post-body">
 <h2 id="introduction" class="anchored">Introduction</h2>
-<p>Customer satisfaction surveys usually ask people to rate a brand on several attributes — trust, ease of use, service quality, and so on. The hard question is not <em>whether</em> these attributes correlate with overall satisfaction, but <strong>which ones matter most</strong> once the predictors overlap.</p>
-<p>That is <strong>key drivers analysis</strong>: rank attributes by importance using methods that behave sensibly under multicollinearity. This post replicates the comparison table from slide 75 of the course key-drivers deck. For each of nine brand attributes I compute:</p>
+<p>Run a Pearson correlation on every brand attribute and you get a tidy ranking: trust looks important, popularity looks fine, move on. Then you fit the full model and half the story changes — because <strong>survey attributes move together</strong>. People who trust a brand also tend to like its design, its service, its social impact. Correlation is not causation, but here it is also not independence.</p>
+<p>That is the whole point of <strong>key drivers analysis</strong>: figure out which attributes actually move satisfaction once the others are accounted for. For this optional assignment I built the full comparison table — Pearson, standardized betas, drop-one usefulness, Shapley values, Johnson relative weights, and random-forest Gini importance — on real customer survey data.</p>
+<p>The part I enjoyed most: <strong>hand-coding Shapley values</strong> from scratch, using <span class="math inline">\(R^2\)</span> as the fit metric and looping over every predictor subset. With only nine attributes that is manageable; it also makes you feel the method instead of just calling a package.</p>
+<p>Here is what I computed for each driver:</p>
 <ol type="1">
-<li><strong>Pearson correlation</strong> with satisfaction (bivariate, no controls)</li>
-<li><strong>Standardized regression coefficient</strong> from a multiple linear model</li>
-<li><strong>Drop-one usefulness</strong> — how much <span class="math inline">\(R^2\)</span> falls when a predictor is removed</li>
-<li><strong>Shapley values</strong> (LMG decomposition) — fair allocation of <span class="math inline">\(R^2\)</span> across predictors</li>
-<li><strong>Johnson’s relative weights</strong> — orthogonalized decomposition that sums to <span class="math inline">\(R^2\)</span></li>
-<li><strong>Random forest mean decrease in Gini</strong> — nonlinear importance from an ensemble of trees</li>
+<li><strong>Pearson <em>r</em></strong> — bivariate link with satisfaction, no controls</li>
+<li><strong>Standardized β</strong> — coefficient in the full linear model</li>
+<li><strong>Drop-one usefulness</strong> — how much <span class="math inline">\(R^2\)</span> drops when you remove that predictor</li>
+<li><strong>Shapley values</strong> — fair share of <span class="math inline">\(R^2\)</span> (LMG decomposition; my own code)</li>
+<li><strong>Johnson relative weights</strong> — orthogonalized <span class="math inline">\(R^2\)</span> shares that sum to the model total</li>
+<li><strong>Random forest Gini</strong> — nonlinear importance from 500 trees</li>
 </ol>
-<p>Shapley values are implemented from scratch using <span class="math inline">\(R^2\)</span> as the fit metric; Johnson weights follow the standard correlation-matrix algorithm (Tonidandel &amp; LeBreton, 2015).</p>
+<p>Spoiler: the methods mostly agree on the top three. The interesting bit is who <em>falls</em> once you stop looking at drivers one at a time.</p>
 <h2 id="the-data" class="anchored">The Data</h2>
-<p>The file <code>data_for_drivers_analysis.csv</code> contains 2,553 survey responses across two brands. Each row records whether a respondent agreed (1) or disagreed (0) with nine attribute statements, plus an overall <strong>satisfaction</strong> score on a 1–5 scale.</p>
-<div id="a4bbc045" class="cell" data-execution_count="1">
+<p><code>data_for_drivers_analysis.csv</code> has <strong>2,553 responses</strong> across two brands. Each row is one person’s yes/no answers to nine attribute statements — trust, build quality, ease of use, social impact, and so on — plus overall <strong>satisfaction</strong> on a 1–5 scale. Binary predictors, ordinal outcome: not glamorous, but very typical of the satisfaction surveys marketers actually run.</p>
+<div id="8fdc64ff" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Show Python code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> base64</span>
@@ -430,8 +432,8 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>All regression-based metrics use a linear model predicting standardized satisfaction from the nine binary attribute indicators.</p>
-<div id="238144ea" class="cell" data-execution_count="2">
+<p>I standardized satisfaction and all nine attribute dummies, then ran everything off a single multiple regression backbone. Pearson correlations and the random forest are the exceptions — one is purely bivariate, the other deliberately nonlinear.</p>
+<div id="0b75ce04" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Show Python code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> r2_subset(indices):</span>
@@ -502,15 +504,19 @@ window.Quarto = {
 <span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>rf.fit(X, y)</span>
 <span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>rf_gini <span class="op">=</span> rf.feature_importances_</span>
 <span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>display(Markdown(<span class="ss">f"**Full-model** $R^2 = </span><span class="sc">{</span>full_r2<span class="sc">:.3f}</span><span class="ss">$ — modest, which is typical when satisfaction has many unmeasured causes."</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>display(Markdown(</span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"**Full-model** $R^2 = </span><span class="sc">{</span>full_r2<span class="sc">:.3f}</span><span class="ss">$. "</span></span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Honestly? That is low — most of what drives satisfaction is not in these nine dummies. "</span></span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>    <span class="st">"But the goal here is *relative* importance among the measured attributes, not explaining everything."</span></span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display cell-output-markdown">
-<p><strong>Full-model</strong> <span class="math inline">\(R^2 = 0.109\)</span> — modest, which is typical when satisfaction has many unmeasured causes.</p>
+<p><strong>Full-model</strong> <span class="math inline">\(R^2 = 0.109\)</span>. Honestly? That is low — most of what drives satisfaction is not in these nine dummies. But the goal here is <em>relative</em> importance among the measured attributes, not explaining everything.</p>
 </div>
 </div>
 <h2 id="results" class="anchored">Results</h2>
-<p>The table below matches the slide-75 layout. Correlations and standardized betas are shown as-is. Usefulness, Shapley, and Johnson weights are <strong><span class="math inline">\(R^2\)</span> contributions</strong> (they sum to the model’s <span class="math inline">\(R^2 \approx 0.109\)</span>). The last column shows random-forest Gini importance, rescaled to percentages for comparability.</p>
-<div id="5d168646" class="cell" data-execution_count="3">
+<p>The table below is the assignment deliverable: one row per driver, one column per method. Correlations and betas are raw; drop-one, Shapley, and Johnson are <strong><span class="math inline">\(R^2\)</span> contributions</strong> (together they sum to about 0.109). RF Gini is rescaled to percentages so you can compare it on the same visual scale as the decompositions.</p>
+<div id="ca6055ea" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Show Python code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> markdown_table(headers, rows):</span>
@@ -685,10 +691,10 @@ window.Quarto = {
 </div>
 </div>
 <h2 id="visualizations" class="anchored">Visualizations</h2>
-<p>Numbers in a table are precise; charts make the <em>pattern</em> obvious — especially where bivariate correlations disagree with multivariate decompositions. The bar and scatter charts are interactive (<strong>hover</strong> for values; click legend items to toggle methods).</p>
+<p>Tables are for precision; charts are for the <em>oh, that is why</em> moment. I kept the heatmap static because the labeled cells read better that way. The bar and scatter charts are interactive — hover for exact values, click legend items to toggle methods.</p>
 <h3 id="driver-importance-across-methods" class="anchored">Driver importance across methods</h3>
-<p>Each metric is rescaled to <strong>percent of its own total</strong> so the four ranking methods are comparable on one chart. Trust, social impact, and customer service lead under every decomposition; popularity and rewarding experience trail.</p>
-<div id="bee39be4" class="cell" data-execution_count="4">
+<p>I rescaled each metric to <strong>percent of its own total</strong> so four different methods fit on one chart. The headline: trust, social impact, and customer service lead everywhere. Popularity and rewarding experience sit at the bottom no matter how you slice it.</p>
+<div id="22b9b3b2" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Show Python code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>plot_df <span class="op">=</span> results.copy()</span>
@@ -730,7 +736,7 @@ window.Quarto = {
 <span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="plot-bd88f015bc" class="plotly-graph-div" style="width:100%;height:460px;"></div>
+<div id="plot-146f394568" class="plotly-graph-div" style="width:100%;height:460px;"></div>
 <script>
 (function() {
   function decodeBdata(obj) {
@@ -758,13 +764,13 @@ window.Quarto = {
       setTimeout(drawPlot, 50);
       return;
     }
-    var el = document.getElementById("plot-bd88f015bc");
+    var el = document.getElementById("plot-146f394568");
     if (!el || el.dataset.plotlyDrawn === "1") return;
     Plotly.newPlot(el, spec.data, spec.layout, spec.config).then(function() {
       el.dataset.plotlyDrawn = "1";
       if (typeof Plotly.Plots !== "undefined") Plotly.Plots.resize(el);
     }).catch(function(err) {
-      console.error("Plotly failed (plot-bd88f015bc):", err);
+      console.error("Plotly failed (plot-146f394568):", err);
       el.innerHTML = "<p style='color:#7a3b35;font-size:0.9rem'>Chart could not load — try a hard refresh.</p>";
     });
   }
@@ -778,8 +784,8 @@ window.Quarto = {
 </div>
 </div>
 <h3 id="correlation-structure" class="anchored">Correlation structure</h3>
-<p>Drivers are positively correlated with each other — respondents who agree with one statement tend to agree with others. That shared variance is exactly why Pearson <em>r</em> alone can mislead: attributes like <strong>popularity</strong> look moderately correlated with satisfaction until the other drivers are controlled for.</p>
-<div id="6e708939" class="cell" data-execution_count="5">
+<p>Look at the off-diagonal cells — almost everything is positively correlated with everything else. If someone agrees the brand is trustworthy, they probably also agree it has good service, appealing design, social impact, the works. That clustering is exactly why a simple correlation ranking can lie to you. <strong>Popularity</strong> looks decent in isolation; it is much less special once the other attributes enter the model.</p>
+<div id="f53a37cf" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Show Python code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>heat_cols <span class="op">=</span> [OUTCOME] <span class="op">+</span> DRIVERS</span>
@@ -818,8 +824,8 @@ window.Quarto = {
 </div>
 </div>
 <h3 id="bivariate-vs.-model-adjusted-importance" class="anchored">Bivariate vs.&nbsp;model-adjusted importance</h3>
-<p>Pearson <em>r</em> treats each driver in isolation; standardized β controls for the others. Points below the diagonal are drivers whose apparent bivariate link with satisfaction <strong>shrinks</strong> once the rest of the model is included — the classic multicollinearity story for popularity and rewarding experience.</p>
-<div id="bac861d7" class="cell" data-execution_count="6">
+<p>This is my favorite chart. The dashed line is parity: same importance bivariate and multivariate. Points <strong>below</strong> the line looked better alone than they do in the full model — popularity and rewarding experience fall here. Points <strong>above</strong> it gain punch once everything else is controlled for — social impact is the clearest example. That gap between alone and adjusted is the whole multicollinearity lesson in one picture.</p>
+<div id="e00d326a" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Show Python code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>scatter_df <span class="op">=</span> results.copy()</span>
@@ -862,7 +868,7 @@ window.Quarto = {
 <span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="plot-d00beb05bf" class="plotly-graph-div" style="width:100%;height:460px;"></div>
+<div id="plot-0eb1e28bb3" class="plotly-graph-div" style="width:100%;height:460px;"></div>
 <script>
 (function() {
   function decodeBdata(obj) {
@@ -890,13 +896,13 @@ window.Quarto = {
       setTimeout(drawPlot, 50);
       return;
     }
-    var el = document.getElementById("plot-d00beb05bf");
+    var el = document.getElementById("plot-0eb1e28bb3");
     if (!el || el.dataset.plotlyDrawn === "1") return;
     Plotly.newPlot(el, spec.data, spec.layout, spec.config).then(function() {
       el.dataset.plotlyDrawn = "1";
       if (typeof Plotly.Plots !== "undefined") Plotly.Plots.resize(el);
     }).catch(function(err) {
-      console.error("Plotly failed (plot-d00beb05bf):", err);
+      console.error("Plotly failed (plot-0eb1e28bb3):", err);
       el.innerHTML = "<p style='color:#7a3b35;font-size:0.9rem'>Chart could not load — try a hard refresh.</p>";
     });
   }
@@ -909,15 +915,17 @@ window.Quarto = {
 </script><p class="chart-caption"><em>Pearson r (bivariate) vs. standardized β (multivariate). Points below the line lose importance after controls.</em></p>
 </div>
 </div>
-<h2 id="what-the-metrics-agree-on" class="anchored">What the metrics agree on</h2>
-<p>Three attributes consistently rise to the top:</p>
+<h2 id="what-surprised-me" class="anchored">What surprised me</h2>
+<p>I expected more disagreement across methods. Instead, the ranking is stubbornly consistent:</p>
 <ul>
-<li><strong>Social impact</strong> and <strong>trust</strong> lead on Shapley and Johnson weights (each ~20–22% of explained variance). They also show the largest drop-one usefulness scores.</li>
-<li><strong>Customer service</strong> is a clear third driver (~17% of <span class="math inline">\(R^2\)</span> in the decomposition methods).</li>
-<li><strong>Rewarding experience</strong> and <strong>popularity</strong> matter least once other attributes are in the model — their Pearson correlations look respectable in isolation, but multicollinearity and shared variance push their regression-based importance down.</li>
+<li><strong>Social impact</strong> and <strong>trust</strong> top the decomposition methods (~20–22% of explained variance each). They also take the biggest hits in drop-one usefulness — remove either one and <span class="math inline">\(R^2\)</span> actually moves.</li>
+<li><strong>Customer service</strong> is a solid third (~17%). Not flashy, but steady across Shapley, Johnson, and the forest.</li>
+<li><strong>Popularity</strong> and <strong>rewarding experience</strong> are the fakers. Respectable Pearson correlations, weak everything else. They are riding coattails.</li>
 </ul>
-<p>The random forest ranks the same broad leaders (trust, impact, service) but spreads importance more evenly across mid-tier attributes like build quality and rewarding experience. That is expected: trees capture nonlinearities and interactions that a linear model folds into the error term.</p>
-<h2 id="takeaways" class="anchored">Takeaways</h2>
+<p>The random forest tells roughly the same story but spreads credit more evenly — build quality and rewarding experience pick up importance that the linear model does not give them. Trees are picking up something (maybe interactions), but they are not overturning the top three.</p>
+<p>The sanity check I liked: <strong>Shapley and Johnson weights nearly match row for row</strong>, and both sum to <span class="math inline">\(R^2\)</span>. When two completely different decompositions agree, I trust the ranking more than any single column in the table.</p>
+<h2 id="what-id-actually-recommend" class="anchored">What I’d actually recommend</h2>
+<p>If this were a real brand tracker — not a classroom dataset — I would tell the client to focus on <strong>trust, social impact, and customer service</strong> first. Not because one method said so, but because six methods pointed the same direction.</p>
 <table class="caption-top">
 <colgroup>
 <col style="width: 33%">
@@ -927,44 +935,44 @@ window.Quarto = {
 <thead>
 <tr class="header">
 <th>Method</th>
-<th>What it measures</th>
-<th>Caveat</th>
+<th>What it tells you</th>
+<th>When it misleads</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td>Pearson <em>r</em></td>
-<td>Bivariate association</td>
-<td>Ignores other drivers; can overstate importance</td>
+<td>Simple bivariate link</td>
+<td>When drivers correlate (here: always)</td>
 </tr>
 <tr class="even">
 <td>Std β</td>
-<td>Marginal effect in a linear model</td>
-<td>Unstable when predictors correlate</td>
+<td>Marginal effect in the full model</td>
+<td>Same collinearity problem, different flavor</td>
 </tr>
 <tr class="odd">
 <td>Drop-one</td>
-<td>Unique <span class="math inline">\(R^2\)</span> lost if removed</td>
-<td>Order-sensitive; can double-count</td>
+<td>What you lose by removing a variable</td>
+<td>Can feel punitive to correlated drivers</td>
 </tr>
 <tr class="even">
 <td>Shapley</td>
-<td>Fair average marginal <span class="math inline">\(R^2\)</span> contribution</td>
-<td>Assumes linearity; exact but slow for many predictors</td>
+<td>Fair average share of <span class="math inline">\(R^2\)</span></td>
+<td>Slow with many predictors; assumes linearity</td>
 </tr>
 <tr class="odd">
 <td>Johnson RW</td>
-<td>Orthogonalized <span class="math inline">\(R^2\)</span> shares</td>
-<td>Fast; sums exactly to <span class="math inline">\(R^2\)</span></td>
+<td>Fast orthogonalized <span class="math inline">\(R^2\)</span> shares</td>
+<td>Less intuitive behind the scenes</td>
 </tr>
 <tr class="even">
 <td>RF Gini</td>
 <td>Nonlinear split importance</td>
-<td>Not a causal effect; scale differs from <span class="math inline">\(R^2\)</span></td>
+<td>Different scale; not a causal claim</td>
 </tr>
 </tbody>
 </table>
-<p>For prioritizing product investments on this survey, <strong>trust, social impact, and customer service</strong> are the attributes worth focusing on. The decomposition methods (Shapley and Johnson) tell the same story, which is reassuring — when those agree, you can trust the ranking more than any single metric alone.</p>
+<p>Would I run all six every time? Probably not in production — Johnson or Shapley plus a correlation heatmap would be my default. But for learning why marketing analytics nerds distrust raw correlations, this dataset is a great toy.</p>
 </div>
 
 <div class="footer-bar">
