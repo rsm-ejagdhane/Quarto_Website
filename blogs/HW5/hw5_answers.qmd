@@ -57,7 +57,8 @@ execute:
   .footer-bar { margin: 0 4rem; padding: 2rem 0; border-top: 1px solid #c9c2b6; display: flex; justify-content: space-between; font-size: 0.7rem; color: #8a8278; }
   .post-body .cell-output { max-width: 100%; overflow-x: auto; }
   .post-body .chart-caption { font-size: 0.85rem; color: #8a8278; font-style: italic; margin: -0.5rem 0 1.5rem; text-align: center; }
-  .post-body .cell-output-display img { display: block; max-width: 100%; height: auto; margin: 0 auto 0.5rem; }
+  .post-body .plotly-graph-div { max-width: 100% !important; margin: 0 auto; }
+  .post-body .cell-output-display:has(.plotly-graph-div) > div { margin: 0; }
   @media (max-width: 800px) { .nav, .post-header, .post-body { padding-left: 1.5rem; padding-right: 1.5rem; } }
   body details:has(pre.sourceCode) { margin: 0 0 1.25rem; border: 1px solid #c9c2b6; border-radius: 2px; background: #e8e3da; }
   body details:has(pre.sourceCode) > summary { cursor: pointer; list-style: none; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: #f0ece4; background: #2e2825; padding: 0.55rem 1rem; }
@@ -106,14 +107,19 @@ The file `data_for_drivers_analysis.csv` contains 2,553 survey responses across 
 ```{python}
 #| echo: true
 
+import base64
+import json
+import struct
+import uuid
 from itertools import combinations
 from math import factorial
 from pathlib import Path
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from IPython.display import Markdown, display
+import plotly.graph_objects as go
+import plotly.io as pio
+from IPython.display import HTML, Markdown, display
 from numpy.linalg import eig, inv
 from scipy import stats
 from sklearn.ensemble import RandomForestRegressor
@@ -148,17 +154,111 @@ GRID = "#c9c2b6"
 HIGHLIGHT = "#7a3b35"
 PALETTE = ["#7a3b35", "#2e2825", "#8a8278", "#c9a09b", "#6b6560"]
 
+pio.templates.default = "simple_white"
 
-def style_axes(ax):
-    ax.set_facecolor(PANEL)
-    ax.figure.set_facecolor(BG)
-    ax.grid(True, axis="both", color=GRID, linewidth=0.7, alpha=0.8)
-    for spine in ("top", "right"):
-        ax.spines[spine].set_visible(False)
-    ax.tick_params(colors="#8a8278")
-    ax.xaxis.label.set_color(ACCENT)
-    ax.yaxis.label.set_color(ACCENT)
-    ax.title.set_color(ACCENT)
+
+def _decode_bdata(obj: dict) -> list:
+    raw = base64.b64decode(obj["bdata"])
+    dtype = obj["dtype"]
+    if dtype == "f8":
+        return list(struct.unpack(f"<{len(raw) // 8}d", raw))
+    if dtype == "f4":
+        return list(struct.unpack(f"<{len(raw) // 4}f", raw))
+    if dtype == "i2":
+        return list(struct.unpack(f"<{len(raw) // 2}h", raw))
+    if dtype == "i4":
+        return list(struct.unpack(f"<{len(raw) // 4}i", raw))
+    return list(raw)
+
+
+def _plain_json(obj):
+    if isinstance(obj, dict):
+        if "bdata" in obj and "dtype" in obj:
+            return _decode_bdata(obj)
+        return {k: _plain_json(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [_plain_json(v) for v in obj]
+    if isinstance(obj, np.ndarray):
+        return obj.tolist()
+    if isinstance(obj, (np.integer, np.floating, np.bool_)):
+        return obj.item()
+    return obj
+
+
+def embed_plotly(fig: go.Figure, div_id: str, height: int) -> str:
+    fig.update_layout(
+        height=height,
+        paper_bgcolor=BG,
+        plot_bgcolor=PANEL,
+        font=dict(color=ACCENT, family="DM Sans, sans-serif"),
+    )
+    fig.update_xaxes(gridcolor=GRID, zerolinecolor=GRID)
+    fig.update_yaxes(gridcolor=GRID, zerolinecolor=GRID)
+    raw = fig.to_dict()
+    layout = _plain_json(raw.get("layout", {}))
+    layout.pop("template", None)
+    payload = json.dumps(
+        {
+            "data": _plain_json(raw.get("data", [])),
+            "layout": layout,
+            "config": {"displayModeBar": True, "responsive": True},
+        }
+    )
+    return f"""<div id="{div_id}" class="plotly-graph-div" style="width:100%;height:{height}px;"></div>
+<script>
+(function() {{
+  function decodeBdata(obj) {{
+    if (Array.isArray(obj)) return obj.map(decodeBdata);
+    if (obj && typeof obj === "object") {{
+      if (obj.bdata && obj.dtype) {{
+        var bin = atob(obj.bdata);
+        var buf = new ArrayBuffer(bin.length);
+        var view = new Uint8Array(buf);
+        for (var i = 0; i < bin.length; i++) view[i] = bin.charCodeAt(i);
+        if (obj.dtype === "f8") return Array.from(new Float64Array(buf));
+        if (obj.dtype === "f4") return Array.from(new Float32Array(buf));
+        if (obj.dtype === "i2") return Array.from(new Int16Array(buf));
+        if (obj.dtype === "i4") return Array.from(new Int32Array(buf));
+      }}
+      var out = {{}};
+      for (var k in obj) out[k] = decodeBdata(obj[k]);
+      return out;
+    }}
+    return obj;
+  }}
+  var spec = decodeBdata({payload});
+  function drawPlot() {{
+    if (typeof Plotly === "undefined") {{
+      setTimeout(drawPlot, 50);
+      return;
+    }}
+    var el = document.getElementById("{div_id}");
+    if (!el || el.dataset.plotlyDrawn === "1") return;
+    Plotly.newPlot(el, spec.data, spec.layout, spec.config).then(function() {{
+      el.dataset.plotlyDrawn = "1";
+      if (typeof Plotly.Plots !== "undefined") Plotly.Plots.resize(el);
+    }}).catch(function(err) {{
+      console.error("Plotly failed ({div_id}):", err);
+      el.innerHTML = "<p style='color:#7a3b35;font-size:0.9rem'>Chart could not load — try a hard refresh.</p>";
+    }});
+  }}
+  if (document.readyState === "loading") {{
+    document.addEventListener("DOMContentLoaded", drawPlot);
+  }} else {{
+    drawPlot();
+  }}
+}})();
+</script>"""
+
+
+def show_plotly(fig: go.Figure, height=None, caption=None) -> None:
+    plot_h = int(height if height is not None else (fig.layout.height or 500))
+    div_id = "plot-" + uuid.uuid4().hex[:10]
+    html = embed_plotly(fig, div_id, plot_h)
+    if caption:
+        html += f'<p class="chart-caption"><em>{caption}</em></p>'
+    display(HTML(html))
+
 
 df = pd.read_csv(DATA_DIR / "data_for_drivers_analysis.csv")
 X = df[DRIVERS].to_numpy(dtype=float)
@@ -312,7 +412,7 @@ display(Markdown(
 
 ## Visualizations
 
-Numbers in a table are precise; charts make the *pattern* obvious — especially where bivariate correlations disagree with multivariate decompositions.
+Numbers in a table are precise; charts make the *pattern* obvious — especially where bivariate correlations disagree with multivariate decompositions. **Hover** any point or cell for exact values; click legend items to show or hide methods.
 
 ### Driver importance across methods
 
@@ -320,7 +420,6 @@ Each metric is rescaled to **percent of its own total** so the four ranking meth
 
 ```{python}
 #| echo: true
-#| fig-cap: "Normalized importance shares across four ranking methods (higher = stronger driver)."
 
 plot_df = results.copy()
 plot_df["label"] = plot_df["driver"].map(LABELS)
@@ -334,22 +433,31 @@ methods = [
     ("johnson_pct", "Johnson RW"),
     ("rf_gini_pct", "RF Gini"),
 ]
-y = np.arange(len(plot_df))
-bar_h = 0.18
-offsets = np.linspace(-1.5 * bar_h, 1.5 * bar_h, len(methods))
 
-fig, ax = plt.subplots(figsize=(8.5, 5.2), dpi=140)
-for color, (col, name), offset in zip(PALETTE, methods, offsets):
-    ax.barh(y + offset, plot_df[col], height=bar_h, label=name, color=color, alpha=0.92)
+fig_methods = go.Figure()
+for color, (col, name) in zip(PALETTE, methods):
+    fig_methods.add_trace(go.Bar(
+        y=plot_df["label"],
+        x=plot_df[col],
+        name=name,
+        orientation="h",
+        marker_color=color,
+        opacity=0.92,
+        hovertemplate="<b>%{y}</b><br>%{fullData.name}: %{x:.1f}%<extra></extra>",
+    ))
 
-ax.set_yticks(y)
-ax.set_yticklabels(plot_df["label"])
-ax.set_xlabel("Share of total importance (%)")
-ax.set_title("Driver rankings agree more than they disagree")
-ax.legend(frameon=False, loc="lower right")
-style_axes(ax)
-plt.tight_layout()
-plt.show()
+fig_methods.update_layout(
+    title="Driver rankings agree more than they disagree",
+    barmode="group",
+    xaxis_title="Share of total importance (%)",
+    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+    margin=dict(l=10, r=10, t=70, b=40),
+    height=460,
+)
+show_plotly(
+    fig_methods,
+    caption="Normalized importance shares across four ranking methods (higher = stronger driver).",
+)
 ```
 
 ### Correlation structure
@@ -358,33 +466,41 @@ Drivers are positively correlated with each other — respondents who agree with
 
 ```{python}
 #| echo: true
-#| fig-cap: "Pearson correlations among drivers and satisfaction. Darker red = stronger positive association."
 
 heat_cols = [OUTCOME] + DRIVERS
 heat_labels = ["Satisfaction"] + [LABELS[d] for d in DRIVERS]
 corr_heat = df[heat_cols].corr()
-corr_heat.index = heat_labels
-corr_heat.columns = heat_labels
+z = corr_heat.to_numpy()
+text = [[f"{val:.2f}" for val in row] for row in z]
 
-fig, ax = plt.subplots(figsize=(8.8, 6.8), dpi=140)
-im = ax.imshow(corr_heat, cmap="RdBu_r", vmin=-0.2, vmax=1.0, aspect="auto")
-ax.set_xticks(range(len(heat_labels)))
-ax.set_yticks(range(len(heat_labels)))
-ax.set_xticklabels(heat_labels, rotation=45, ha="right")
-ax.set_yticklabels(heat_labels)
-ax.set_title("Drivers move together — multicollinearity is real")
-
-for i in range(len(heat_labels)):
-    for j in range(len(heat_labels)):
-        val = corr_heat.iloc[i, j]
-        color = "#f0ece4" if abs(val) > 0.45 else ACCENT
-        ax.text(j, i, f"{val:.2f}", ha="center", va="center", fontsize=7.5, color=color)
-
-cbar = fig.colorbar(im, ax=ax, fraction=0.03, pad=0.02)
-cbar.ax.tick_params(colors="#8a8278")
-fig.patch.set_facecolor(BG)
-plt.tight_layout()
-plt.show()
+fig_heat = go.Figure(data=go.Heatmap(
+    z=z,
+    x=heat_labels,
+    y=heat_labels,
+    colorscale=[
+        [0.0, "#2166ac"],
+        [0.5, "#f7f7f7"],
+        [1.0, "#b2182b"],
+    ],
+    zmin=-0.2,
+    zmax=1.0,
+    text=text,
+    texttemplate="%{text}",
+    textfont=dict(size=10, color=ACCENT),
+    hovertemplate="<b>%{y}</b> vs <b>%{x}</b><br>Pearson r = %{z:.3f}<extra></extra>",
+    colorbar=dict(title="r"),
+))
+fig_heat.update_layout(
+    title="Drivers move together — multicollinearity is real",
+    xaxis=dict(tickangle=-35, side="bottom"),
+    yaxis=dict(autorange="reversed"),
+    margin=dict(l=10, r=10, t=60, b=100),
+    height=520,
+)
+show_plotly(
+    fig_heat,
+    caption="Pearson correlations among drivers and satisfaction. Darker red = stronger positive association.",
+)
 ```
 
 ### Bivariate vs. model-adjusted importance
@@ -393,37 +509,45 @@ Pearson *r* treats each driver in isolation; standardized β controls for the ot
 
 ```{python}
 #| echo: true
-#| fig-cap: "Pearson r (bivariate) vs. standardized β (multivariate). Points below the line lose importance after controls."
 
 scatter_df = results.copy()
 scatter_df["label"] = scatter_df["driver"].map(LABELS)
 lim = max(scatter_df["pearson"].max(), scatter_df["std_beta"].max()) * 1.15
 
-fig, ax = plt.subplots(figsize=(6.8, 6.2), dpi=140)
-ax.scatter(
-    scatter_df["pearson"], scatter_df["std_beta"],
-    s=110, color=HIGHLIGHT, alpha=0.85, edgecolors=ACCENT, linewidths=0.6, zorder=3,
+fig_scatter = go.Figure()
+fig_scatter.add_trace(go.Scatter(
+    x=scatter_df["pearson"],
+    y=scatter_df["std_beta"],
+    mode="markers+text",
+    text=scatter_df["label"],
+    textposition="top center",
+    textfont=dict(size=10, color=ACCENT),
+    marker=dict(size=14, color=HIGHLIGHT, line=dict(width=1.2, color=ACCENT)),
+    hovertemplate=(
+        "<b>%{text}</b><br>"
+        "Pearson r: %{x:.3f}<br>"
+        "Std β: %{y:.3f}<extra></extra>"
+    ),
+))
+fig_scatter.add_shape(
+    type="line",
+    x0=0, y0=0, x1=lim, y1=lim,
+    line=dict(color=GRID, width=1.5, dash="dash"),
 )
-ax.plot([0, lim], [0, lim], linestyle="--", color=GRID, linewidth=1.2, zorder=1)
-
-for _, row in scatter_df.iterrows():
-    ax.annotate(
-        row["label"],
-        (row["pearson"], row["std_beta"]),
-        textcoords="offset points",
-        xytext=(6, 4),
-        fontsize=8,
-        color=ACCENT,
-    )
-
-ax.set_xlim(0, lim)
-ax.set_ylim(0, lim)
-ax.set_xlabel("Pearson r with satisfaction")
-ax.set_ylabel("Standardized β in full model")
-ax.set_title("What looks important alone vs. in the full model")
-style_axes(ax)
-plt.tight_layout()
-plt.show()
+fig_scatter.update_layout(
+    title="What looks important alone vs. in the full model",
+    xaxis_title="Pearson r with satisfaction",
+    yaxis_title="Standardized β in full model",
+    xaxis=dict(range=[0, lim]),
+    yaxis=dict(range=[0, lim]),
+    margin=dict(l=10, r=10, t=60, b=50),
+    height=460,
+    showlegend=False,
+)
+show_plotly(
+    fig_scatter,
+    caption="Pearson r (bivariate) vs. standardized β (multivariate). Points below the line lose importance after controls.",
+)
 ```
 
 ## What the metrics agree on
