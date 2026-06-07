@@ -56,6 +56,8 @@ execute:
   td { padding: 0.6rem 0.75rem; color: #6b6560; border-bottom: 1px solid #e8e3da; }
   .footer-bar { margin: 0 4rem; padding: 2rem 0; border-top: 1px solid #c9c2b6; display: flex; justify-content: space-between; font-size: 0.7rem; color: #8a8278; }
   .post-body .cell-output { max-width: 100%; overflow-x: auto; }
+  .post-body .chart-caption { font-size: 0.85rem; color: #8a8278; font-style: italic; margin: -0.5rem 0 1.5rem; text-align: center; }
+  .post-body .cell-output-display img { display: block; max-width: 100%; height: auto; margin: 0 auto 0.5rem; }
   @media (max-width: 800px) { .nav, .post-header, .post-body { padding-left: 1.5rem; padding-right: 1.5rem; } }
   body details:has(pre.sourceCode) { margin: 0 0 1.25rem; border: 1px solid #c9c2b6; border-radius: 2px; background: #e8e3da; }
   body details:has(pre.sourceCode) > summary { cursor: pointer; list-style: none; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: #f0ece4; background: #2e2825; padding: 0.55rem 1rem; }
@@ -108,6 +110,7 @@ from itertools import combinations
 from math import factorial
 from pathlib import Path
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from IPython.display import Markdown, display
@@ -137,6 +140,25 @@ LABELS = {
     "service": "Customer service",
     "impact": "Social impact",
 }
+
+ACCENT = "#2e2825"
+BG = "#f0ece4"
+PANEL = "#e8e3da"
+GRID = "#c9c2b6"
+HIGHLIGHT = "#7a3b35"
+PALETTE = ["#7a3b35", "#2e2825", "#8a8278", "#c9a09b", "#6b6560"]
+
+
+def style_axes(ax):
+    ax.set_facecolor(PANEL)
+    ax.figure.set_facecolor(BG)
+    ax.grid(True, axis="both", color=GRID, linewidth=0.7, alpha=0.8)
+    for spine in ("top", "right"):
+        ax.spines[spine].set_visible(False)
+    ax.tick_params(colors="#8a8278")
+    ax.xaxis.label.set_color(ACCENT)
+    ax.yaxis.label.set_color(ACCENT)
+    ax.title.set_color(ACCENT)
 
 df = pd.read_csv(DATA_DIR / "data_for_drivers_analysis.csv")
 X = df[DRIVERS].to_numpy(dtype=float)
@@ -286,6 +308,122 @@ display(Markdown(
     f"**Model fit:** $R^2 = {full_r2:.4f}$ "
     f"(Shapley sum = {shapley.sum():.4f}, Johnson sum = {johnson_r2:.4f})"
 ))
+```
+
+## Visualizations
+
+Numbers in a table are precise; charts make the *pattern* obvious — especially where bivariate correlations disagree with multivariate decompositions.
+
+### Driver importance across methods
+
+Each metric is rescaled to **percent of its own total** so the four ranking methods are comparable on one chart. Trust, social impact, and customer service lead under every decomposition; popularity and rewarding experience trail.
+
+```{python}
+#| echo: true
+#| fig-cap: "Normalized importance shares across four ranking methods (higher = stronger driver)."
+
+plot_df = results.copy()
+plot_df["label"] = plot_df["driver"].map(LABELS)
+plot_df["shapley_pct"] = plot_df["shapley"] / plot_df["shapley"].sum() * 100
+plot_df["drop_one_pct"] = plot_df["drop_one"] / plot_df["drop_one"].sum() * 100
+plot_df = plot_df.sort_values("shapley_pct", ascending=True)
+
+methods = [
+    ("drop_one_pct", "Drop-one"),
+    ("shapley_pct", "Shapley"),
+    ("johnson_pct", "Johnson RW"),
+    ("rf_gini_pct", "RF Gini"),
+]
+y = np.arange(len(plot_df))
+bar_h = 0.18
+offsets = np.linspace(-1.5 * bar_h, 1.5 * bar_h, len(methods))
+
+fig, ax = plt.subplots(figsize=(8.5, 5.2), dpi=140)
+for color, (col, name), offset in zip(PALETTE, methods, offsets):
+    ax.barh(y + offset, plot_df[col], height=bar_h, label=name, color=color, alpha=0.92)
+
+ax.set_yticks(y)
+ax.set_yticklabels(plot_df["label"])
+ax.set_xlabel("Share of total importance (%)")
+ax.set_title("Driver rankings agree more than they disagree")
+ax.legend(frameon=False, loc="lower right")
+style_axes(ax)
+plt.tight_layout()
+plt.show()
+```
+
+### Correlation structure
+
+Drivers are positively correlated with each other — respondents who agree with one statement tend to agree with others. That shared variance is exactly why Pearson *r* alone can mislead: attributes like **popularity** look moderately correlated with satisfaction until the other drivers are controlled for.
+
+```{python}
+#| echo: true
+#| fig-cap: "Pearson correlations among drivers and satisfaction. Darker red = stronger positive association."
+
+heat_cols = [OUTCOME] + DRIVERS
+heat_labels = ["Satisfaction"] + [LABELS[d] for d in DRIVERS]
+corr_heat = df[heat_cols].corr()
+corr_heat.index = heat_labels
+corr_heat.columns = heat_labels
+
+fig, ax = plt.subplots(figsize=(8.8, 6.8), dpi=140)
+im = ax.imshow(corr_heat, cmap="RdBu_r", vmin=-0.2, vmax=1.0, aspect="auto")
+ax.set_xticks(range(len(heat_labels)))
+ax.set_yticks(range(len(heat_labels)))
+ax.set_xticklabels(heat_labels, rotation=45, ha="right")
+ax.set_yticklabels(heat_labels)
+ax.set_title("Drivers move together — multicollinearity is real")
+
+for i in range(len(heat_labels)):
+    for j in range(len(heat_labels)):
+        val = corr_heat.iloc[i, j]
+        color = "#f0ece4" if abs(val) > 0.45 else ACCENT
+        ax.text(j, i, f"{val:.2f}", ha="center", va="center", fontsize=7.5, color=color)
+
+cbar = fig.colorbar(im, ax=ax, fraction=0.03, pad=0.02)
+cbar.ax.tick_params(colors="#8a8278")
+fig.patch.set_facecolor(BG)
+plt.tight_layout()
+plt.show()
+```
+
+### Bivariate vs. model-adjusted importance
+
+Pearson *r* treats each driver in isolation; standardized β controls for the others. Points below the diagonal are drivers whose apparent bivariate link with satisfaction **shrinks** once the rest of the model is included — the classic multicollinearity story for popularity and rewarding experience.
+
+```{python}
+#| echo: true
+#| fig-cap: "Pearson r (bivariate) vs. standardized β (multivariate). Points below the line lose importance after controls."
+
+scatter_df = results.copy()
+scatter_df["label"] = scatter_df["driver"].map(LABELS)
+lim = max(scatter_df["pearson"].max(), scatter_df["std_beta"].max()) * 1.15
+
+fig, ax = plt.subplots(figsize=(6.8, 6.2), dpi=140)
+ax.scatter(
+    scatter_df["pearson"], scatter_df["std_beta"],
+    s=110, color=HIGHLIGHT, alpha=0.85, edgecolors=ACCENT, linewidths=0.6, zorder=3,
+)
+ax.plot([0, lim], [0, lim], linestyle="--", color=GRID, linewidth=1.2, zorder=1)
+
+for _, row in scatter_df.iterrows():
+    ax.annotate(
+        row["label"],
+        (row["pearson"], row["std_beta"]),
+        textcoords="offset points",
+        xytext=(6, 4),
+        fontsize=8,
+        color=ACCENT,
+    )
+
+ax.set_xlim(0, lim)
+ax.set_ylim(0, lim)
+ax.set_xlabel("Pearson r with satisfaction")
+ax.set_ylabel("Standardized β in full model")
+ax.set_title("What looks important alone vs. in the full model")
+style_axes(ax)
+plt.tight_layout()
+plt.show()
 ```
 
 ## What the metrics agree on
