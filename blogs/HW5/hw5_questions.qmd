@@ -1,0 +1,16 @@
+---
+title: "Key Drivers Analysis"
+author: "Your Name"
+date: today
+---
+
+
+_todo: replicate the table on slide 75 of the key drivers slides. This involves calculating pearson correlations (feel free to omit the polychoric correlations), standardized regression coefficients, drop-one (aka "usefulness"), Shapley values for a linear regression, Johnson's relative weights, and the mean decrease in the gini coefficient from a random forest. You may use packages built into R or Python._
+
+_Optionally, if you want a medium challenge: write your own code to implement Shapley values using a linear regression model and r-squared as the fit metric._
+
+_Optionally, if you want a harder challenge: write your own code to implement Shapley values for a generalized linear model such as the logit, and use either a pseudo-r-squared or an information criteria (eg, the BIC) as the fit metric._
+
+
+
+

@@ -9,6 +9,7 @@ project:
     - "!blogs/HW2/hw2_questions.qmd"
     - "!blogs/HW3/hw3_questions.qmd"
     - "!blogs/HW4/hw4_questions.qmd"
+    - "!blogs/HW5/hw5_questions.qmd"
 
 website:
   title: "Eesha Jagdhane"

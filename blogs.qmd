@@ -254,6 +254,17 @@ execute:
       </div>
     </div>
 
+    <div class="blog-card">
+      <div class="blog-num">07</div>
+      <div class="blog-tag">Assignment 5 — Key Drivers</div>
+      <div class="blog-title">What Drives Customer Satisfaction?</div>
+      <div class="blog-desc">Replicating the slide-75 driver table — Pearson correlations, standardized betas, drop-one usefulness, hand-coded Shapley values, Johnson relative weights, and random-forest Gini importance on survey data.</div>
+      <div class="blog-footer">
+        <span class="blog-date">June 7, 2026</span>
+        <a href="blogs/HW5/hw5_answers.html" class="blog-link">Read more →</a>
+      </div>
+    </div>
+
   </div>
 </div>
 
